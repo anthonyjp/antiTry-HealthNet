@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'djangobower',
     'registry.apps.RegistryConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,6 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'axes',
+    'hijack',
+    'compat',
+    'crispy_forms',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -49,6 +54,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'axes.middleware.FailedLoginMiddleware',
 ]
 
 ROOT_URLCONF = 'HealthNet.urls'
@@ -120,4 +126,28 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
+# BOWER SETTINGS
+STATICFILES_FINDERS = {
+    'djangobower.finders.BowerFinder',
+}
+
+BOWER_INSTALLED_APPS = {
+    'jquery',
+    'Chart.js',
+    'timesheet.js',
+}
+
+BOWER_COMPONENTS_ROOT = '/PROJECT_ROOT/bower_components/'
 STATIC_URL = '/static/'
+
+# AXES SETTINGS - Do not change without permission
+AXES_LOGIN_FAILURE_LIMIT = 3
+AXES_LOCK_OUT_AT_FAILURE = True
+AXES_USE_USER_AGENT = False
+AXES_COOLOFF_TIME = None
+AXES_LOCKOUT_TEMPLATE = None
+AXES_LOCKOUT_URL = None
+AXES_VERBOSE = True
+AXES_USERNAME_FROM_FIELD = 'username'
+AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = False
+

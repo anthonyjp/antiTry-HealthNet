@@ -1,0 +1,8 @@
+Django==1.9.2
+django-axes==1.6.0
+django-bower==5.1.0
+django-compat==1.0.8
+django-crispy-forms==1.6.0
+django-hijack==2.0.3
+rules==1.1.1
+six==1.10.0

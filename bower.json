@@ -1,0 +1,28 @@
+{
+  "name": "HealthNet",
+  "homepage": "https://github.com/anthonyjp/antiTry-HealthNet",
+  "authors": [
+    "Matthew Crocco",
+    "Lisa Ni",
+    "Anthony Perez",
+    "Alice Fischer",
+    "Kyle Scagnelli"
+  ],
+  "description": "An application for managing patient, doctor and nurse information in a hospital environment.",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^2.2.0",
+    "Chart.js": "^1.0.2",
+    "timesheet.js": "https://github.com/sbstjn/timesheet.js.git"
+  }
+}
