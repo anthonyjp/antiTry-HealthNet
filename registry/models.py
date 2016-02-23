@@ -27,10 +27,10 @@ class PatientMedicalRegister(models.Model):
     ATYPE = 'A'
     BTYPE = 'B'
     ABTYPE = 'AB'
-    GENDER_CHOICES = (
+    BLOOD_CHOICES = (
         (OTYPE, 'O'),
-        (ATYPE, 'A')
-        (BTYPE, 'B')
+        (ATYPE, 'A'),
+        (BTYPE, 'B'),
         (ABTYPE, 'AB')
     )
     bloodType = models.CharField(max_length=2, choices = BLOOD_CHOICES,default = OTYPE)
@@ -40,8 +40,8 @@ class PatientMedicalRegister(models.Model):
     NLMI = 'nlmi'
     INSURANCE_CHOICES = (
         (SELF, 'Self Insured'),
-        (BCBS, 'Blue Cross Blue Shield')
-        (SLMI, 'Super Legit Medical Insurance')
+        (BCBS, 'Blue Cross Blue Shield'),
+        (SLMI, 'Super Legit Medical Insurance'),
         (NLMI, 'Not Legit Medical Insurance')
     )
     insurance = models.CharField(max_length =4, choices = INSURANCE_CHOICES, default = SELF)
