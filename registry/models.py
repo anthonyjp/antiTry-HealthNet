@@ -42,6 +42,7 @@ class PatientMedicalRegister(models.Model):
         (SELF, 'Self Insured'),
         (BCBS, 'Blue Cross Blue Shield'),
         (SLMI, 'Super Legit Medical Insurance'),
-        (NLMI, 'Not Legit Medical Insurance')
+        (NLMI, 'Not Legit Medical Insurance'),
     )
     insurance = models.CharField(max_length =4, choices = INSURANCE_CHOICES, default = SELF)
+
