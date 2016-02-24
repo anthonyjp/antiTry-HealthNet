@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'axes',
     'hijack',
     'compat',
-    'crispy_forms',
+    #'crispy_forms',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -114,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/New_York'
 
 USE_I18N = True
 
@@ -151,3 +151,4 @@ AXES_VERBOSE = True
 AXES_USERNAME_FROM_FIELD = 'username'
 AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = False
 
+CRISPY_TEMPLATE_PACK = 'bootstrap'
