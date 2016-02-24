@@ -1,8 +1,7 @@
 from django.db import models
 
 # Create your models here.
-
-class PatientPersonalRegister(models.Model):
+class Patient(models.Model):
     firstName = models.CharField(max_length=100)
     middleInitial = models.CharField(max_length=1)
     lastName = models.CharField(max_length=100)
@@ -19,8 +18,6 @@ class PatientPersonalRegister(models.Model):
     email = models.CharField(max_length=100)
     password = models.CharField(max_length=50)
     securityAnswer = models.CharField(max_length=50)
-
-class PatientMedicalRegister(models.Model):
     height = models.DecimalField()
     weight = models.DecimalField()
     OTYPE = 'O'
