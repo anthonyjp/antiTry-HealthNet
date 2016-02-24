@@ -42,3 +42,6 @@ class Patient(models.Model):
         (NLMI, 'Not Legit Medical Insurance')
     )
     insurance = models.CharField(max_length =4, choices = INSURANCE_CHOICES, default = SELF)
+
+    def __str__(self):
+        return self.lastName
