@@ -15,11 +15,11 @@ class Patient(models.Model):
     gender = models.CharField(max_length=1,
                                       choices=GENDER_CHOICES,
                                       default=MALE)
-    email = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100)
     password = models.CharField(max_length=50)
     securityAnswer = models.CharField(max_length=50)
-    height = models.DecimalField()
-    weight = models.DecimalField()
+    height = models.IntegerField()
+    weight = models.IntegerField()
     OTYPE = 'O'
     ATYPE = 'A'
     BTYPE = 'B'
