@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from .forms import PatientRegisterForm
+from .models import Patient
 # Create your views here.
 
 def new(request):
@@ -12,3 +13,7 @@ def new(request):
     else:
         form = PatientRegisterForm()
     return render(request, 'registry/new.html', {'form': form})
+
+def detail(request, pk):
+    patient = get_object_or_404(Patient, pk=pk)
+    return render(request, 'registry/detail.html', {'patient': patient})
