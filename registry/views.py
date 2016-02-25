@@ -1,5 +1,8 @@
 from django.shortcuts import render
 from django.shortcuts import redirect, get_object_or_404
+
+from django.core.urlresolvers import reverse_lazy
+
 from .forms import PatientRegisterForm
 from .models import Patient
 # Create your views here.
@@ -20,3 +23,6 @@ def detail(request, pk):
 
 def index(request):
     return render(request,'registry/landing.html')
+
+def index_redirect(request):
+    return redirect(to='/registry')

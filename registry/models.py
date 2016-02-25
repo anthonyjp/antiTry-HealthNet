@@ -1,6 +1,8 @@
 from localflavor.us import us_states
 from django.db import models
 
+import uuid
+
 from registry.utility.models import Dictionary
 
 GENDER_CHOICES = (
@@ -33,7 +35,7 @@ class Hospital(models.Model):
     zipcode = models.CharField(max_length=10, blank=False, null=False)
     identifiers = models.ForeignKey(to=Dictionary, on_delete=models.SET(Dictionary.empty))
 
-    def get_location(self) -> str:
+    def get_location(self):
         """
         Returns the location of the hospital as combined location fields of the form:
 
@@ -53,13 +55,14 @@ class Hospital(models.Model):
         return float('NaN'), float('NaN')
 
 class User(models.Model):
+    uuid = models.UUIDField(primary_key=True)
     firstName = models.CharField(max_length=100)
     middleInitial = models.CharField(max_length=1)
     lastName = models.CharField(max_length=100)
     email = models.EmailField()
     dateOfBirth = models.DateField()
 
-    curHospital = models.ForeignKey(to=Hospital, related_name='cur_hospital', on_delete=models.PROTECT, null=False)
+    curHospital = models.ForeignKey(to=Hospital, related_name='cur_hospital', on_delete=models.PROTECT, null=True)
     prefHospital = models.ForeignKey(to=Hospital, related_name='pref_hospital', on_delete=models.SET_NULL, null=True)
 
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default=GENDER_CHOICES[0][0])
