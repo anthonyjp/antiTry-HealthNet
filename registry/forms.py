@@ -7,5 +7,5 @@ class PatientRegisterForm(forms.ModelForm):
     class Meta:
         model = Patient
         fields = ('firstName', 'middleInitial', 'lastName', 'dateOfBirth', 'gender',
-                  'email', 'password', 'securityAnswer', 'height', 'weight', 'bloodType',
-                  'insurance',)
+                  'email', 'password', 'height', 'weight', 'bloodType',
+                  'insurance', 'prefHospital', 'securityAnswer')
