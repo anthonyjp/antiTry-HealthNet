@@ -17,3 +17,6 @@ def new(request):
 def detail(request, pk):
     patient = get_object_or_404(Patient, pk=pk)
     return render(request, 'registry/detail.html', {'patient': patient})
+
+def index(request):
+    return render(request,'registry/landing.html')
