@@ -1,4 +1,4 @@
-from .models import Patient
+from .models.user_models import Patient
 from  django import forms
 # Create your models here.
 

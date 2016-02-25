@@ -68,6 +68,8 @@ def main():
             line = sha_file.readline().strip()
             if SHA_REGEX.match(line):
                 latest_sha = line
+            elif len(sys.argv) > 1 and SHA_REGEX.match(sys.argv[1]):
+                latest_sha = sys.argv[1]
             else:
                 warn('Invalid SHA-1 in', __LAST_SHA, 'please provide last git SHA-1 as argument!')
 
