@@ -2,7 +2,7 @@ from django.db import models
 
 from localflavor.us.us_states import STATE_CHOICES
 
-from registry.utility.models import Dictionary, SeparatedValuesField, TimeRange
+from registry.utility.models import Dictionary, SeparatedValuesField
 
 class Hospital(models.Model):
     """
@@ -42,25 +42,8 @@ class Drug(models.Model):
     msdsLink = models.CharField(max_length=512)
 
 
-class Prescription(models.Model):
-    drug = models.ForeignKey(to=Drug, on_delete=models.PROTECT)
-
-    count = models.PositiveIntegerField()   # prescription count (usually pill count)
-    amount = models.PositiveIntegerField()  # milligrams
-    refills = models.PositiveIntegerField()
-
-    time_range = models.OneToOneField(to=TimeRange, on_delete=models.PROTECT)
-
-    def is_valid(self):
-        return not self.time_range.is_elapsed()
-
-    def can_refill(self):
-        return self.refills > 0
-
-    def refill(self):
-        if not self.can_refill():
-            raise RuntimeError('Cannot refill')
-        else:
-            self.refills -= 1
-            return self.refills
-
+class Note(models.Model):
+    author = models.TextField()
+    timestamp = models.DateTimeField()
+    content = models.TextField()
+    images = SeparatedValuesField()
