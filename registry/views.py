@@ -1,11 +1,10 @@
 from django.shortcuts import render
 from django.shortcuts import redirect, get_object_or_404
 
-from django.core.urlresolvers import reverse_lazy
-
 from .forms import PatientRegisterForm
 from .models.user_models import Patient
 # Create your views here.
+
 
 def new(request):
     if request.method == "POST":
@@ -17,12 +16,11 @@ def new(request):
         form = PatientRegisterForm()
     return render(request, 'registry/new.html', {'form': form})
 
+
 def detail(request, pk):
     patient = get_object_or_404(Patient, pk=pk)
     return render(request, 'registry/detail.html', {'patient': patient})
 
+
 def index(request):
     return render(request,'registry/landing.html')
-
-def index_redirect(request):
-    return redirect(to='/registry')

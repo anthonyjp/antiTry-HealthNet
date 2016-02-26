@@ -33,12 +33,15 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'djangobower',
     'registry.apps.RegistryConfig',
+    'jet.dashboard',
+    'jet',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'axes',
     'hijack',
     'compat',
@@ -127,9 +130,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 # BOWER SETTINGS
-STATICFILES_FINDERS = {
-    'djangobower.finders.BowerFinder',
-}
+# STATICFILES_FINDERS = {
+#     'djangobower.finders.BowerFinder',
+# }
 
 BOWER_INSTALLED_APPS = {
     'jquery',
@@ -137,8 +140,13 @@ BOWER_INSTALLED_APPS = {
     'timesheet.js',
 }
 
-BOWER_COMPONENTS_ROOT = '/PROJECT_ROOT/bower_components/'
+BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR)
+STATIC_ROOT = os.path.join(BASE_DIR, 'private_static')
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
 
 # AXES SETTINGS - Do not change without permission
 AXES_LOGIN_FAILURE_LIMIT = 3

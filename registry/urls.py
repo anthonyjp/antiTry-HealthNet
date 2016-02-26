@@ -2,6 +2,7 @@
 from django.conf.urls import url, include
 from . import views
 
+app_name = 'registry'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^patient/new$', views.new, name='new'),

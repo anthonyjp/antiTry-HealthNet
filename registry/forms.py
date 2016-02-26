@@ -1,8 +1,10 @@
+from django.forms import ModelForm
+
 from .models.user_models import Patient
-from  django import forms
+
 # Create your models here.
 
-class PatientRegisterForm(forms.ModelForm):
+class PatientRegisterForm(ModelForm):
 
     class Meta:
         model = Patient
