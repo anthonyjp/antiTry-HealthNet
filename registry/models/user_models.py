@@ -9,15 +9,19 @@ from ..utility.models import TimeRange, Dictionary
 
 
 class User(DjangoUser):
+    """
+    A Generic User account that extends Django's Auth User account (for authentication use) also consisting of a
+    first name, last name, password and email.
+    """
     uuid = models.UUIDField(primary_key=True)
     middle_initial = models.CharField(max_length=1)
     date_of_birth = models.DateField()
 
     cur_hospital = models.ForeignKey(to=Hospital, related_name='%(app_label)s_%(class)s_cur_hospital',
-                                     on_delete=models.PROTECT, null=True)
+                                     on_delete=models.SET_NULL, null=True)
 
     gender = models.CharField(max_length=1, choices=Gender.choices(), default=Gender.label(Gender.MALE))
-    security_answer = models.CharField(max_length=50)
+    security_answer = models.TextField()
 
     objects = InheritanceManager()
 
@@ -32,7 +36,7 @@ class AdmissionInfo(models.Model):
 
     doctors = models.ManyToManyField(Doctor)
 
-    admission_time = models.OneToOneField(to=TimeRange, on_delete=models.PROTECT)
+    admission_time = models.OneToOneField(to=TimeRange, on_delete=models.SET_DEFAULT, default=True)
     prescriptions = models.OneToOneField(to=Dictionary, on_delete=models.PROTECT)
 
 
