@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 
 from model_utils.managers import InheritanceManager
@@ -12,7 +13,7 @@ class User(models.Model):
     A Generic User account that extends Django's Auth User account (for authentication use) also consisting of a
     first name, last name, password and email.
     """
-    uuid = models.UUIDField(primary_key=True)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4)
     first_name = models.CharField(max_length=100)
     middle_initial = models.CharField(max_length=1)
     last_name = models.CharField(max_length=100)
