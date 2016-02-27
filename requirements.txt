@@ -9,5 +9,6 @@ django-hijack==2.0.3
 django-jet==0.1.4
 django-localflavor==1.2
 django-model-utils==2.4
+pytz==2015.7
 rules==1.1.1
 six==1.10.0
