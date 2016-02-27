@@ -29,7 +29,6 @@ class User(models.Model):
 
     objects = InheritanceManager()
 
-
 class Doctor(User):
     hospitals = models.ManyToManyField(Hospital, related_name='provider_to')
 

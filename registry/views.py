@@ -30,3 +30,12 @@ def register(request):
 
 def login(request):
     return render(request, 'registry/login.html')
+
+def patient(request):
+    return render(request, 'registry/patient.html')
+
+def doc_nurse(request):
+    return render(request, 'registry/doc_nurse.html')
+
+def admin (request):
+    return render(request, 'registry/admin.html')
