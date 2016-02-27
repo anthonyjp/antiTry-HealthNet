@@ -4,6 +4,7 @@ from django.db import models
 from model_utils.managers import InheritanceManager
 
 from .options import BloodType, Gender, INSURANCE_CHOICES
+from .options import SecurityQuestion as SecQ
 from .data_models import Hospital, Drug
 from ..utility.models import TimeRange, Dictionary
 
@@ -25,6 +26,7 @@ class User(models.Model):
 
     gender = models.CharField(max_length=1, choices=Gender.choices(), default=Gender.label(Gender.MALE))
     password = models.TextField()
+    security_question = models.CharField(max_length=255, choices=SecQ.choices(), default=SecQ.label(SecQ.Q1))
     security_answer = models.TextField()
 
     objects = InheritanceManager()

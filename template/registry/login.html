@@ -5,11 +5,11 @@
 {% block content %}
     <div id="wrapper">
             <div id="logIn">
-                <form>
+                <form method="POST">
                     <fieldset>
                         <legend>Log In:</legend>
-                        <label>Email:<input type="text" /></label><br/>
-                        <label>Password:<input type="password"></label><br/>
+                        <label>Email: </label><input type="text" name="email"/><br/>
+                        <label>Password: </label><input type="password" name="password"><br/>
                         <input type="submit" value="Log in"/>
                     </fieldset>
                 </form>

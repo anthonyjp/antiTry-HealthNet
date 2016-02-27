@@ -13,7 +13,7 @@ class Hospital(models.Model):
     address = models.CharField(max_length=300)
     state = models.CharField(max_length=2, choices=STATE_CHOICES, blank=False, null=False)
     zipcode = models.CharField(max_length=10, blank=False, null=False)
-    identifiers = models.ForeignKey(to=Dictionary, on_delete=models.SET(Dictionary.empty))
+    identifiers = models.ForeignKey(default=Dictionary.empty, to=Dictionary, on_delete=models.SET(Dictionary.empty))
 
     def get_location(self):
         """
