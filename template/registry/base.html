@@ -1,0 +1,19 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>{% block title %}HealthNet{% endblock %}</title>
+    {#  All universally shared JavaScript imports should go above the jsimport block  #}
+    {% block jsimport %}{% endblock %}
+
+    {#  All universally shared CSS stylesheets should go above the cssimport block  #}
+    {% block cssimport %}{% endblock %}
+</head>
+<body>
+    {% block content %}{% endblock %}
+    {% block customjs %}{% endblock %}
+</body>
+</html>

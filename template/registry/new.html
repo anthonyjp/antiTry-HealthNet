@@ -1,6 +1,12 @@
+{% extends 'registry/base.html' %}
+
+{% block title %}HealthNet | Registration{% endblock %}
+
+{% block content %}
 <h1>Create a New Patient</h1>
-    <form method="POST" class="post-form">{% csrf_token %}
-        {{ form.as_p }}
-        Security Question: What is your favorite food?<br>
-        <button type="submit">Save</button>
-    </form>
+<form method="POST" class="post-form">{% csrf_token %}
+    {{ form.as_p }}
+    Security Question: What is your favorite food?<br>
+    <button type="submit">Save</button>
+</form>
+{% endblock %}

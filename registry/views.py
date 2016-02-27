@@ -19,7 +19,7 @@ def new(request):
 
 def detail(request, pk):
     patient = get_object_or_404(Patient, pk=pk)
-    return render(request, 'registry/detail.html', {'patient': patient})
+    return render(request, 'registry/patient.html', {'patient': patient})
 
 
 def index(request):
@@ -29,4 +29,4 @@ def register(request):
     return render(request, 'registry/register.html')
 
 def login(request):
-    return render(request, 'registry/Log_In.html')
+    return render(request, 'registry/login.html')
