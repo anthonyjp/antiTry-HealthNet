@@ -34,7 +34,6 @@ class MedicalTest(MedicalData):
     timestamp = models.DateTimeField()
     results = models.OneToOneField(to=Note, related_name='test_note', on_delete=models.SET_NULL, null=True)
     images = SeparatedValuesField()
-    sign_off = models.TextField()
     sign_off_user = models.ForeignKey(to=Doctor, on_delete=models.SET_NULL, null=True)
 
 

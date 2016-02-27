@@ -3,6 +3,8 @@ from django.db import models
 
 from model_utils.managers import InheritanceManager
 
+from django.contrib.auth.models import User as DjangoUser
+
 from .options import BloodType, Gender, INSURANCE_CHOICES
 from .options import SecurityQuestion as SecQ
 from .data_models import Hospital, Drug
@@ -14,20 +16,21 @@ class User(models.Model):
     A Generic User account that extends Django's Auth User account (for authentication use) also consisting of a
     first name, last name, password and email.
     """
+    auth_user = models.OneToOneField(to=DjangoUser, on_delete=models.CASCADE)
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    first_name = models.CharField(max_length=100)
+    # first_name = models.CharField(max_length=100)
     middle_initial = models.CharField(max_length=1)
-    last_name = models.CharField(max_length=100)
-    email = models.EmailField()
+    # last_name = models.CharField(max_length=100)
+    # email = models.EmailField()
     date_of_birth = models.DateField()
 
     cur_hospital = models.ForeignKey(to=Hospital, related_name='%(app_label)s_%(class)s_cur_hospital',
                                      on_delete=models.SET_NULL, null=True)
 
     gender = models.CharField(max_length=1, choices=Gender.choices(), default=Gender.label(Gender.MALE))
-    password = models.TextField()
-    security_question = models.CharField(max_length=255, choices=SecQ.choices(), default=SecQ.label(SecQ.Q1))
-    security_answer = models.TextField()
+    # password = models.TextField()
+    security_question = models.CharField(max_length=100, choices=SecQ.choices(), default=SecQ.label(SecQ.Q1))
+    security_answer = models.CharField(max_length=50, null=False, blank=False)
 
     objects = InheritanceManager()
 
