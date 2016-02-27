@@ -51,6 +51,7 @@ class Patient(User):
     height = models.PositiveIntegerField()
     weight = models.PositiveIntegerField()
 
+    provider = models.ForeignKey(to=Doctor, related_name='providers', on_delete=models.SET_NULL, null=True)
     admission_status = models.OneToOneField(to=AdmissionInfo, related_name='patient_status', on_delete=models.SET_NULL,
                                             null=True)
     pref_hospital = models.ForeignKey(to=Hospital, related_name='%(app_label)s_%(class)s_pref_hospital',

@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'djangobower',
     'registry.apps.RegistryConfig',
+    'rules.apps.AutodiscoverRulesConfig',
     'jet.dashboard',
     'jet',
     'django.contrib.admin',
