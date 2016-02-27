@@ -1,6 +1,5 @@
 from django.db import models
 
-from django.contrib.auth.models import User as DjangoUser
 from model_utils.managers import InheritanceManager
 
 from .options import BloodType, Gender, INSURANCE_CHOICES
@@ -8,19 +7,23 @@ from .data_models import Hospital, Drug
 from ..utility.models import TimeRange, Dictionary
 
 
-class User(DjangoUser):
+class User(models.Model):
     """
     A Generic User account that extends Django's Auth User account (for authentication use) also consisting of a
     first name, last name, password and email.
     """
     uuid = models.UUIDField(primary_key=True)
+    first_name = models.CharField(max_length=100)
     middle_initial = models.CharField(max_length=1)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField()
     date_of_birth = models.DateField()
 
     cur_hospital = models.ForeignKey(to=Hospital, related_name='%(app_label)s_%(class)s_cur_hospital',
                                      on_delete=models.SET_NULL, null=True)
 
     gender = models.CharField(max_length=1, choices=Gender.choices(), default=Gender.label(Gender.MALE))
+    password = models.TextField()
     security_answer = models.TextField()
 
     objects = InheritanceManager()
