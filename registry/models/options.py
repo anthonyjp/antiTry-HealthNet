@@ -34,3 +34,11 @@ class Gender(enum.Enum):
         MALE: 'M',
         FEMALE: 'F'
     }
+
+
+class SecurityQuestion(enum.Enum):
+    Q1 = 0
+
+    labels = {
+        Q1: "What is your mother's maiden name?",
+    }
