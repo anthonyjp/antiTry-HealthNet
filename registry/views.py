@@ -24,3 +24,9 @@ def detail(request, pk):
 
 def index(request):
     return render(request,'registry/landing.html')
+
+def register(request):
+    return render(request, 'registry/register.html')
+
+def login(request):
+    return render(request, 'registry/Log_In.html')

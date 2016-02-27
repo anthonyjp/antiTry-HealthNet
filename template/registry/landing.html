@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>HealthNet</title>
+    <link rel="stylesheet" type="text/css" href="../../static/registry/css/dummy.css">
 </head>
 <body>
     <h1>Welcome to HealthNet</h1>
+    <a href="{% url 'registry:login' %}"><button>Log In</button></a>
+    <a href="{% url 'registry:register' %}"><button>Register</button></a>
 </body>
 </html>
