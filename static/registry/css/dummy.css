@@ -1,4 +1,9 @@
 h1{
     text-align: center;
-    color: red;
+}
+
+#buttons{
+    display: block;
+    width: 8%;
+    margin: 0 auto;
 }

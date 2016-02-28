@@ -14,11 +14,26 @@
 {% block content %}
     <div id="wrapper">
             <div id="logIn">
-                <form method="POST">
+                <form method="POST" class="post-form">
                     <fieldset>
-                        <legend>Log In:</legend>
-                        <label>Email: </label><input type="text" name="email"/><br/>
-                        <label>Password: </label><input type="password" name="password"><br/>
+                        <legend>Log In</legend>
+                        <div>
+                            <div class="left">
+                                <label>Email: </label>
+                            </div>
+                            <div class="right">
+                                <input type="text" name="email"/>
+                            </div>
+
+                        </div>
+                        <div>
+                            <div class="left">
+                                <label>Password: </label>
+                            </div>
+                            <div class="right">
+                                <input type="password" name="password"/>
+                            </div>
+                        </div>
                         <input type="submit" value="Log in"/>
                     </fieldset>
                 </form>

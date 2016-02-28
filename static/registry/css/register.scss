@@ -1,0 +1,28 @@
+h1{
+  text-align: center;
+}
+
+#form{
+  display: block;
+  width: 50%;
+  margin: 0 auto;
+  border: 2px solid black;
+}
+
+label{
+  width: 45%;
+  float: left;
+  text-align: right;
+  margin-right: 1%;
+}
+
+input {
+  width:35%;
+}
+
+#buttons{
+  display: block;
+  width: 15%;
+  margin: 0 auto;
+  padding-bottom: 1.5%;
+}

@@ -6,7 +6,7 @@ from .models.user_models import Patient
 # Create your views here.
 
 
-def new(request):
+def register(request):
     if request.method == "POST":
         form = PatientRegisterForm(request.POST)
         if form.is_valid():
@@ -24,9 +24,6 @@ def detail(request, pk):
 
 def index(request):
     return render(request,'registry/landing.html')
-
-def register(request):
-    return render(request, 'registry/register.html')
 
 def login(request):
     return render(request, 'registry/login.html')
