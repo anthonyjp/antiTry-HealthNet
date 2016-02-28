@@ -24,6 +24,11 @@ class BloodType(enum.Enum):
     B = 1
     AB = 2
     O = 3
+    UNKNOWN = 4
+
+    labels = {
+        UNKNOWN: '--'
+    }
 
 
 class Gender(enum.Enum):
@@ -41,4 +46,14 @@ class SecurityQuestion(enum.Enum):
 
     labels = {
         Q1: "What is your mother's maiden name?",
+    }
+
+
+class Units(enum.Enum):
+    CUSTOMARY = 0
+    METRIC = 1
+
+    labels = {
+        METRIC: 'Metric',
+        CUSTOMARY: 'US Customary'
     }

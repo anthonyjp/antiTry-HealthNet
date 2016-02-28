@@ -23,6 +23,10 @@
   "dependencies": {
     "jquery": "^2.2.0",
     "Chart.js": "^1.0.2",
-    "timesheet.js": "https://github.com/sbstjn/timesheet.js.git"
+    "timesheet.js": "https://github.com/sbstjn/timesheet.js.git",
+    "bootstrap": "^3.3.6",
+    "lodash": "^4.5.1",
+    "pikaday": "^1.4.0",
+    "moment": "momentjs#^2.11.2"
   }
 }

@@ -149,6 +149,7 @@ BOWER_INSTALLED_APPS = {
     'timesheet.js',
     'bootstrap',
     'lodash',
+    'pikaday',
 }
 
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR)
@@ -170,4 +171,5 @@ AXES_VERBOSE = True
 AXES_USERNAME_FROM_FIELD = 'username'
 AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = False
 
+CRISPY_FAIL_SILENTLY = not DEBUG
 CRISPY_TEMPLATE_PACK = 'bootstrap'

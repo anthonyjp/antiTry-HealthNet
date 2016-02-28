@@ -1,12 +1,11 @@
 import uuid
-from django.db import models
-
-from model_utils.managers import InheritanceManager
 
 from django.contrib.auth.models import User as DjangoUser
+from django.db import models
+from model_utils.managers import InheritanceManager
 
-from .options import BloodType, Gender, INSURANCE_CHOICES
-from .options import SecurityQuestion as SecQ
+from registry.utility.options import BloodType, Gender, INSURANCE_CHOICES
+from registry.utility.options import SecurityQuestion as SecQ
 from .data_models import Hospital, Drug
 from ..utility.models import TimeRange, Dictionary
 
@@ -18,21 +17,18 @@ class User(models.Model):
     """
     auth_user = models.OneToOneField(to=DjangoUser, on_delete=models.CASCADE)
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    # first_name = models.CharField(max_length=100)
-    middle_initial = models.CharField(max_length=1)
-    # last_name = models.CharField(max_length=100)
-    # email = models.EmailField()
+    middle_initial = models.CharField(max_length=1, blank=True, default='')
     date_of_birth = models.DateField()
 
     cur_hospital = models.ForeignKey(to=Hospital, related_name='%(app_label)s_%(class)s_cur_hospital',
                                      on_delete=models.SET_NULL, null=True)
 
     gender = models.CharField(max_length=1, choices=Gender.choices(), default=Gender.label(Gender.MALE))
-    # password = models.TextField()
     security_question = models.CharField(max_length=100, choices=SecQ.choices(), default=SecQ.label(SecQ.Q1))
     security_answer = models.CharField(max_length=50, null=False, blank=False)
 
     objects = InheritanceManager()
+
 
 class Doctor(User):
     hospitals = models.ManyToManyField(Hospital, related_name='provider_to')
@@ -62,7 +58,7 @@ class Patient(User):
     pref_hospital = models.ForeignKey(to=Hospital, related_name='%(app_label)s_%(class)s_pref_hospital',
                                       on_delete=models.SET_NULL, null=True)
 
-    blood_type = models.CharField(max_length=2, choices=BloodType.choices(), default=BloodType.label(BloodType.O))
+    blood_type = models.CharField(max_length=2, choices=BloodType.choices(), default=BloodType.label(BloodType.UNKNOWN))
     insurance = models.CharField(max_length=40, choices=INSURANCE_CHOICES, default=INSURANCE_CHOICES[0][0])
 
 

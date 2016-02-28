@@ -3,8 +3,25 @@
  */
 
 var registry = {};
-registry['base'] = (function (lodash, jQuery) {
+registry['base'] = (function () {
+    const NONE_CHOICE = '__NONE__';
     var curActive = null;
+
+    function has(key) {
+        var layers = _.split(key, '.')
+        var obj = registry;
+        var i = 0;
+        while(i++ < layers.length-1) {
+            var next = layers[i-1];
+
+            if(!(next in obj))
+                return false;
+
+            obj = obj[next];
+        }
+
+        return layers[i] in obj;
+    }
 
     /**
      * A utility function that checks if some element is inside a given indexable/sequential object, i.e. an object defined
@@ -18,10 +35,10 @@ registry['base'] = (function (lodash, jQuery) {
      * @returns {boolean} Whether or not the element exists in the given arr
      */
     function inArray(elem, arr) {
-        if (lodash.isNil(elem) || lodash.isNil(arr) || !lodash.isArrayLikeObject(arr))
+        if (_.isNil(elem) || _.isNil(arr) || !_.isArrayLikeObject(arr))
             throw new TypeError('inArray expects non-nil element and non-nil array-like (iterable)!');
 
-        return lodash.some(arr, function (x) {
+        return _.some(arr, function (x) {
             return x === elem;
         });
     }
@@ -37,25 +54,44 @@ registry['base'] = (function (lodash, jQuery) {
      * @returns {boolean} True if succeeded, False otherwise
      */
     function setActiveMenuitem(html_content) {
-        if (lodash.isNil(html_content) || !lodash.isString(html_content))
+        if (_.isNil(html_content) || !_.isString(html_content))
             return false;
 
-        var options = lodash.trim(html_content).split('|');
-        var newActive = jQuery('li.hn-menuitem > a').filter(function () {
-            return inArray(this.innerHTML, options);
-        }).first().parent();
+        var options = _.trim(html_content).split('|');
+        var nilActive = _.isNil(curActive);
+        const IS_NONE = inArray(NONE_CHOICE, options);
 
-        if (newActive.length > 0) {
-            if (!lodash.isNil(curActive))
+        if(!IS_NONE) {
+            var newActive = $('li.hn-menuitem > a').filter(function () {
+                return inArray(this.innerHTML, options);
+            }).first().parent();
+
+            if (newActive.length > 0) {
+                if (!nilActive)
+                    curActive.removeClass('active');
+                (curActive = newActive).addClass('active');
+            }
+
+            return !_.isNil(curActive) && curActive === newActive;
+        } else {
+            if(!nilActive)
                 curActive.removeClass('active');
-            (curActive = newActive).addClass('active');
-        }
 
-        return !lodash.isNil(curActive) && curActive === newActive;
+            curActive = null;
+            return true;
+        }
     }
 
     return {
+        'NO_MENUITEM': NONE_CHOICE,
+        'has': has,
         'inArray': inArray,
         'setActiveMenuItem': setActiveMenuitem
     }
-})(_, $);
+})();
+
+registry['utility'] = {};
+registry['forms'] = {};
+registry['auth'] = {};
+
+Object.preventExtensions(registry);

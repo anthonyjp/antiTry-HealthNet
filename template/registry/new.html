@@ -1,26 +1,28 @@
-{% extends 'registry/base.html' %}
-
-{% load staticfiles %}
+{% extends 'registry/base_auth.html' %}
+{% load static %}
 {% load sass_tags %}
+{% load crispy_forms_tags %}
 
 {% block title %}HealthNet | Registration{% endblock %}
+{% block inner-title %}Patient Registration{% endblock %}
+{% block set-active %}__NONE__{% endblock %}
 
 {% block cssimport %}
-    <link rel="stylesheet" href="{% sass_src 'registry/css/register.scss' %}">
-    <!--[if gte IE 8]>
-     <link rel="stylesheet" type="text/css" href="{% static 'registry/css/login-ie.css' %}"/>
-<![endif]-->
+    <link rel="stylesheet" href="{% sass_src 'registry/css/base_auth.scss' %}"/>
 {% endblock %}
 
-{% block content %}
-<h1>Create a New Patient</h1>
-<div id="form">
-    <form method="POST" class="post-form">{% csrf_token %}
-        {{ form.as_p }}
-        <div id="buttons">
-            <button type="submit">Register</button>
-            <button type="submit">Cancel</button>
-        </div>
-    </form>
-</div>
+{% block inner-content %}
+    {% crispy form form.helper %}
+{% endblock %}
+
+{% block jsimport %}
+<script type="text/javascript" src="{% static 'pikaday/pikaday.js' %}"></script>
+<script type="text/javascript" stc="{% static 'pikaday/plugins/pikaday.jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'registry/js/measurements.js' %}"></script>
+{% endblock %}
+
+{% block customjs %}
+<script type="text/javascript">
+    var picker = new Pikaday
+</script>
 {% endblock %}

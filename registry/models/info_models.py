@@ -1,11 +1,10 @@
 from django.db import models
-
 from localflavor.us.models import PhoneNumberField
 from model_utils.managers import InheritanceManager
 
-from .user_models import Doctor, Nurse, Patient, AdmissionInfo
+from registry.utility.options import Relationship
 from .data_models import Hospital, Note
-from .options import Relationship
+from .user_models import Doctor, Nurse, Patient, AdmissionInfo
 from ..utility.models import SeparatedValuesField
 
 

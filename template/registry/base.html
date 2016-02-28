@@ -46,7 +46,9 @@
     </nav>
 </header>
 <body>
-    {% block content %}{% endblock %}
+    <div class="hn-page-wrapper">
+        {% block content %}{% endblock %}
+    </div>
 
     {#  All universally shared JavaScript imports should go above the jsimport block  #}
     <script type="text/javascript" src="{% static 'jquery/dist/jquery.min.js' %}"></script>
