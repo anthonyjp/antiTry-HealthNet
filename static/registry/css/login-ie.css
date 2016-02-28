@@ -1,0 +1,5 @@
+/* A simple css file to augment the login.scss file overriding certain properties that won't work in IE by default */
+
+.login {
+    display: table;
+}

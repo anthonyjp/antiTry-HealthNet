@@ -1,0 +1,69 @@
+@import "constants";
+
+// Header margin constants
+$header-margin-topbottom: 7px;
+$header-margin-leftright: 28px;
+$header-margin: $header-margin-topbottom $header-margin-leftright;
+
+body {
+  // Just some general things to apply to general text, hopefully overriding anything default bootstrap
+  font-family: $healthnet-standard-font;
+  padding-top: 70px; // Recommended by bootstrap, we can play with this
+  background: $healthnet-primary-bg-color;
+}
+
+// Where most of the action is
+nav.navbar {
+  font-family: $healthnet-header-font;
+  background: $healthnet-secondary-bg-color;
+  color: $healthnet-text-color;
+
+  // The below is necessary to beat Bootstrap's specificity
+  & > .container-fluid {
+    a.healthnet { // Branch Logo SASS
+      margin: $header-margin;
+
+      font-size: 200%;
+      font-weight: bold;
+
+      letter-spacing: 0.05em;
+      color: $healthnet-text-color;
+    }
+
+    .navbar-nav {
+      & > .hn-menuitem { // Applies to all menu items (should be marked with hn-menuitem)
+        margin-right: 10px;
+        box-sizing: border-box; // Fixes transition artefacts
+        font-weight: bold;
+        margin-top: $header-margin-topbottom;
+        margin-bottom: $header-margin-topbottom;
+
+        & > a { // All menuitems have <a> children
+          color: $healthnet-text-color;
+        }
+      }
+
+      & > .hn-menuitem.active {
+        & > a { // Additional SASS for 'active' menuitem link
+          background: $healthnet-text-color-alt;
+        }
+      }
+
+      & > .hn-menuitem:not(.active) {
+        & > a { // Additional SASS For all other 'non-active' menuitem links
+          background: $healthnet-secondary-bg-color;
+          @include hover-animate($healthnet-secondary-bg-color);
+
+          &:hover {
+            @include hover-animate($healthnet-text-color-alt);
+          }
+        }
+      }
+    }
+  }
+
+  // Makes the Mobile Navigation Icon have bars the same color as the header text... for consistency.
+  .navbar-toggle span.icon-bar {
+    background-color: $healthnet-text-color;
+  }
+}

@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load sass_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,14 +7,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <title>{% block title %}HealthNet{% endblock %}</title>
-    {#  All universally shared JavaScript imports should go above the jsimport block  #}
-    {% block jsimport %}{% endblock %}
 
     {#  All universally shared CSS stylesheets should go above the cssimport block  #}
+    <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap-theme.min.css' %}"/>
+    <link href='https://fonts.googleapis.com/css?family=Noto+Serif:400,400italic,700' rel='stylesheet' type='text/css'/>
+    <link href='https://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'/>
+    <link rel="stylesheet" href="{% sass_src 'registry/css/base.scss' %}"/>
     {% block cssimport %}{% endblock %}
 </head>
+<header>
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#hn-navbar"
+                        aria-expanded="false">
+                    <span class="sr-only">Toggle Navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand healthnet" href="{% url 'registry:index' %}">HealthNet</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="hn-navbar">
+                <ul class="nav navbar-nav">
+                    {% if user.is_authenticated %}
+                        <li class="hn-menuitem"><a href="{% url 'registry:home' user.pk %}">Home</a></li>
+                        {% block headermenu-auth %}{% endblock %}
+                    {% else %}
+                        <li class="hn-menuitem"><a href="{% url 'registry:login' %}">Log In</a></li>
+                        {% block headermenu-noauth %}{% endblock %}
+                    {% endif %}
+                    <li class="hn-menuitem"><a href="#">About</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
 <body>
     {% block content %}{% endblock %}
+
+    {#  All universally shared JavaScript imports should go above the jsimport block  #}
+    <script type="text/javascript" src="{% static 'jquery/dist/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'lodash/dist/lodash.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'registry/js/base.js' %}"></script>
+    {% block jsimport %}{% endblock %}
+
+    {# Place all universally shared custom JavaScript above customjs #}
+    <script type="text/javascript">
+        {# TODO Find a better solution than this appearing on every page... Sectioning maybe? #}
+        registry.base.setActiveMenuItem("{% block set-active %}Home|Log In|Profile|User{% if user %}|{{ user.first_name }}{% endif %}{{ user.first_name }}{% endblock %}");
+    </script>
     {% block customjs %}{% endblock %}
 </body>
 </html>

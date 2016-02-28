@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'rules.apps.AutodiscoverRulesConfig',
     'jet.dashboard',
     'jet',
+    'sass_processor',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -135,10 +136,19 @@ USE_TZ = True
 #     'djangobower.finders.BowerFinder',
 # }
 
+STATICFILES_FINDERS = {
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'djangobower.finders.BowerFinder',
+    'sass_processor.finders.CssFinder'
+}
+
 BOWER_INSTALLED_APPS = {
     'jquery',
     'Chart.js',
     'timesheet.js',
+    'bootstrap',
+    'lodash',
 }
 
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR)

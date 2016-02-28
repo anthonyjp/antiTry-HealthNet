@@ -1,0 +1,11 @@
+$healthnet-standard-font: "Noto Serif", serif;
+$healthnet-header-font: "PT Sans", sans-serif;
+$healthnet-text-color: #fff;
+$healthnet-text-color-alt: #aebeb4;
+$healthnet-secondary-bg-color: #9fa8a3;
+$healthnet-primary-bg-color: #e3e0cf;
+
+@mixin hover-animate($color) {
+  box-shadow: inset 0 0 100em $color;
+  transition: box-shadow 0.2s;
+}
