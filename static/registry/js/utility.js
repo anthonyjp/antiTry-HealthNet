@@ -7,7 +7,8 @@ registry.utility = (function() {
         $('.dateinput').filter(function() {
             return $(this).attr('datepicker') === '';
         }).each(function() {
-            var picker = new Pikaday({field: $(this)[0]});
+            new Pikaday({field: $(this)[0], format: 'MM/DD/YYYY'});
+            $(this).attr('readonly', true);
         });
     }
 

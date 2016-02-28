@@ -43,7 +43,7 @@ registry.forms['measurement'] = (function() {
             filterAndApply($(this).children(), UNITS.METRIC, function() {
                 $(this).hide();
                 $(this).children().each(function () {
-                    $(this).prop('required', false)
+                    $(this).attr('required', false)
                 })
             });
         });
@@ -60,14 +60,14 @@ registry.forms['measurement'] = (function() {
             filterAndApply(children, unit, function() {
                 $(this).hide();
                 $(this).children().each(function() {
-                    $(this).prop('required', false);
+                    $(this).attr('required', false);
                 });
             });
 
             filterAndApply(children, newUnit, function() {
                 $(this).show();
                 $(this).children().each(function() {
-                    $(this).prop('required', true);
+                    $(this).attr('required', true);
                 });
             });
         });
@@ -92,4 +92,4 @@ registry.forms['measurement'] = (function() {
     }
 })();
 
-registry.base.forms.measurement.init();
+registry.forms.measurement.init();

@@ -8,6 +8,7 @@
 {% block set-active %}__NONE__{% endblock %}
 
 {% block cssimport %}
+    <link rel="stylesheet" href="{% static 'pikaday/css/pikaday.css' %}"/>
     <link rel="stylesheet" href="{% sass_src 'registry/css/base_auth.scss' %}"/>
 {% endblock %}
 
@@ -16,13 +17,15 @@
 {% endblock %}
 
 {% block jsimport %}
+<script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'pikaday/pikaday.js' %}"></script>
-<script type="text/javascript" stc="{% static 'pikaday/plugins/pikaday.jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'pikaday/plugins/pikaday.jquery.js' %}"></script>
 <script type="text/javascript" src="{% static 'registry/js/measurements.js' %}"></script>
+<script type="text/javascript" src="{% static 'registry/js/utility.js' %}"></script>
 {% endblock %}
 
 {% block customjs %}
-<script type="text/javascript">
-    var picker = new Pikaday
-</script>
+    <script type="text/javascript">
+        registry.utility.hookDatepicker();
+    </script>
 {% endblock %}

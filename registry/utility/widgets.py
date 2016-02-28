@@ -10,9 +10,9 @@ class HeightWidget(widgets.MultiWidget):
     def __init__(self, attrs=None):
         _widgets = (
             widgets.Select(choices=Units.choices(), attrs={'class': 'hn-measurement unit-select height'}),
-            widgets.NumberInput(attrs={'customary': True, 'class': 'hn-measurement height'}),
-            widgets.NumberInput(attrs={'customary': True, 'class': 'hn-measurement height'}),
-            widgets.NumberInput(attrs={'metric': True, 'class': 'hn-measurement height'})
+            widgets.NumberInput(attrs={'customary': True, 'class': 'hn-measurement height', 'min': 0, 'max': 7}),
+            widgets.NumberInput(attrs={'customary': True, 'class': 'hn-measurement height', 'min': 0, 'max': 11}),
+            widgets.NumberInput(attrs={'metric': True, 'class': 'hn-measurement height', 'min': 20, 'max': 280})
         )
 
         super(HeightWidget, self).__init__(_widgets, attrs)
@@ -37,7 +37,7 @@ class WeightWidget(widgets.MultiWidget):
     def __init__(self, attrs=None):
         _widgets = (
             widgets.Select(choices=Units.choices(), attrs={'class': 'hn-measurement unit-select weight'}),
-            widgets.NumberInput(attrs={'customary': True, 'class': 'hn-measurement weight'})
+            widgets.NumberInput(attrs={'customary': True, 'class': 'hn-measurement weight', 'min': 1})
         )
 
         self.name = ''
@@ -61,9 +61,9 @@ class HeightField(MultiValueField):
     def __init__(self, *args, **kwargs):
         _fields = (
             fields.ChoiceField(),
-            fields.IntegerField(min_value=0, max_value=8, required=False),
-            fields.IntegerField(min_value=0, max_value=11, required=False),
-            fields.IntegerField(min_value=0, max_value=280, required=False)
+            fields.IntegerField(min_value=0, max_value=8, required=True),
+            fields.IntegerField(min_value=0, max_value=11, required=True),
+            fields.IntegerField(min_value=1, max_value=280, required=False)
         )
         super(HeightField, self).__init__(_fields, *args, **kwargs)
 
