@@ -70,7 +70,7 @@ class HeightField(MultiValueField):
 
     def compress(self, data_list):
         units = data_list[0]
-
+        print(units, data_list)
         if units == Units.CUSTOMARY:
             feet = data_list[1] * ureg.feet
             inches = data_list[2] * ureg.inches
@@ -94,6 +94,7 @@ class WeightField(MultiValueField):
 
     def compress(self, data_list):
         units = data_list[0]
+        print(units)
 
         if units == Units.CUSTOMARY:
             pounds = data_list[1] * ureg.lb

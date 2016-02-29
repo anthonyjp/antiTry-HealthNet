@@ -13,6 +13,7 @@ from .utility.options import BloodType
 
 
 class PatientRegisterForm(models.ModelForm):
+    model = Patient
     first_name = fields.CharField(max_length=25)
     last_name = fields.CharField(max_length=30)
     password = fields.CharField(max_length=40, widget=widgets.PasswordInput)
@@ -25,7 +26,7 @@ class PatientRegisterForm(models.ModelForm):
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form register'
         self.helper.form_method = 'POST'
-        self.helper.form_action = 'new'
+        self.helper.form_action = 'register'
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
 

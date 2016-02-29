@@ -27,6 +27,10 @@ class BloodType(enum.Enum):
     UNKNOWN = 4
 
     labels = {
+        A: 'A',
+        B: 'B',
+        AB: 'AB',
+        O: 'O',
         UNKNOWN: '--'
     }
 

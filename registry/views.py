@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect, get_object_or_404
 
+from django.contrib.auth.models import User
 from .forms import PatientRegisterForm, LoginForm
 from .models.user_models import Patient
 # Create your views here.
@@ -10,8 +11,11 @@ def register(request):
     if request.method == "POST":
         form = PatientRegisterForm(request.POST)
         if form.is_valid():
-            post = form.save()
-            return redirect('detail', pk=post.pk)
+            patient = form.save(commit=False)
+            username = '%s%s%s' % (form.first_name, patient.middle_initial, form.last_name)
+            patient.auth_user = User.objects.create_user(username, form.email, form.password)
+            patient.save()
+            return redirect('detail', pk=patient.pk)
     else:
         form = PatientRegisterForm()
     return render(request, 'registry/new.html', {'form': form})
