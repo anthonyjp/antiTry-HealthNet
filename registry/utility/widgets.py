@@ -33,6 +33,9 @@ class HeightWidget(widgets.MultiWidget):
                 (rendered_widgets[0], ''.join([metric_div, customary_div]))
         return value
 
+    def value_from_datadict(self, data, files, name):
+        return [data['weight_0'], data['weight_1']]
+
 
 class WeightWidget(widgets.MultiWidget):
     def __init__(self, attrs=None):
@@ -93,8 +96,10 @@ class WeightField(MultiValueField):
         super(WeightField, self).__init__(_fields, *args, **kwargs)
 
     def compress(self, data_list):
+
+        data_list = [int(x) for x in data_list]
+
         units = data_list[0]
-        print(units)
 
         if units == Units.CUSTOMARY:
             pounds = data_list[1] * ureg.lb
@@ -104,3 +109,13 @@ class WeightField(MultiValueField):
             return kilos.to(ureg.milligrams).magnitude
         else:
             return 0
+
+    def clean(self, value):
+        print(self.compress(value))
+        print(super(WeightField, self).clean(value))
+        return super(WeightField, self).clean(value)
+
+    def to_python(self, value):
+        print(value)
+        return value
+
