@@ -7,7 +7,18 @@ div.hn-page-wrapper {
 }
 
 div.hn-form.wrapper {
-  width: 50%;
+  width: 70%;
   height: auto;
 
+  &> .content {
+    padding: 3% 5%;
+  }
+}
+
+legend {
+  border-bottom-color: $healthnet-secondary-bg-color;
+}
+
+.form-actions input {
+  margin: 20px 0;
 }

@@ -25,7 +25,8 @@ class HeightWidget(widgets.MultiWidget):
         return [Units.label(Units.CUSTOMARY), 0, 0]
 
     def format_output(self, rendered_widgets):
-        metric_div = '<div class="customary">%s\'%s"</div>' % (rendered_widgets[1], rendered_widgets[2])
+        metric_div = '<div class="customary"><span>%s\'</span><span>%s"</span></div>' % \
+                     (rendered_widgets[1], rendered_widgets[2])
         customary_div = '<div class="metric">%scm</div>' % rendered_widgets[3]
 
         value = '%s<div class="hn-measurement wrapper">%s</div>' % \
