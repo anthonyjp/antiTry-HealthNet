@@ -30,7 +30,7 @@ class PatientRegisterForm(models.ModelForm):
         self.helper.field_class = 'col-lg-8'
 
         self.helper.layout = Layout(
-            Fieldset( 'Patient Registration',
+            Fieldset('Patient Registration',
                 Div(
                     Div('first_name', css_class='col-lg-5'),
                     Div('middle_initial', css_class='col-md-2'),
@@ -92,13 +92,27 @@ class PatientRegisterForm(models.ModelForm):
 
 
 class LoginForm(forms.Form):
-    username = fields.CharField(max_length=255)
+    email = fields.EmailField()
     password = fields.CharField(max_length=255, widget=widgets.PasswordInput)
 
     def __init__(self, *args, **kwargs):
         super(LoginForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form login'
+        self.helper.form_method = 'POST'
+        self.helper.form_action = 'login'
+        self.helper.label_class = 'control-label col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+
+        self.helper.layout = Layout(
+            Fieldset('HealthNet Login',
+                 'email',
+                 'password',
+             ),
+            FormActions(
+                Submit('login', 'Log In'),
+            )
+        )
 
 
 class HospitalRegisterForm(models.ModelForm):

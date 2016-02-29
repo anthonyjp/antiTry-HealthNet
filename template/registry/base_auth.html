@@ -1,4 +1,11 @@
 {% extends 'registry/base.html' %}
+{% load sass_tags %}
+
+{% block set-active %}__NONE__{% endblock %}
+
+{% block _base_cssimport %}
+    <link rel="stylesheet" href="{% sass_src 'registry/css/base_auth.scss' %}"/>
+{% endblock %}
 
 {% block content %}
     <div class="hn-form wrapper">

@@ -1,13 +1,14 @@
 @import 'constants';
 
 div.hn-page-wrapper {
+  margin-top: 70px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 div.hn-form.wrapper {
-  width: 70%;
+  width: 68%;
   height: auto;
 
   &> .content {
@@ -21,4 +22,8 @@ legend {
 
 .form-actions input {
   margin: 20px 0;
+}
+
+.help-inline {
+  color: #a94442;
 }

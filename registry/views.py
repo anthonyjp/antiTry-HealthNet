@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect, get_object_or_404
 
-from .forms import PatientRegisterForm
+from .forms import PatientRegisterForm, LoginForm
 from .models.user_models import Patient
 # Create your views here.
 
@@ -26,7 +26,13 @@ def index(request):
     return render(request,'registry/landing.html')
 
 def login(request):
-    return render(request, 'registry/login.html')
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            pass
+    else:
+        form = LoginForm()
+    return render(request, 'registry/login.html', {'form' : form})
 
 def patient(request):
     return render(request, 'registry/patient.html')

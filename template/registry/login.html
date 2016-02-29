@@ -1,6 +1,7 @@
-{% extends 'registry/base.html' %}
+{% extends 'registry/base_auth.html' %}
 {% load staticfiles %}
 {% load sass_tags %}
+{% load crispy_forms_tags %}
 
 {% block title %}HealthNet | Log In{% endblock %}
 
@@ -8,35 +9,9 @@
     <link rel="stylesheet" href="{% sass_src 'registry/css/login.scss' %}">
     <!--[if gte IE 8]>
     <link rel="stylesheet" type="text/css" href="{% static 'registry/css/login-ie.css' %}"/>
-<![endif]-->
+    <![endif]-->
 {% endblock %}
 
-{% block content %}
-    <div id="wrapper">
-            <div id="logIn">
-                <form method="POST" class="post-form">
-                    <fieldset>
-                        <legend>Log In</legend>
-                        <div>
-                            <div class="left">
-                                <label>Email: </label>
-                            </div>
-                            <div class="right">
-                                <input type="text" name="email"/>
-                            </div>
-
-                        </div>
-                        <div>
-                            <div class="left">
-                                <label>Password: </label>
-                            </div>
-                            <div class="right">
-                                <input type="password" name="password"/>
-                            </div>
-                        </div>
-                        <input type="submit" value="Log in"/>
-                    </fieldset>
-                </form>
-            </div>
-    </div>
+{% block inner-content %}
+    {% crispy form form.helper %}
 {% endblock %}
