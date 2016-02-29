@@ -1,4 +1,4 @@
-from django.forms import widgets, MultiValueField, fields
+from django.forms import widgets, MultiValueField, fields, ValidationError
 
 from pint import UnitRegistry
 from .options import Units
@@ -34,7 +34,7 @@ class HeightWidget(widgets.MultiWidget):
         return value
 
     def value_from_datadict(self, data, files, name):
-        return [data['weight_0'], data['weight_1']]
+        return [data['height_0'], data['height_1'], data['height_2'], data['height_3']]
 
 
 class WeightWidget(widgets.MultiWidget):
@@ -64,24 +64,31 @@ class HeightField(MultiValueField):
 
     def __init__(self, *args, **kwargs):
         _fields = (
-            fields.ChoiceField(),
-            fields.IntegerField(min_value=0, max_value=8, required=True),
-            fields.IntegerField(min_value=0, max_value=11, required=True),
-            fields.IntegerField(min_value=1, max_value=280, required=False)
+            fields.ChoiceField(choices=Units.choices(), initial=Units.label(Units.CUSTOMARY)),
+            fields.IntegerField(min_value=0, max_value=8, initial=1, required=True),
+            fields.IntegerField(min_value=0, max_value=11, initial=1, required=True),
+            fields.IntegerField(min_value=1, max_value=280, initial=100, required=False)
         )
         super(HeightField, self).__init__(_fields, *args, **kwargs)
 
     def compress(self, data_list):
+        data_list = [int(x) for x in data_list]
+        
         units = data_list[0]
-        print(units, data_list)
         if units == Units.CUSTOMARY:
             feet = data_list[1] * ureg.feet
             inches = data_list[2] * ureg.inches
-            return (feet + inches).to(ureg.centimeters).magnitude
+            return int((feet + inches).to(ureg.centimeters).magnitude)
         elif units == Units.METRIC:
-            return data_list[3]
+            return int(data_list[3])
         else:
             return 0
+    
+    def clean(self, value):
+        for i, item in enumerate(value):
+            if item in self.empty_values:
+                value[i] = '1'
+        return super(HeightField, self).clean(value)
 
 
 class WeightField(MultiValueField):
@@ -89,33 +96,26 @@ class WeightField(MultiValueField):
 
     def __init__(self, *args, **kwargs):
         _fields = (
-            fields.ChoiceField(),
-            fields.IntegerField(min_value=0),
-            fields.IntegerField(min_value=0)
+            fields.ChoiceField(choices=Units.choices()),
+            fields.IntegerField(min_value=1),
         )
         super(WeightField, self).__init__(_fields, *args, **kwargs)
 
     def compress(self, data_list):
-
         data_list = [int(x) for x in data_list]
 
         units = data_list[0]
 
         if units == Units.CUSTOMARY:
             pounds = data_list[1] * ureg.lb
-            return pounds.to(ureg.milligrams).magnitude
+            return int(pounds.to(ureg.milligrams).magnitude)
         elif units == Units.METRIC:
             kilos = data_list[1] * ureg.kilograms
-            return kilos.to(ureg.milligrams).magnitude
+            return int(kilos.to(ureg.milligrams).magnitude)
         else:
             return 0
 
     def clean(self, value):
-        print(self.compress(value))
-        print(super(WeightField, self).clean(value))
         return super(WeightField, self).clean(value)
 
-    def to_python(self, value):
-        print(value)
-        return value
 

@@ -12,10 +12,11 @@ def register(request):
         form = PatientRegisterForm(request.POST)
         if form.is_valid():
             patient = form.save(commit=False)
-            username = '%s%s%s' % (form.first_name, patient.middle_initial, form.last_name)
-            patient.auth_user = User.objects.create_user(username, form.email, form.password)
+            username = '%s%s%s' % (patient.first_name, patient.middle_initial, patient.last_name)
+            patient.auth_user = User.objects.create_user(username, form.cleaned_data['email'],
+                                                         form.cleaned_data['password'])
             patient.save()
-            return redirect('detail', pk=patient.pk)
+            return redirect('registry:index')
     else:
         form = PatientRegisterForm()
     return render(request, 'registry/new.html', {'form': form})

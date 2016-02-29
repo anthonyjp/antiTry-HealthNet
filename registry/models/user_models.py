@@ -10,6 +10,11 @@ from .data_models import Hospital, Drug
 from ..utility.models import TimeRange, Dictionary
 
 
+DjangoUser.USERNAME_FIELD = 'email'
+DjangoUser.REQUIRED_FIELDS = ['username']
+DjangoUser._meta.get_field('username')._unique = False
+DjangoUser._meta.get_field('email')._unique = True
+
 class User(models.Model):
     """
     A Generic User account that extends Django's Auth User account (for authentication use) also consisting of a
@@ -17,20 +22,19 @@ class User(models.Model):
     """
     auth_user = models.OneToOneField(to=DjangoUser, on_delete=models.CASCADE)
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    first_name = models.CharField(max_length=255, default='John/Jane')
     middle_initial = models.CharField(max_length=1, blank=True, default='')
+    last_name = models.CharField(max_length=255, default='Doe')
     date_of_birth = models.DateField()
 
     cur_hospital = models.ForeignKey(to=Hospital, related_name='%(app_label)s_%(class)s_cur_hospital',
                                      on_delete=models.SET_NULL, null=True)
 
     gender = models.IntegerField(max_length=1, choices=Gender.choices(), default=Gender.MALE)
-    # gender = models.CharField(max_length=1, choices=Gender.choices(), default=Gender.label(Gender.MALE))
     security_question = models.IntegerField(max_length=100, choices=SecQ.choices(), default=SecQ.Q1)
-    # security_question = models.CharField(max_length=100, choices=SecQ.choices(), default=SecQ.label(SecQ.Q1))
     security_answer = models.CharField(max_length=50, null=False, blank=False)
 
     objects = InheritanceManager()
-
 
 class Doctor(User):
     hospitals = models.ManyToManyField(Hospital, related_name='provider_to')
