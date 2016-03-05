@@ -1,10 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'registry/base.html' %}
 
-</body>
-</html>
+{% block title %}HealthNet | {{ administrator.first_name }}{% endblock %}
+
+{% block content %}
+ <div class="Administrator Tabs">
+    <h1>Administrator Profile<br></h1>
+    <u1 class = "tab-links">
+        <li class = "active"><a href = "Personal">Personal</a></li>
+        <li><a href="Logs/Stats">Logs/Stats</a></li>
+        <li><a href="Add Staff">Add Staff</a></li>
+        <li><a href="Add Patient">Add Patient</a></li>
+        <li><a href="Inbox">Inbox</a></li>
+    </u1>
+
+    <div class="tab-content">
+        <div id="tab1" class="tab active">
+            <p>Tab #1 content goes here!</p>
+        </div>
+
+        <div id="tab2" class="tab">
+            <p>Tab #2 content goes here!</p>
+        </div>
+
+        <div id="tab3" class="tab">
+            <p>Tab #3 content goes here!</p>
+        </div>
+
+        <div id="tab4" class="tab">
+            <p>Tab #4 content goes here!</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

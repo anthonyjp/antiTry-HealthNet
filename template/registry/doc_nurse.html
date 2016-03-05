@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'registry/base.html' %}
 
-</body>
-</html>
+{% block title %}HealthNet | {{ doctor.first_name }}{% endblock %}
+
+{% block content %}
+ <div class="Doctor/Nurse">
+    <h1>Doctor/Nurse Profile<br></h1>
+    <h1>{{ doctor.firstName }} {{ doctor.middleInitial }}. {{ doctor.lastName }}</h1>
+</div>
+{% endblock %}
