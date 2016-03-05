@@ -1,13 +1,22 @@
 {% extends 'registry/base.html' %}
+{% load staticfiles %}
 
 {% block title %}HealthNet | {{ administrator.first_name }}{% endblock %}
+
+{% block cssimport %}
+    <link rel="stylesheet" href="{% static 'registry/css/admin.css' %}"/>
+{% endblock %}
+
+{% block jsimport %}
+<script type="text/javascript" src="{% static 'registry/js/admin.js' %}"></script>
+{% endblock %}
 
 {% block content %}
  <div class="Administrator Tabs">
     <h1>Administrator Profile<br></h1>
     <u1 class = "tab-links">
         <li class = "active"><a href = "Personal">Personal</a></li>
-        <li><a href="Logs/Stats">Logs/Stats</a></li>
+        <li><a href="Logs-Stats">Logs/Stats</a></li>
         <li><a href="Add Staff">Add Staff</a></li>
         <li><a href="Add Patient">Add Patient</a></li>
         <li><a href="Inbox">Inbox</a></li>
