@@ -1,0 +1,19 @@
+{
+  "APP_NAME": "HealthNet",
+  "VERSION": "1.0.0-RC1",
+  "INCLUDES": {
+    "files": [
+      "requirements.txt",
+      "README.md",
+      "bower.json",
+      "manage.py"
+    ],
+    "dirs": {
+      "HealthNet/": "**/*.*",
+      "private_static/": "**/*.*",
+      "registry/": "**/*.*",
+      "static/": "**/*.*",
+      "template/": "**/*.*"
+    }
+  }
+}

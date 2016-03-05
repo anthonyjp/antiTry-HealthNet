@@ -1,3 +1,5 @@
+/*.egg-info
+/dist
 /bower_components
 /private_static
 /.idea/*

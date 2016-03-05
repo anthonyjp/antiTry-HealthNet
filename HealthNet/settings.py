@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '1&!+0x75m@)f+-lqdwg3(=p2n=16m0o6j+!wa)8h75+_wut3kz'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -128,13 +128,16 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.9/howto/static-files/
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_SSL_REDIRECT = False
+X_FRAME_OPTIONS = 'DENY'
 
-# BOWER SETTINGS
-# STATICFILES_FINDERS = {
-#     'djangobower.finders.BowerFinder',
-# }
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_HTTPONLY = True
+
+
 
 STATICFILES_FINDERS = {
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -174,4 +177,22 @@ AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = False
 CRISPY_FAIL_SILENTLY = not DEBUG
 CRISPY_TEMPLATE_PACK = 'bootstrap'
 
-# AUTH_USER_MODEL = 'registry.User'
+## Mute Deprecation Warnings
+import logging, copy
+from django.utils.log import DEFAULT_LOGGING
+
+
+LOGGING = copy.deepcopy(DEFAULT_LOGGING)
+LOGGING['filters']['suppress_deprecated'] = {
+    '()': 'HealthNet.settings.SuppressDeprecated'
+}
+LOGGING['handlers']['console']['filters'].append('suppress_deprecated')
+
+class SuppressDeprecated(logging.Filter):
+    def filter(self, record):
+        WARNINGS_TO_SUPPRESS = [
+            'RemovedInDjango110Warning',
+            'RemovedInDjango19Warning'
+        ]
+        # Return false to suppress message.
+        return not any([warn in record.getMessage() for warn in WARNINGS_TO_SUPPRESS])

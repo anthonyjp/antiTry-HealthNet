@@ -30,8 +30,8 @@ class User(models.Model):
     cur_hospital = models.ForeignKey(to=Hospital, related_name='%(app_label)s_%(class)s_cur_hospital',
                                      on_delete=models.SET_NULL, null=True)
 
-    gender = models.IntegerField(max_length=1, choices=Gender.choices(), default=Gender.MALE)
-    security_question = models.IntegerField(max_length=100, choices=SecQ.choices(), default=SecQ.Q1)
+    gender = models.SmallIntegerField(choices=Gender.choices(), default=Gender.MALE)
+    security_question = models.SmallIntegerField(choices=SecQ.choices(), default=SecQ.Q1)
     security_answer = models.CharField(max_length=50, null=False, blank=False)
 
     objects = InheritanceManager()
@@ -64,8 +64,7 @@ class Patient(User):
     pref_hospital = models.ForeignKey(to=Hospital, related_name='%(app_label)s_%(class)s_pref_hospital',
                                       on_delete=models.SET_NULL, null=True)
 
-    blood_type = models.IntegerField(max_length=2, choices=BloodType.choices(), default=BloodType.UNKNOWN)
-    # blood_type = models.CharField(max_length=2, choices=BloodType.choices(), default=BloodType.label(BloodType.UNKNOWN))
+    blood_type = models.SmallIntegerField(choices=BloodType.choices(), default=BloodType.UNKNOWN)
     insurance = models.CharField(max_length=40, choices=INSURANCE_CHOICES, default=INSURANCE_CHOICES[0][0])
 
 
