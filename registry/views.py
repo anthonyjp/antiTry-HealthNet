@@ -2,8 +2,9 @@ from django.shortcuts import render
 from django.shortcuts import redirect, get_object_or_404
 
 from django.contrib.auth.models import User
-from .forms import PatientRegisterForm, LoginForm
+from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm
 from .models.user_models import Patient
+from .models.info_models import Appointment
 # Create your views here.
 
 
@@ -21,6 +22,16 @@ def register(request):
         form = PatientRegisterForm()
     return render(request, 'registry/new.html', {'form': form})
 
+def apptSchedule(request):
+    if request.method == "POST":
+        form = AppointmentSchedulingForm(request.POST)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.save()
+            return redirect('registry:index')
+    else:
+        form = AppointmentSchedulingForm()
+    return render(request, 'registry/appointment.html', {'form': form})
 
 def detail(request, pk):
     patient = get_object_or_404(Patient, pk=pk)
