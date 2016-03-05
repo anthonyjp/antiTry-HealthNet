@@ -1,7 +1,10 @@
 from django.shortcuts import render
 from django.shortcuts import redirect, get_object_or_404
+from django.core.urlresolvers import reverse
 
-from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as django_login
+from django.contrib.auth.models import User as DjangoUser
 from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm
 from .models.user_models import Patient
 from .models.info_models import Appointment
@@ -14,7 +17,7 @@ def register(request):
         if form.is_valid():
             patient = form.save(commit=False)
             username = '%s%s%s' % (patient.first_name, patient.middle_initial, patient.last_name)
-            patient.auth_user = User.objects.create_user(username, form.cleaned_data['email'],
+            patient.auth_user = DjangoUser.objects.create_user(username, form.cleaned_data['email'],
                                                          form.cleaned_data['password'])
             patient.save()
             return redirect('registry:index')
@@ -44,8 +47,11 @@ def index(request):
 def login(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
-        if form.is_valid():
-            pass
+        user = authenticate(username=request.POST['email'], password=request.POST['password'])
+        if user is not None:
+            if user.is_active:
+                django_login(request, user)
+                return redirect(to='/login')
     else:
         form = LoginForm()
     return render(request, 'registry/login.html', {'form' : form})
