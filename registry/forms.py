@@ -7,6 +7,7 @@ from crispy_forms.bootstrap import *
 
 from .models.user_models import Patient
 from .models.data_models import Hospital
+from .models.info_models import Appointment
 
 from .utility.widgets import HeightField, WeightField
 from .utility.options import BloodType
@@ -121,3 +122,40 @@ class HospitalRegisterForm(models.ModelForm):
     class Meta:
             model = Hospital
             fields = ('name', 'address', 'state', 'zipcode', 'identifiers')
+
+
+class AppointmentSchedulingForm(models.ModelForm):
+    model = Appointment
+    def __init__(self, *args, **kwargs):
+        super(AppointmentSchedulingForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal hn-form appointment'
+        self.helper.form_method = 'POST'
+        self.helper.form_action = 'appointment'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+
+        self.helper.layout = Layout(
+            Fieldset('Appointment Scheduling',
+                     Div(
+                         Div('time', css_class='col-md-12'),
+                         css_class='row',
+                     ),
+                     'doctor',
+                     'patient',
+                     'nurse',
+                     'location',
+            ),
+            FormActions(
+                Submit('submit', 'Submit'),
+                Button('cancel', 'Cancel')
+            )
+        )
+        self.fields['time'].widget.attrs['datepicker'] = True
+
+    class Meta:
+        model = Appointment
+        fields = ('time', 'doctor', 'patient', 'nurse', 'location')
+
+
+

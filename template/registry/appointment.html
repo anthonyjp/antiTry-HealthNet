@@ -1,0 +1,30 @@
+{% extends 'registry/base_auth.html' %}
+{% load static %}
+{% load sass_tags %}
+{% load crispy_forms_tags %}
+
+{% block title %}HealthNet | Appointment{% endblock %}
+{% block inner-title %}Appointment Scheduling{% endblock %}
+{% block set-active %}__NONE__{% endblock %}
+
+{% block cssimport %}
+    <link rel="stylesheet" href="{% static 'pikaday/css/pikaday.css' %}"/>
+{% endblock %}
+
+{% block inner-content %}
+    {% crispy form form.helper %}
+{% endblock %}
+
+{% block jsimport %}
+<script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'pikaday/pikaday.js' %}"></script>
+<script type="text/javascript" src="{% static 'pikaday/plugins/pikaday.jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'registry/js/measurements.js' %}"></script>
+<script type="text/javascript" src="{% static 'registry/js/utility.js' %}"></script>
+{% endblock %}
+
+{% block customjs %}
+    <script type="text/javascript">
+        registry.utility.hookDatepicker();
+    </script>
+{% endblock %}
