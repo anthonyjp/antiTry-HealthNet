@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect, get_object_or_404
 from django.core.urlresolvers import reverse
-
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as django_login
 from django.contrib.auth.models import User as DjangoUser
@@ -25,6 +25,7 @@ def register(request):
         form = PatientRegisterForm()
     return render(request, 'registry/new.html', {'form': form})
 
+@login_required(login_url='/login')
 def apptSchedule(request):
     if request.method == "POST":
         form = AppointmentSchedulingForm(request.POST)
