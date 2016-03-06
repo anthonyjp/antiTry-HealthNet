@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'axes',
-    'hijack',
+    # 'hijack',
     'compat',
     'crispy_forms',
 ]

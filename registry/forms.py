@@ -65,7 +65,7 @@ class PatientRegisterForm(models.ModelForm):
             ),
             FormActions(
                 Submit('submit', 'Submit'),
-                Button('cancel', 'Cancel')
+                Button('cancel', 'Cancel', onclick="window.history.back()")
             )
         )
 
