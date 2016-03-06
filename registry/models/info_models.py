@@ -13,7 +13,7 @@ class Appointment(models.Model):
 
     doctor = models.ForeignKey(to=Doctor, on_delete=models.CASCADE)
     patient = models.ForeignKey(to=Patient, on_delete=models.CASCADE)
-    nurse = models.ForeignKey(to=Nurse, on_delete=models.SET_NULL, null=True)
+    #nurse = models.ForeignKey(to=Nurse, on_delete=models.SET_NULL, null=True)
 
     location = models.ForeignKey(to=Hospital, on_delete=models.CASCADE)
 

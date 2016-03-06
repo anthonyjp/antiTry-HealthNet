@@ -138,12 +138,11 @@ class AppointmentSchedulingForm(models.ModelForm):
         self.helper.layout = Layout(
             Fieldset('Appointment Scheduling',
                      Div(
-                         Div('time', css_class='col-md-12'),
+                        Div('time', css_class='col-lg-3'),
                          css_class='row',
                      ),
                      'doctor',
                      'patient',
-                     'nurse',
                      'location',
             ),
             FormActions(
@@ -155,7 +154,7 @@ class AppointmentSchedulingForm(models.ModelForm):
 
     class Meta:
         model = Appointment
-        fields = ('time', 'doctor', 'patient', 'nurse', 'location')
+        fields = ('time', 'doctor', 'patient', 'location')
 
 
 

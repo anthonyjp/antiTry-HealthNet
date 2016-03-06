@@ -49,6 +49,9 @@ class Dictionary(models.Model):
     def empty():
         return Dictionary.objects.create()
 
+    def __str__(self):
+        return self.name
+
 
 class KeyValue(models.Model):
     dict = models.ForeignKey(to=Dictionary, on_delete=models.CASCADE)

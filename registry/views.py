@@ -62,5 +62,5 @@ def patient(request):
 def doc_nurse(request):
     return render(request, 'registry/doc_nurse.html')
 
-def admin (request):
-    return render(request, 'registry/admin.html')
+def admins (request):
+    return render(request, 'registry/admins.html')
