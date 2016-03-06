@@ -37,13 +37,26 @@ Deploying HealthNet is a bit of a challenge becuase of the mix we have regarding
 
 Fortunately, this is done for us using [setuptools!](http://pythonhosted.org/setuptools/) Once you have configured everything properly and gone through the [django deployment checklist](https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/), all that is required is to run
 
-    python setup.py sdist
+    python setup.py
+
+This will run few a few steps:
+
+1. Check that DEBUG is set to false
+2. Execute `python manage.py check --deploy` which will be spit out and then you are asked to confirm to continue.
+3. Execute `python manage.py makemigrations`
+4. Execute `python manage.py migreate`
+4. Read `MANIFEST.json`
+    1. Retrieve APPNAME
+    2. Retrieve VERSION
+    3. Retrieve INCLUDES
+5. Package all includes into a file named APPNAME-VERSION.zip
+
+Steps 3 and 4 can be skipped by adding the `--no-migrate` flag. 
 
 This will create a new `dist` directory containing the packaged app. Then it can be extracted anywhere. Once extracted, run:
 
-    pip install -r requirements.txt
-    python manage.py makemigrations
+    pip install -r requirements.txt --user
     python manage.py migrate
     python manage.py runserver
 
-Then simply go to `127.0.0.1:8000` and your app will be running! The rest is simply server configuration. _(* - When using pip install you may need to add the flag `--user` to the end in environments where admin privileges are not available.)_
+Then simply go to `127.0.0.1:8000` and your app will be running! The rest is simply server configuration. _(* - `--user` can be dropped if you have admin access to the machine.)_

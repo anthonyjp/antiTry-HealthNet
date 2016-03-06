@@ -1,4 +1,6 @@
 from django.forms import forms, models, fields, widgets
+from django.core.urlresolvers import reverse_lazy
+from localflavor.us.forms import USPhoneNumberField
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout
@@ -10,7 +12,7 @@ from .models.data_models import Hospital
 from .models.info_models import Appointment
 
 from .utility.widgets import HeightField, WeightField
-from .utility.options import BloodType
+from .utility.options import BloodType, Relationship
 
 
 class PatientRegisterForm(models.ModelForm):
@@ -21,6 +23,11 @@ class PatientRegisterForm(models.ModelForm):
     email = fields.EmailField(max_length=256)
     height = HeightField(required=True)
     weight = WeightField(required=True)
+    contact_name = fields.CharField(max_length=60)
+    contact_relationship = fields.ChoiceField(choices=Relationship.choices(), initial=Relationship.OTHER)
+    contact_primary = USPhoneNumberField(required=True)
+    contact_seconday = USPhoneNumberField(required=False)
+    contact_email = fields.EmailField(required=True)
 
     def __init__(self, *args, **kwargs):
         super(PatientRegisterForm, self).__init__(*args, **kwargs)
@@ -62,10 +69,24 @@ class PatientRegisterForm(models.ModelForm):
                     Div('security_answer', css_class='col-md-4'),
                     css_class='row',
                 ),
+                Div(
+                    Div('contact_name', css_class='col-lg-5'),
+                    Div('contact_relationship', css_class='col-lg-3'),
+                    css_class='row',
+                ),
+                Div(
+                    Div('contact_email', css_class='col-lg-5'),
+                    css_class='row',
+                ),
+                Div(
+                    Div('contact_primary', css_class='col-lg-5'),
+                    Div('contact_seconday', css_class='col-lg-5'),
+                    css_class='row'
+                )
             ),
             FormActions(
                 Submit('submit', 'Submit'),
-                Button('cancel', 'Cancel', onclick="window.history.back()")
+                HTML('<a class="btn btn-default" href={% url "registry:index" %}>Cancel</a>')
             )
         )
 
@@ -102,7 +123,7 @@ class LoginForm(forms.Form):
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form login'
         self.helper.form_method = 'POST'
-        self.helper.form_action = 'login'
+        self.helper.form_action = reverse_lazy('registry:login')
         self.helper.label_class = 'control-label col-lg-2'
         self.helper.field_class = 'col-lg-8'
 
@@ -113,7 +134,7 @@ class LoginForm(forms.Form):
              ),
             FormActions(
                 Submit('login', 'Log In'),
-                Button('cancel', 'Cancel', onclick="window.history.back()")
+                HTML('<a class="btn btn-default" href={% url "registry:index" %}>Cancel</a>')
             )
         )
 
@@ -127,12 +148,13 @@ class HospitalRegisterForm(models.ModelForm):
 
 class AppointmentSchedulingForm(models.ModelForm):
     model = Appointment
+
     def __init__(self, *args, **kwargs):
         super(AppointmentSchedulingForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form appointment'
         self.helper.form_method = 'POST'
-        self.helper.form_action = ''
+        self.helper.form_action = reverse_lazy('registry:appt_create')
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
 
@@ -148,7 +170,7 @@ class AppointmentSchedulingForm(models.ModelForm):
             ),
             FormActions(
                 Submit('submit', 'Submit'),
-                Button('cancel', 'Cancel', onclick="window.history.back()")
+                HTML('<a class="btn btn-default" href={% url "registry:index" %}>Cancel</a>')
             )
         )
         self.fields['time'].widget.attrs['datepicker'] = True
@@ -156,8 +178,9 @@ class AppointmentSchedulingForm(models.ModelForm):
     class Meta:
         model = Appointment
         fields = ('time', 'doctor', 'patient', 'location')
+
 #will edit after club
-class AppointmentForm(forms.ModelForm):
+class AppointmentForm(models.ModelForm):
     class Meta:
         model = Appointment
         fields = ('time', 'doctor', 'patient', 'location')

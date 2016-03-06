@@ -53,4 +53,4 @@ class Contact(models.Model):
 class PatientContact(Contact):
     patient = models.ForeignKey(to=Patient, on_delete=models.CASCADE)
     relationship = models.IntegerField(choices=Relationship.choices(), default=Relationship.OTHER)
-    contact_seconday = PhoneNumberField()
+    contact_seconday = PhoneNumberField(blank=True)

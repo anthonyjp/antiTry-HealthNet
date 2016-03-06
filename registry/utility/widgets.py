@@ -117,5 +117,3 @@ class WeightField(MultiValueField):
 
     def clean(self, value):
         return super(WeightField, self).clean(value)
-
-
