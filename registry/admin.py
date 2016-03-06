@@ -17,6 +17,8 @@ admin.site.register(MedicalTest)
 admin.site.register(MedicalData)
 admin.site.register(Appointment)
 admin.site.register(TimeRange)
+admin.site.register(PatientContact)
+admin.site.register(Contact)
 admin.site.register(Hospital)
 admin.site.register(Drug)
 
