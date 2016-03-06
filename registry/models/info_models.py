@@ -1,7 +1,6 @@
 from django.db import models
 from localflavor.us.models import PhoneNumberField
 from model_utils.managers import InheritanceManager
-
 from registry.utility.options import Relationship
 from .data_models import Hospital, Note
 from .user_models import Doctor, Nurse, Patient, AdmissionInfo
@@ -16,6 +15,9 @@ class Appointment(models.Model):
     #nurse = models.ForeignKey(to=Nurse, on_delete=models.SET_NULL, null=True)
 
     location = models.ForeignKey(to=Hospital, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.time.__str__() + " Patient " + self.patient.__str__() + " Doctor " + self.doctor.__str__() + " Location" + self.location.__str__()
 
 
 class MedicalData(models.Model):

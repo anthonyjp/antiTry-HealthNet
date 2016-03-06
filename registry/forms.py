@@ -65,7 +65,7 @@ class PatientRegisterForm(models.ModelForm):
             ),
             FormActions(
                 Submit('submit', 'Submit'),
-                Button('cancel', 'Cancel')
+                Button('cancel', 'Cancel', onclick="window.history.back()")
             )
         )
 
@@ -113,6 +113,7 @@ class LoginForm(forms.Form):
              ),
             FormActions(
                 Submit('login', 'Log In'),
+                Button('cancel', 'Cancel', onclick="window.history.back()")
             )
         )
 
@@ -131,7 +132,7 @@ class AppointmentSchedulingForm(models.ModelForm):
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form appointment'
         self.helper.form_method = 'POST'
-        self.helper.form_action = 'appointment'
+        self.helper.form_action = ''
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
 
@@ -147,7 +148,7 @@ class AppointmentSchedulingForm(models.ModelForm):
             ),
             FormActions(
                 Submit('submit', 'Submit'),
-                Button('cancel', 'Cancel')
+                Button('cancel', 'Cancel', onclick="window.history.back()")
             )
         )
         self.fields['time'].widget.attrs['datepicker'] = True
