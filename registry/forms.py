@@ -157,5 +157,8 @@ class AppointmentSchedulingForm(models.ModelForm):
         model = Appointment
         fields = ('time', 'doctor', 'patient', 'location')
 
-
+class AppointmentForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = ('time', 'doctor', 'patient', 'location')
 

@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as django_login
 from django.contrib.auth.models import User as DjangoUser
-from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm
+from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm, AppointmentForm
 from .models.user_models import Patient
 from .models.info_models import Appointment
 # Create your views here.
@@ -25,7 +25,7 @@ def register(request):
         form = PatientRegisterForm()
     return render(request, 'registry/new.html', {'form': form})
 
-@login_required(login_url='/login')
+#@login_required(login_url='/login')
 def apptSchedule(request):
     if request.method == "POST":
         form = AppointmentSchedulingForm(request.POST)
@@ -36,6 +36,22 @@ def apptSchedule(request):
     else:
         form = AppointmentSchedulingForm()
     return render(request, 'registry/appointment.html', {'form': form})
+
+def apptUpdate(request, pk):
+    appointment = get_object_or_404(Appointment, pk=pk)
+    if request.method == "POST":
+        form = AppointmentForm(request.POST, instance=appointment)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.save()
+            return redirect('registry/calender.html', pk=appointment.pk)
+    else:
+        form = AppointmentForm(instance=appointment)
+    return render(request, 'registry/edit_appointment.html', {'appointment': form})
+
+def appt_detail(request, pk):
+    appointment = get_object_or_404(Appointment, pk=pk)
+    return render(request, 'registry/appointment_detail.html', {'appointment': appointment})
 
 def detail(request, pk):
     patient = get_object_or_404(Patient, pk=pk)
