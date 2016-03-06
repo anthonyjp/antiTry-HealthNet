@@ -34,6 +34,9 @@ class Hospital(models.Model):
         """
         return float('NaN'), float('NaN')
 
+    def __str__(self):
+        return self.name
+
 
 class Drug(models.Model):
     name = models.CharField(max_length=255)
@@ -41,6 +44,8 @@ class Drug(models.Model):
     side_effects = SeparatedValuesField()
     msdsLink = models.CharField(max_length=512)
 
+    def __str__(self):
+        return self.name
 
 class Note(models.Model):
     author = models.TextField()

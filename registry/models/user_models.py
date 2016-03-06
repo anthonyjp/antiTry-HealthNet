@@ -36,6 +36,9 @@ class User(models.Model):
 
     objects = InheritanceManager()
 
+    def __str__(self):
+        return self.first_name + " " + self.last_name
+
 class Doctor(User):
     hospitals = models.ManyToManyField(Hospital, related_name='provider_to')
 
