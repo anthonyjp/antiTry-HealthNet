@@ -79,7 +79,7 @@ class PatientRegisterForm(models.ModelForm):
                     css_class='row',
                 ),
                 Div(
-                    Div('contact_primary', css_class='col-lg-5'),
+                    Div(PrependedText('contact_primary', 'contact'), css_class='col-lg-5'),
                     Div('contact_seconday', css_class='col-lg-5'),
                     css_class='row'
                 )

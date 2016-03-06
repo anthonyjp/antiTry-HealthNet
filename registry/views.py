@@ -1,13 +1,12 @@
 from django.shortcuts import render
 from django.shortcuts import redirect, get_object_or_404
 from django.core.urlresolvers import reverse
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as django_login
 from django.contrib.auth.models import User as DjangoUser
 from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm, AppointmentForm
-from .models.user_models import Patient
-from .models.info_models import Appointment
+from .models.user_models import Patient, User
+from .models.info_models import Appointment, PatientContact
 # Create your views here.
 
 
@@ -20,6 +19,25 @@ def register(request):
             patient.auth_user = DjangoUser.objects.create_user(username, form.cleaned_data['email'],
                                                          form.cleaned_data['password'])
             patient.save()
+
+            contact = PatientContact(
+                patient=patient,
+                relationship=form.cleaned_data['contact_relationship'],
+                contact_name=form.cleaned_data['contact_name'],
+                contact_primary=form.cleaned_data['contact_primary'],
+                contact_secondary=form.cleaned_data['contact_seconday'],
+                contact_email=form.cleaned_data['contact_email']
+            )
+            try:
+                user = User.objects.get(auth_user__email=form.cleaned_data['contact_email'])
+            except User.DoesNotExist:
+                user = None
+
+            if user is not None:
+                contact.contact_user = user
+
+            contact.save()
+
             return redirect('registry:index')
     else:
         form = PatientRegisterForm()
@@ -69,7 +87,7 @@ def login(request):
         if user is not None:
             if user.is_active:
                 django_login(request, user)
-                return redirect(to='/login')
+                return redirect(to=reverse('registry:login'))
     else:
         form = LoginForm()
     return render(request, 'registry/login.html', {'form' : form})
