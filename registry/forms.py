@@ -156,7 +156,7 @@ class AppointmentSchedulingForm(models.ModelForm):
     class Meta:
         model = Appointment
         fields = ('time', 'doctor', 'patient', 'location')
-
+#will edit after club
 class AppointmentForm(forms.ModelForm):
     class Meta:
         model = Appointment

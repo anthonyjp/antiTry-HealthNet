@@ -12,5 +12,5 @@ urlpatterns = [
     url(r'^appointment/$', views.apptSchedule, name='apptSchedule'),
     url(r'^admins/$', views.admins, name='admins'),
     url(r'^detail/(?P<pk>[0-9]+)/$', views.detail, name='detail'),
-    url(r'^detail/(?P<pk>[0-9]+)/$', views.apptUpdate, name='apptUpdate')
+    url(r'^update_appointment/(?P<pk>[0-9]+)/$', views.apptUpdate, name='apptUpdate')
 ]
