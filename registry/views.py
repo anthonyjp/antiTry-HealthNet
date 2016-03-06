@@ -25,7 +25,7 @@ def register(request):
                 relationship=form.cleaned_data['contact_relationship'],
                 contact_name=form.cleaned_data['contact_name'],
                 contact_primary=form.cleaned_data['contact_primary'],
-                contact_secondary=form.cleaned_data['contact_seconday'],
+                contact_secondary=form.cleaned_data['contact_secondary'],
                 contact_email=form.cleaned_data['contact_email']
             )
             try:
