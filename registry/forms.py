@@ -26,7 +26,7 @@ class PatientRegisterForm(models.ModelForm):
     contact_name = fields.CharField(max_length=60)
     contact_relationship = fields.ChoiceField(choices=Relationship.choices(), initial=Relationship.OTHER)
     contact_primary = USPhoneNumberField(required=True)
-    contact_seconday = USPhoneNumberField(required=False)
+    contact_secondary = USPhoneNumberField(required=False)
     contact_email = fields.EmailField(required=True)
 
     def __init__(self, *args, **kwargs):
@@ -80,7 +80,7 @@ class PatientRegisterForm(models.ModelForm):
                 ),
                 Div(
                     Div(PrependedText('contact_primary', 'contact'), css_class='col-lg-5'),
-                    Div('contact_seconday', css_class='col-lg-5'),
+                    Div('contact_secondary', css_class='col-lg-5'),
                     css_class='row'
                 )
             ),

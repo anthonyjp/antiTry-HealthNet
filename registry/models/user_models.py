@@ -20,7 +20,7 @@ class User(models.Model):
     A Generic User account that extends Django's Auth User account (for authentication use) also consisting of a
     first name, last name, password and email.
     """
-    auth_user = models.OneToOneField(to=DjangoUser, on_delete=models.CASCADE)
+    auth_user = models.OneToOneField(to=DjangoUser, on_delete=models.CASCADE, related_name='hn_user')
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4)
     first_name = models.CharField(max_length=255, default='John/Jane')
     middle_initial = models.CharField(max_length=1, blank=True, default='')
