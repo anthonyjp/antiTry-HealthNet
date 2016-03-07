@@ -16,10 +16,10 @@ import rules
 @login_required(login_url='/login')
 def appt_delete(request, pk):
     delete = get_object_or_404(Appointment, id=pk)
-
+    #print("123")
     if request.method == 'POST':
         form = DeleteAppForm(request.POST, instance=delete)
-
+        #print("456")
         if form.is_valid():
             delete.delete()
             return redirect('registry:alist')
