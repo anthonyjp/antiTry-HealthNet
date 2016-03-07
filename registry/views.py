@@ -16,16 +16,16 @@ def alist(request):
     q = request.user.hn_user
     p = User.objects.get_subclass(pk=q.pk)
     if (rules.test_rule('is_patient',p)):
-        print("1")
+        #print("1")
         appointments = Appointment.objects.filter(patient__pk=p.pk).order_by('time')
     elif (rules.test_rule('is_doctor',p)):
-        print("2")
+        #print("2")
         appointments = Appointment.objects.filter(doctor__pk=p.pk).order_by('time')
     else:
-        print("3")
-        print(isinstance(p, Patient))
-        print(isinstance(p, Doctor))
-        print(isinstance(p, User))
+        #print("3")
+        #print(isinstance(p, Patient))
+        #print(isinstance(p, Doctor))
+        #print(isinstance(p, User))
         appointments = Appointment.objects.filter().order_by('time')
     return render(request, 'registry/alist.html',  {'appointments': appointments})
 
@@ -70,7 +70,7 @@ def apptSchedule(request):
         if form.is_valid():
             appointment = form.save(commit=False)
             appointment.save()
-            return render(request, 'registry/alist.html')
+            return redirect('registry:alist')
     else:
         form = AppointmentSchedulingForm()
     return render(request, 'registry/appointment.html', {'form': form})
@@ -113,7 +113,8 @@ def login(request):
     return render(request, 'registry/login.html', {'form': form})
 
 def home(request):
-    patient =  request.user.hn_user
+    p = request.user.hn_user
+    patient = User.objects.get_subclass(pk=p.pk)
     return render(request, 'registry/base_user.html', {'patient': patient})
 
 def doc_nurse(request):
