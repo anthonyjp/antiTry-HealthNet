@@ -17,8 +17,8 @@ registry.utility = (function() {
             return $(this).attr('timepicker') === '';
         }).each(function() {
             $(this).timepicker({
-                'timeFormat': 'g:i A'
-            })
+                'timeFormat': 'h:i a'
+            });
         });
     }
 

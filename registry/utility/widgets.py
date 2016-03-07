@@ -64,7 +64,7 @@ class WeightWidget(widgets.MultiWidget):
 class DateTimeMultiWidget(widgets.MultiWidget):
     def __init__(self, attrs=None):
         _widgets = (
-            widgets.DateInput(format='%d/%m/%Y', attrs={'datepicker': True}),
+            widgets.DateInput(format='%m/%d/%Y', attrs={'datepicker': True}),
             widgets.TimeInput(attrs={'timepicker': True}),
         )
 
@@ -85,7 +85,7 @@ class DateTimeMultiWidget(widgets.MultiWidget):
 
     def decompress(self, value):
         if value:
-            time = datetime.datetime.strptime("%m/%d/%Y|%I:%M:%S %p", value)
+            time = datetime.datetime.strptime("%m/%d/%Y|%I:%M %p", value)
         else:
             time = datetime.datetime.now()
 
@@ -161,14 +161,15 @@ class DateTimeMultiField(MultiValueField):
 
     def __init__(self, *args, **kwargs):
         _fields = (
-            fields.DateField(required=True, input_formats=('%m/%d/%Y',)),
+            fields.DateField(required=True),
             fields.TimeField(required=True)
         )
         super(DateTimeMultiField, self).__init__(_fields, *args, **kwargs)
 
     def compress(self, data_list):
-        return data_list[0].strftime('%m/%d/%Y') + '|' + data_list[1].strftime('%I:%M:%S %p')
+        print(data_list)
+        return datetime.datetime.strptime(data_list[0] + '|' + data_list[1], "%m/%d/%Y|%I:%M %p")
 
     def clean(self, value):
-        print(value)
-        return super(DateTimeMultiField, self).clean(value)
+        # return self.compress(value)
+        return self.compress(value)
