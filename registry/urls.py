@@ -12,7 +12,7 @@ urlpatterns = [
     url(r'^appointment/create$', views.apptSchedule, name='appt_create'),
     url(r'^admins/$', views.admins, name='admins'),
     url(r'^detail/(?P<pk>[0-9]+)/$', views.detail, name='detail'),
-    url(r'^patient/$', views.patient, name='patient'),
+    url(r'^home/$', views.home, name='home'),
     url(r'^appointment/update/(?P<pk>[0-9]+)/$', views.apptUpdate, name='appt_update'),
     url(r'^appointment', views.alist, name='alist'),
 ]
