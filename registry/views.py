@@ -6,12 +6,27 @@ from django.contrib.auth import login as django_login
 from django.contrib.auth import logout
 from django.contrib.auth.models import User as DjangoUser
 from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm, AppointmentForm
-from .models.user_models import Patient, User
+from .models.user_models import Patient, User, Doctor
 from .models.info_models import Appointment, PatientContact
+from django.contrib.auth.decorators import login_required
+import rules
 # Create your views here.
 
 def alist(request):
-    appointments = Appointment.objects.filter().order_by('time')
+    q = request.user.hn_user
+    p = User.objects.get_subclass(pk=q.pk)
+    if (rules.test_rule('is_patient',p)):
+        print("1")
+        appointments = Appointment.objects.filter(patient__pk=p.pk).order_by('time')
+    elif (rules.test_rule('is_doctor',p)):
+        print("2")
+        appointments = Appointment.objects.filter(doctor__pk=p.pk).order_by('time')
+    else:
+        print("3")
+        print(isinstance(p, Patient))
+        print(isinstance(p, Doctor))
+        print(isinstance(p, User))
+        appointments = Appointment.objects.filter().order_by('time')
     return render(request, 'registry/alist.html',  {'appointments': appointments})
 
 
@@ -48,14 +63,14 @@ def register(request):
         form = PatientRegisterForm()
     return render(request, 'registry/new.html', {'form': form})
 
-#@login_required(login_url='/login')
+@login_required(login_url='/login')
 def apptSchedule(request):
     if request.method == "POST":
         form = AppointmentSchedulingForm(request.POST)
         if form.is_valid():
             appointment = form.save(commit=False)
             appointment.save()
-            return redirect('registry:index')
+            return render(request, 'registry/alist.html')
     else:
         form = AppointmentSchedulingForm()
     return render(request, 'registry/appointment.html', {'form': form})
