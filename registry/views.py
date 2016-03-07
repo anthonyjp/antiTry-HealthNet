@@ -33,13 +33,15 @@ def appt_delete(request, pk):
 def alist(request):
     q = request.user.hn_user
     p = User.objects.get_subclass(pk=q.pk)
-    if (rules.test_rule('is_patient',p)):
+    if rules.test_rule('is_patient',p):
         appointments = Appointment.objects.filter(patient__pk=p.pk).order_by('time')
-    elif (rules.test_rule('is_doctor',p)):
+    elif rules.test_rule('is_doctor',p):
         appointments = Appointment.objects.filter(doctor__pk=p.pk).order_by('time')
+    elif rules.test_rule('is_nurse',p):
+        appointments = Appointment.objects.filter(nurse__pk=p.pk).order_by('time')
     else:
-        appointments = Appointment.objects.filter(location__pk=p.hospital.pk).order_by('time')
-        return render(request, 'registry/alistn.html',  {'appointments': appointments})
+        appointments = []
+
     return render(request, 'registry/alist.html',  {'appointments': appointments})
 
 
