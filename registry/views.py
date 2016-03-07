@@ -132,8 +132,8 @@ def login(request):
 @login_required(login_url='/login')
 def home(request):
     p = request.user.hn_user
-    patient = User.objects.get_subclass(pk=p.pk)
-    return render(request, 'registry/base_user.html', {'patient': patient})
+    hn_user = User.objects.get_subclass(pk=p.pk)
+    return render(request, 'registry/base_user.html', {'hn_user': hn_user})
 
 @login_required(login_url='/login')
 def doc_nurse(request):

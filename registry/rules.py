@@ -53,5 +53,6 @@ is_doctor_check = is_doctor & is_doctor_of
 rules.add_rule('is_patient', is_patient)
 rules.add_rule('is_doctor', is_doctor)
 rules.add_rule('is_nurse', is_nurse)
+rules.add_rule('is_administrator', is_administrator)
 
 rules.add_rule('can_view_patient', has_appointment_check | is_doctor_check | (is_patient & is_self))
