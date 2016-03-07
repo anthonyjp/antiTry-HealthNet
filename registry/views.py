@@ -7,7 +7,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.models import User as DjangoUser
 from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm
 from .forms import DeleteAppForm
-from .models.user_models import Patient, User, Doctor
+from .models.user_models import Patient, User
 from .models.info_models import Appointment, PatientContact
 from django.contrib.auth.decorators import login_required
 import rules
