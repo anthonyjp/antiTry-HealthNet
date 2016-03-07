@@ -34,7 +34,7 @@
             <div class="collapse navbar-collapse" id="hn-navbar">
                 <ul class="nav navbar-nav navbar-left">
                     {% if user.is_authenticated %}
-                        <li class="hn-menuitem"><a href="{% url 'registry:detail' user.pk %}">Home</a></li>
+                        <li class="hn-menuitem"><a href="{% url 'registry:home' %}">Home</a></li>
                         {% block headermenu-auth %}{% endblock %}
                     {% else %}
                         <li class="hn-menuitem"><a href="{% url 'registry:login' %}">Log In</a></li>

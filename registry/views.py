@@ -107,14 +107,14 @@ def login(request):
         if user is not None:
             if user.is_active:
                 django_login(request, user)
-                return redirect(to=reverse('registry:patient'))
+                return redirect(to=reverse('registry:home'))
     else:
         form = LoginForm()
     return render(request, 'registry/login.html', {'form': form})
 
-def patient(request):
-    patient = get_object_or_404(Patient)
-    return render(request, 'registry/patient.html', {'patient': patient})
+def home(request):
+    patient =  request.user.hn_user
+    return render(request, 'registry/base_user.html', {'patient': patient})
 
 def doc_nurse(request):
     return render(request, 'registry/doc_nurse.html')

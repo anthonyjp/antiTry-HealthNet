@@ -1,0 +1,49 @@
+{% extends 'registry/base.html' %}
+
+{% load staticfiles %}
+{% load sass_tags %}
+
+{% block title %}HealthNet | Home{% endblock %}
+
+{% block cssimport %}
+    <link rel="stylesheet" href="{% sass_src 'registry/css/base_user.scss' %}"/>
+{% endblock %}
+
+{% block jsimport %}
+<script type="text/javascript" src="{% static 'registry/js/base_user.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<div>
+    <u1 id = "tab-links">
+        <li><a href ="#tab1" rel="tab1">Personal</a></li>
+        <li><a href ="#tab2" rel="tab2">Logs/Stats</a></li>
+        <li><a href ="#tab3" rel="tab3">Add Staff</a></li>
+        <li><a href ="#tab4" rel="tab4">Add Patient</a></li>
+        <li><a href ="#tab5" rel="tab5">Inbox</a></li>
+    </u1>
+
+    <div id="tab-content">
+        <div id="tab1" class="tab">
+            <p>Tab #1 content goes here!</p>
+        </div>
+
+        <div id="tab2" class="tab">
+            <p>Tab #2 content goes here!</p>
+        </div>
+
+        <div id="tab3" class="tab">
+            <p>Tab #3 content goes here!</p>
+        </div>
+
+        <div id="tab4" class="tab">
+            <p>Tab #4 content goes here!</p>
+        </div>
+        <div id="tab5" class="tab">
+            <p>Tab #5 content goes here!</p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
