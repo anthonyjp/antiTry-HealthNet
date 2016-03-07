@@ -1,4 +1,5 @@
 from django.forms import forms, models, fields, widgets
+from django import forms
 from django.core.urlresolvers import reverse_lazy
 from localflavor.us.forms import USPhoneNumberField
 
@@ -184,4 +185,3 @@ class AppointmentForm(models.ModelForm):
     class Meta:
         model = Appointment
         fields = ('time', 'doctor', 'patient', 'location')
-

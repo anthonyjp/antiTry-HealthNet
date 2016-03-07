@@ -64,3 +64,4 @@ class PatientContact(Contact):
     def __str__(self):
         contact_super = super(PatientContact, self).__str__()
         return "%s <-> %s" % (str(self.patient), contact_super)
+
