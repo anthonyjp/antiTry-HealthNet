@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 import rules
 # Create your views here.
 
+@login_required(login_url='/login')
 def alist(request):
     q = request.user.hn_user
     p = User.objects.get_subclass(pk=q.pk)
@@ -75,6 +76,7 @@ def apptSchedule(request):
         form = AppointmentSchedulingForm()
     return render(request, 'registry/appointment.html', {'form': form})
 
+@login_required(login_url='/login')
 def apptUpdate(request, pk):
     appointment = get_object_or_404(Appointment, pk=pk)
     if request.method == "POST":
@@ -87,11 +89,12 @@ def apptUpdate(request, pk):
         form = AppointmentForm(instance=appointment)
     return render(request, 'registry/edit_appointment.html', {'appointment': form})
 
-
+@login_required(login_url='/login')
 def appt_detail(request, pk):
     appointment = get_object_or_404(Appointment, pk=pk)
     return render(request, 'registry/appointment_detail.html', {'appointment': appointment})
 
+@login_required(login_url='/login')
 def detail(request, pk):
     patient = get_object_or_404(Patient, pk=pk)
     return render(request, 'registry/patient.html', {'patient': patient})
@@ -112,18 +115,21 @@ def login(request):
         form = LoginForm()
     return render(request, 'registry/login.html', {'form': form})
 
+@login_required(login_url='/login')
 def home(request):
     p = request.user.hn_user
     patient = User.objects.get_subclass(pk=p.pk)
     return render(request, 'registry/base_user.html', {'patient': patient})
 
+@login_required(login_url='/login')
 def doc_nurse(request):
     return render(request, 'registry/doc_nurse.html')
 
+@login_required(login_url='/login')
 def admins (request):
     return render(request, 'registry/admin.html')
 
-
+@login_required(login_url='/login')
 def sign_out(request):
     if request.user:
         logout(request)
