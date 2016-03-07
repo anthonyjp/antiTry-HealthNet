@@ -10,6 +10,8 @@ from .forms import DeleteAppForm
 from .models.user_models import Patient, User
 from .models.info_models import Appointment, PatientContact
 from django.contrib.auth.decorators import login_required
+from datetime import datetime
+import dateutil.parser
 import rules
 from django.utils import timezone
 # Create your views here.
@@ -81,8 +83,14 @@ def register(request):
     return render(request, 'registry/new.html', {'form': form})
 
 
+def appt_calendar(request):
+    hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    return render(request, 'registry/calendar.html', {'appointments': hn_user.appointment_set.all()})
+
+
 @login_required(login_url='/login')
-def apptSchedule(request):
+def appt_schedule(request):
+    next = None
     if request.method == "POST":
         form = AppointmentSchedulingForm(request.POST)
         if form.is_valid():
@@ -90,8 +98,15 @@ def apptSchedule(request):
             appointment.save()
             return redirect('registry:alist')
     else:
-        form = AppointmentSchedulingForm()
-    return render(request, 'registry/appointment.html', {'form': form})
+        if 'start' in request.GET:
+            form = AppointmentSchedulingForm(initial={'time': dateutil.parser.parse(request.GET['start'])})
+        else:
+            form = AppointmentSchedulingForm()
+
+        if 'next' in request.GET:
+            next = request.GET['next']
+
+    return render(request, 'registry/appointment.html', {'form': form, 'next_url': next})
 
 @login_required(login_url='/login')
 def appt_edit(request, pk):

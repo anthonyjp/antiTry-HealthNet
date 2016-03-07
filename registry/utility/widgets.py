@@ -1,6 +1,5 @@
 import datetime
 from django.forms import widgets, MultiValueField, fields, ValidationError
-from django.utils import timezone
 
 from pint import UnitRegistry
 from .options import Units
