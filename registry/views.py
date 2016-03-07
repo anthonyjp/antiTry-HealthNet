@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as django_login
 from django.contrib.auth import logout
 from django.contrib.auth.models import User as DjangoUser
-from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm, AppointmentForm
+from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm
 from .forms import DeleteAppForm
 from .models.user_models import Patient, User, Doctor
 from .models.info_models import Appointment, PatientContact
@@ -90,22 +90,17 @@ def apptSchedule(request):
     return render(request, 'registry/appointment.html', {'form': form})
 
 @login_required(login_url='/login')
-def apptUpdate(request, pk):
-    appointment = get_object_or_404(Appointment, pk=pk)
+def appt_edit(request, pk):
+    appt = get_object_or_404(Appointment, pk=pk)
     if request.method == "POST":
-        form = AppointmentForm(request.POST, instance=appointment)
+        form = AppointmentSchedulingForm(request.POST, instance=appt)
         if form.is_valid():
             appointment = form.save(commit=False)
             appointment.save()
-            return redirect('registry/calender.html', pk=appointment.pk)
+            return redirect('registry:alist')
     else:
-        form = AppointmentForm(instance=appointment)
-    return render(request, 'registry/edit_appointment.html', {'appointment': form})
-
-@login_required(login_url='/login')
-def appt_detail(request, pk):
-    appointment = get_object_or_404(Appointment, pk=pk)
-    return render(request, 'registry/appointment_detail.html', {'appointment': appointment})
+        form = AppointmentSchedulingForm(instance=appt)
+    return render(request, 'registry/edit_appointment.html', {'form': form})
 
 @login_required(login_url='/login')
 def detail(request, pk):

@@ -85,7 +85,7 @@ class DateTimeMultiWidget(widgets.MultiWidget):
 
     def decompress(self, value):
         if value:
-            time = datetime.datetime.strptime("%m/%d/%Y|%I:%M %p", value)
+            time = datetime.datetime.strptime(value, "%m/%d/%Y|%I:%M %p")
         else:
             time = datetime.datetime.now()
 

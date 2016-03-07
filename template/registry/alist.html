@@ -22,7 +22,7 @@
 </tr>
 {% for appointment in appointments %}
     <tr>
-    <td>Edit</td>
+    <td><a href="{% url 'registry:appt_edit' pk=appointment.pk %}">Edit</a></td>
     <td>{{ appointment.patient }}</td>
     <td>{{ appointment.doctor }}</td>
         <td>{{ appointment.time }}</td>
