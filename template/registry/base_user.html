@@ -16,16 +16,16 @@
 {% block content %}
 
 <div>
-    <u1 class = "tab-links">
-        <li class = "active"><a href ="#tab1" rel="tab1">Personal</a></li>
+    <u1 id = "tab-links">
+        <li><a href ="#tab1" rel="tab1">Personal</a></li>
         <li><a href ="#tab2" rel="tab2">Logs/Stats</a></li>
         <li><a href ="#tab3" rel="tab3">Add Staff</a></li>
         <li><a href ="#tab4" rel="tab4">Add Patient</a></li>
         <li><a href ="#tab5" rel="tab5">Inbox</a></li>
     </u1>
 
-    <div class="tab-content">
-        <div id="tab1" class="tab active">
+    <div id="tab-content">
+        <div id="tab1" class="tab">
             <p>Tab #1 content goes here!</p>
         </div>
 
@@ -39,6 +39,9 @@
 
         <div id="tab4" class="tab">
             <p>Tab #4 content goes here!</p>
+        </div>
+        <div id="tab5" class="tab">
+            <p>Tab #5 content goes here!</p>
         </div>
     </div>
 </div>

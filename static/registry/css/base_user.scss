@@ -6,19 +6,19 @@
 
     /*----- Tab Links -----*/
     /* Clearfix */
-    .tab-links:after {
+    #tab-links:after {
         display:block;
         clear:both;
         content:'';
     }
 
-    .tab-links li {
+    #tab-links li {
         margin:0px 5px;
         float:left;
         list-style:none;
     }
 
-        .tab-links a {
+        #tab-links a {
             padding:9px 15px;
             display:inline-block;
             border-radius:3px 3px 0px 0px;
@@ -29,7 +29,7 @@
             transition:all linear 0.15s;
         }
 
-        .tab-links a:hover {
+        #tab-links a:hover {
             background:#a7cce5;
             text-decoration:none;
         }
@@ -40,7 +40,7 @@
     }
 
     /*----- Content of Tabs -----*/
-    .tab-content {
+    #tab-content {
         padding:15px;
         border-radius:3px;
         box-shadow:-1px 1px 1px rgba(0,0,0,0.15);
