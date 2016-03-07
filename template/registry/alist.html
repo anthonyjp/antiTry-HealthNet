@@ -1,0 +1,21 @@
+<div>
+    <h1><a href="/">back to index</a></h1>
+</div>
+<table border="1">
+    <tr>
+    <th>Patient</th>
+    <th>Doctor</th>
+        <th>Date</th>
+    <th>Hospital</th>
+        <th>Delete</th>
+</tr>
+{% for appointment in appointments %}
+    <tr>
+    <td>{{ appointment.patient }}</td>
+    <td>{{ appointment.doctor }}</td>
+        <td>{{ appointment.time }}</td>
+    <td>{{ appointment.location }}</td>
+    <td>Delete</td>
+    </tr>
+{% endfor %}
+</table>

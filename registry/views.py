@@ -10,6 +10,10 @@ from .models.user_models import Patient, User
 from .models.info_models import Appointment, PatientContact
 # Create your views here.
 
+def alist(request):
+    appointments = Appointment.objects.filter().order_by('time')
+    return render(request, 'registry/alist.html',  {'appointments': appointments})
+
 
 def register(request):
     if request.method == "POST":
