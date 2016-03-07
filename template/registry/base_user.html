@@ -35,7 +35,7 @@
             <li><a href ="#tab2" rel="tab2">Medical</a></li>
             <li><a href ="#tab3" rel="tab3">Insurance</a></li>
             <li><a href ="#tab4" rel="tab4">Admission</a></li>
-            <li><a href ="#tab4" rel="tab4">Appointments</a></li>
+            <li><a href="{% url 'registry:alist' %}" rel="tab4">Appointments</a></li>
             <li><a href ="#tab5" rel="tab5">Inbox</a></li>
         </ul>
 
@@ -78,7 +78,7 @@
     {% if is_doctor %}
         <ul id = "tab-links">
             <li><a href ="#tab1" rel="tab1">Personal</a></li>
-            <li><a href ="#tab2" rel="tab2">Appointments</a></li>
+            <li><a href="{% url 'registry:alist' %}" rel="tab2">Appointments</a></li>
             <li><a href ="#tab3" rel="tab3">Inbox</a></li>
         </ul>
 
