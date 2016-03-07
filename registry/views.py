@@ -42,7 +42,6 @@ def alist(request):
         appointments = Appointment.objects.filter(doctor__pk=p.pk, time__month=current_month).order_by('time')
     else:
         appointments = Appointment.objects.filter(location__pk=p.hospital.pk, time__day=current_day).order_by('time')
-        print("1")
         week = Appointment.objects.filter(location__pk=p.hospital.pk, time__day__range=[current_day, current_day+7]).order_by('time')
         return render(request, 'registry/alistnd.html',  {'appointments': appointments, 'hn_user': p, 'week': week})
     return render(request, 'registry/alist.html',  {'appointments': appointments, 'hn_user': p,})
