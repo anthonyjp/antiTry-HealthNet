@@ -32,7 +32,7 @@
             </div>
 
             <div class="collapse navbar-collapse" id="hn-navbar">
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav navbar-left">
                     {% if user.is_authenticated %}
                         <li class="hn-menuitem"><a href="{% url 'registry:detail' user.pk %}">Home</a></li>
                         {% block headermenu-auth %}{% endblock %}
@@ -41,6 +41,12 @@
                         {% block headermenu-noauth %}{% endblock %}
                     {% endif %}
                     <li class="hn-menuitem"><a href="#">About</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if user.is_authenticated %}
+                        <li class="hn-menuitem">{{ user.hn_user }}</li>
+                        <li class="hn-menuitem"><a href="{% url 'registry:logout' %}">Sign Out</a></li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

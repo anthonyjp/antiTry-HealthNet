@@ -3,6 +3,7 @@ from django.shortcuts import redirect, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as django_login
+from django.contrib.auth import logout
 from django.contrib.auth.models import User as DjangoUser
 from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm, AppointmentForm
 from .models.user_models import Patient, User
@@ -90,7 +91,7 @@ def login(request):
                 return redirect(to=reverse('registry:patient'))
     else:
         form = LoginForm()
-    return render(request, 'registry/login.html', {'form' : form})
+    return render(request, 'registry/login.html', {'form': form})
 
 def patient(request):
     patient = get_object_or_404(Patient)
@@ -101,3 +102,10 @@ def doc_nurse(request):
 
 def admins (request):
     return render(request, 'registry/admin.html')
+
+
+def sign_out(request):
+    if request.user:
+        logout(request)
+
+    return redirect(to=reverse('registry:index'))
