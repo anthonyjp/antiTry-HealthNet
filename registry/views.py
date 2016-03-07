@@ -180,13 +180,13 @@ def Logs():
         log_action = ""
         if action_flag == 1:
             log_action = user_id + " has added a new " + object_id + "."
-            action_list += log_action
+            action_list.append(log_action)
         if action_flag == 2:
             log_action = user_id + " has changed their " + object_id + "."
-            action_list += log_action
+            action_list.append(log_action)
         if action_flag == 3:
             log_action = user_id + " has deleted their " + object_id + "."
-            action_list += log_action
+            action_list.append(log_action)
 
     return action_list
 
