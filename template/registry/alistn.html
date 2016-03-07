@@ -5,7 +5,7 @@
 {% block content %}
 
 <table border="1" >
-     <tr>
+    <tr>
         <th><a href="{% url 'registry:appt_create'%}"><h4>Create an appointment</h4></a></th>
         </tr>
 <tr>
@@ -14,7 +14,6 @@
     <th>Doctor</th>
         <th>Date</th>
     <th>Hospital</th>
-        <th>Delete</th>
 </tr>
 {% for appointment in appointments %}
     <tr>
@@ -23,7 +22,6 @@
     <td>{{ appointment.doctor }}</td>
         <td>{{ appointment.time }}</td>
     <td>{{ appointment.location }}</td>
-    <td><a href="{% url 'registry:appt_delete' pk=appointment.pk %}">Delete</a></td>
     </tr>
 {% endfor %}
 </table>

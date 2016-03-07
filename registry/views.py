@@ -16,10 +16,8 @@ import rules
 @login_required(login_url='/login')
 def appt_delete(request, pk):
     delete = get_object_or_404(Appointment, id=pk)
-    #print("123")
     if request.method == 'POST':
         form = DeleteAppForm(request.POST, instance=delete)
-        #print("456")
         if form.is_valid():
             delete.delete()
             return redirect('registry:alist')
@@ -40,7 +38,8 @@ def alist(request):
     elif (rules.test_rule('is_doctor',p)):
         appointments = Appointment.objects.filter(doctor__pk=p.pk).order_by('time')
     else:
-        appointments = Appointment.objects.filter().order_by('time')
+        appointments = Appointment.objects.filter(location__pk=p.hospital.pk).order_by('time')
+        return render(request, 'registry/alistn.html',  {'appointments': appointments})
     return render(request, 'registry/alist.html',  {'appointments': appointments})
 
 

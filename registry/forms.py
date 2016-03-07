@@ -172,7 +172,7 @@ class AppointmentSchedulingForm(models.ModelForm):
             ),
             FormActions(
                 Submit('submit', 'Submit'),
-                HTML('<a class="btn btn-default" href={% url "registry:index" %}>Cancel</a>')
+                HTML('<a class="btn btn-default" href={% url "registry:alist" %}>Cancel</a>')
             )
         )
 
