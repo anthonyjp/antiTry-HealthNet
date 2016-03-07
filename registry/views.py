@@ -98,7 +98,8 @@ def login(request):
     return render(request, 'registry/login.html', {'form': form})
 
 def home(request):
-    patient =  request.user.hn_user
+    p = request.user.hn_user
+    patient = User.objects.get_subclass(pk=p.pk)
     return render(request, 'registry/base_user.html', {'patient': patient})
 
 def doc_nurse(request):
