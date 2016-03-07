@@ -14,6 +14,6 @@ urlpatterns = [
     url(r'^detail/(?P<pk>[0-9]+)/$', views.detail, name='detail'),
     url(r'^home/$', views.home, name='home'),
     url(r'^appointment/update/(?P<pk>[0-9]+)/$', views.apptUpdate, name='appt_update'),
-    url(r'^appointment$', views.alist, name='alist'),
+    url(r'^appointment/view$', views.alist, name='alist'),
     url(r'^appointment/(?P<pk>[0-9]+)/delete/$', views.appt_delete, name='appt_delete'),
 ]

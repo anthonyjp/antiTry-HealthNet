@@ -27,6 +27,8 @@
     "bootstrap": "^3.3.6",
     "lodash": "^4.5.1",
     "pikaday": "^1.4.0",
-    "moment": "momentjs#^2.11.2"
+    "moment": "momentjs#^2.11.2",
+    "fullcalendar": "^2.6.1",
+    "jt.timepicker": "jquery-timepicker-jt#^1.8.9"
   }
 }

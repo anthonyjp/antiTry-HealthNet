@@ -39,6 +39,7 @@ class User(models.Model):
     def __str__(self):
         return "%s %s. %s" % (self.first_name, self.middle_initial, self.last_name)
 
+
 class Doctor(User):
     hospitals = models.ManyToManyField(Hospital, related_name='provider_to')
 

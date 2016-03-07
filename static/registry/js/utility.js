@@ -12,7 +12,18 @@ registry.utility = (function() {
         });
     }
 
+    function timepickerHook() {
+        $('.timeinput').filter(function() {
+            return $(this).attr('timepicker') === '';
+        }).each(function() {
+            $(this).timepicker({
+                'timeFormat': 'g:i A'
+            })
+        });
+    }
+
     return {
-        'hookDatepicker': datepickerHook
+        'hookDatepicker': datepickerHook,
+        'hookTimepicker': timepickerHook
     }
 })();

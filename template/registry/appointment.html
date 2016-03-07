@@ -9,6 +9,7 @@
 
 {% block cssimport %}
     <link rel="stylesheet" href="{% static 'pikaday/css/pikaday.css' %}"/>
+    <link rel="stylesheet" href="{% static 'jt.timepicker/jquery.timepicker.css' %}"/>
 {% endblock %}
 
 {% block inner-content %}
@@ -19,6 +20,7 @@
 <script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'pikaday/pikaday.js' %}"></script>
 <script type="text/javascript" src="{% static 'pikaday/plugins/pikaday.jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'jt.timepicker/jquery.timepicker.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'registry/js/measurements.js' %}"></script>
 <script type="text/javascript" src="{% static 'registry/js/utility.js' %}"></script>
 {% endblock %}
@@ -26,5 +28,6 @@
 {% block customjs %}
     <script type="text/javascript">
         registry.utility.hookDatepicker();
+        registry.utility.hookTimepicker();
     </script>
 {% endblock %}

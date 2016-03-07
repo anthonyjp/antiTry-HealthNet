@@ -1,4 +1,6 @@
+import datetime
 from django.forms import widgets, MultiValueField, fields, ValidationError
+from django.utils import timezone
 
 from pint import UnitRegistry
 from .options import Units
@@ -59,6 +61,41 @@ class WeightWidget(widgets.MultiWidget):
         return value
 
 
+class DateTimeMultiWidget(widgets.MultiWidget):
+    def __init__(self, attrs=None):
+        _widgets = (
+            widgets.DateInput(format='%d/%m/%Y', attrs={'datepicker': True}),
+            widgets.TimeInput(attrs={'timepicker': True}),
+        )
+
+        super(DateTimeMultiWidget, self).__init__(_widgets, attrs)
+
+    def roundTime(self, dt=None, roundTo=60):
+        """Round a datetime object to any time laps in seconds
+        dt : datetime.datetime object, default now.
+        roundTo : Closest number of seconds to round to, default 1 minute.
+        Author: Thierry Husson 2012 - Use it as you want but don't blame me.
+        """
+        if dt is None:
+            dt = datetime.datetime.now()
+        seconds = (dt - dt.min).seconds
+        # // is a floor division, not a comment on following line:
+        rounding = (seconds+roundTo/2) // roundTo * roundTo
+        return dt + datetime.timedelta(0,rounding-seconds,-dt.microsecond)
+
+    def decompress(self, value):
+        if value:
+            time = datetime.datetime.strptime("%m/%d/%Y|%I:%M:%S %p", value)
+        else:
+            time = datetime.datetime.now()
+
+        time = self.roundTime(time, roundTo=1800)
+        return [time.date(), time.time()]
+
+    def format_output(self, rendered_widgets):
+        return ''.join(rendered_widgets)
+
+
 class HeightField(MultiValueField):
     widget = HeightWidget()
 
@@ -117,3 +154,21 @@ class WeightField(MultiValueField):
 
     def clean(self, value):
         return super(WeightField, self).clean(value)
+
+
+class DateTimeMultiField(MultiValueField):
+    widget = DateTimeMultiWidget()
+
+    def __init__(self, *args, **kwargs):
+        _fields = (
+            fields.DateField(required=True, input_formats=('%m/%d/%Y',)),
+            fields.TimeField(required=True)
+        )
+        super(DateTimeMultiField, self).__init__(_fields, *args, **kwargs)
+
+    def compress(self, data_list):
+        return data_list[0].strftime('%m/%d/%Y') + '|' + data_list[1].strftime('%I:%M:%S %p')
+
+    def clean(self, value):
+        print(value)
+        return super(DateTimeMultiField, self).clean(value)

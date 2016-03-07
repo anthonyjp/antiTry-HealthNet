@@ -12,7 +12,7 @@ from .models.user_models import Patient
 from .models.data_models import Hospital
 from .models.info_models import Appointment
 
-from .utility.widgets import HeightField, WeightField
+from .utility.widgets import HeightField, WeightField, DateTimeMultiField
 from .utility.options import BloodType, Relationship
 
 
@@ -150,6 +150,7 @@ class HospitalRegisterForm(models.ModelForm):
 class AppointmentSchedulingForm(models.ModelForm):
     model = Appointment
 
+    time = DateTimeMultiField()
     def __init__(self, *args, **kwargs):
         super(AppointmentSchedulingForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -174,7 +175,8 @@ class AppointmentSchedulingForm(models.ModelForm):
                 HTML('<a class="btn btn-default" href={% url "registry:index" %}>Cancel</a>')
             )
         )
-        self.fields['time'].widget.attrs['datepicker'] = True
+
+        self.fields['time'].widget.attrs['timepicker'] = True
 
     class Meta:
         model = Appointment
