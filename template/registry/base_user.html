@@ -24,7 +24,7 @@
     </ul>
 </div>
 
-<div id="right">
+<div onload="enable_text(false);" id="right">
 
 
     {% test_rule 'is_patient' hn_user as is_patient %}
@@ -42,7 +42,7 @@
         <div id="tab-content">
             <div id="tab1" class="tab">
                 <form id="form">
-                    <label>First Name:</label><input type="text" value="{{ hn_user.first_name }}"/><br>
+                    <label>First Name:</label><input id="patient_name" type="text" value="{{ hn_user.first_name }}"/><br>
                     <label>Middle Initial:</label><input type="text" value="{{ hn_user.middle_initial }}"/><br>
                     <label>Last Name:</label><input type="text" value="{{ hn_user.last_name }}"/><br>
                     <label>Date of Birth:</label><input type="text" value="{{ hn_user.date_of_birth }}"/><br>
@@ -72,6 +72,7 @@
             </div>
         </div>
     {% endif %}
+
             <!-- Doctor/Nurse -->
     {% test_rule 'is_doctor' hn_user as is_doctor %}
     {% if is_doctor %}
@@ -101,6 +102,7 @@
             </div>
         </div>
     {% endif %}
+
         <!-- Admin-->
     {% test_rule 'is_administrator' hn_user as is_administrator %}
     {% if is_administrator %}
@@ -129,7 +131,10 @@
             </div>
         </div>
     {% endif %}
-
+    <div id="buttons">
+        <button><a>Edit</a></button>
+        <button><a>Submit</a></button>
+    </div>
 </div>
 
 {% endblock %}

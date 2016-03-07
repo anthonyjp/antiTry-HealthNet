@@ -139,7 +139,6 @@ class LoginForm(forms.Form):
             )
         )
 
-
 class HospitalRegisterForm(models.ModelForm):
 
     class Meta:

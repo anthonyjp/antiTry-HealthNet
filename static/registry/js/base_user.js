@@ -20,3 +20,9 @@ $(document).ready(function(){
         return false;
     });
 });
+
+function enable_text(status)
+{
+status=!status;
+	document.form.input.disabled = status;
+}
