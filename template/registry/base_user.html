@@ -15,14 +15,23 @@
 
 {% block content %}
 
-<div>
-    <u1 id = "tab-links">
+<div id="left">
+    <ul>
+        <li>Picture</li>
+        <li>{{ user.hn_user }}</li>
+        <li>{{ patient.date_of_birth }}</li>
+        <li>{{ patient.blood_type }}</li>
+    </ul>
+</div>
+
+<div id="right">
+    <ul id = "tab-links">
         <li><a href ="#tab1" rel="tab1">Personal</a></li>
         <li><a href ="#tab2" rel="tab2">Logs/Stats</a></li>
         <li><a href ="#tab3" rel="tab3">Add Staff</a></li>
         <li><a href ="#tab4" rel="tab4">Add Patient</a></li>
         <li><a href ="#tab5" rel="tab5">Inbox</a></li>
-    </u1>
+    </ul>
 
     <div id="tab-content">
         <div id="tab1" class="tab">
