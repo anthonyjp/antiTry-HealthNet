@@ -15,7 +15,7 @@
     <td>{{ appointment.doctor }}</td>
         <td>{{ appointment.time }}</td>
     <td>{{ appointment.location }}</td>
-    <td>{{appointment.pk}}</td>
+    <td><a href="{% url 'registry:appt_delete' pk=appointment.pk %}">Delete</a></td>
     </tr>
 {% endfor %}
 </table>

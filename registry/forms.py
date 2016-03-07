@@ -185,3 +185,8 @@ class AppointmentForm(models.ModelForm):
     class Meta:
         model = Appointment
         fields = ('time', 'doctor', 'patient', 'location')
+
+class DeleteAppForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = []

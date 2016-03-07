@@ -6,11 +6,30 @@ from django.contrib.auth import login as django_login
 from django.contrib.auth import logout
 from django.contrib.auth.models import User as DjangoUser
 from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm, AppointmentForm
+from .forms import DeleteAppForm
 from .models.user_models import Patient, User, Doctor
 from .models.info_models import Appointment, PatientContact
 from django.contrib.auth.decorators import login_required
 import rules
 # Create your views here.
+
+@login_required(login_url='/login')
+def appt_delete(request, pk):
+    delete = get_object_or_404(Appointment, id=pk)
+
+    if request.method == 'POST':
+        form = DeleteAppForm(request.POST, instance=delete)
+
+        if form.is_valid():
+            delete.delete()
+            return redirect('registry:alist')
+
+    else:
+        form = DeleteAppForm(instance=delete)
+
+    template_vars = {'form': form}
+    return render(request, 'registry/appt_delete.html', template_vars)
+
 
 @login_required(login_url='/login')
 def alist(request):
