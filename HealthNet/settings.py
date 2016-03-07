@@ -188,6 +188,7 @@ LOGGING['filters']['suppress_deprecated'] = {
 }
 LOGGING['handlers']['console']['filters'].append('suppress_deprecated')
 
+
 class SuppressDeprecated(logging.Filter):
     def filter(self, record):
         WARNINGS_TO_SUPPRESS = [

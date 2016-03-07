@@ -1,0 +1,11 @@
+{% extends 'registry/base.html' %}
+{% load staticfiles %}
+{% load sass_tags %}
+
+{% block title %}HealthNet | Activity Log {% endblock %}
+
+{% block content %}
+    {% for line in action_list %}
+        <p>{{line}}</p>
+    {% endfor %}
+{% endblock %}

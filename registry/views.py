@@ -147,3 +147,35 @@ def sign_out(request):
         logout(request)
 
     return redirect(to=reverse('registry:index'))
+
+
+from django.contrib.admin.models import LogEntry
+# LogEntry Action flags meaning:
+# ADDITION = 1
+# CHANGE = 2
+# DELETION = 3
+
+def Logs():
+    logs = LogEntry.objects.all()
+    action_list = []
+    for l in logs:
+        user_id = str(l.user)
+        object_id = str(l.object_repr)
+        action_flag = int(l.action_flag)
+        log_action = ""
+        if action_flag == 1:
+            log_action = user_id + " has added a new " + object_id + "."
+            action_list += log_action
+        if action_flag == 2:
+            log_action = user_id + " has changed their " + object_id + "."
+            action_list += log_action
+        if action_flag == 3:
+            log_action = user_id + " has deleted their " + object_id + "."
+            action_list += log_action
+
+    return action_list
+
+@login_required(login_url='/login')
+def Log_actions(request):
+    return render(request, "registry/log.html", context={"action_list": Logs()})
+
