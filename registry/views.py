@@ -7,10 +7,11 @@ from django.contrib.auth import logout
 from django.contrib.auth.models import User as DjangoUser
 from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm
 from .forms import DeleteAppForm
-from .models.user_models import Patient, User, Doctor
+from .models.user_models import Patient, User
 from .models.info_models import Appointment, PatientContact
 from django.contrib.auth.decorators import login_required
 import rules
+from django.utils import timezone
 # Create your views here.
 
 @login_required(login_url='/login')
@@ -33,16 +34,17 @@ def appt_delete(request, pk):
 def alist(request):
     q = request.user.hn_user
     p = User.objects.get_subclass(pk=q.pk)
-    if rules.test_rule('is_patient',p):
-        appointments = Appointment.objects.filter(patient__pk=p.pk).order_by('time')
-    elif rules.test_rule('is_doctor',p):
-        appointments = Appointment.objects.filter(doctor__pk=p.pk).order_by('time')
-    elif rules.test_rule('is_nurse',p):
-        appointments = Appointment.objects.filter(nurse__pk=p.pk).order_by('time')
+    current_day = timezone.now().day
+    current_month = timezone.now().month
+    if (rules.test_rule('is_patient',p)):
+        appointments = Appointment.objects.filter(patient__pk=p.pk, time__month=current_month).order_by('time')
+    elif (rules.test_rule('is_doctor',p)):
+        appointments = Appointment.objects.filter(doctor__pk=p.pk, time__month=current_month).order_by('time')
     else:
-        appointments = []
-
-    return render(request, 'registry/alist.html',  {'appointments': appointments})
+        appointments = Appointment.objects.filter(location__pk=p.hospital.pk, time__day=current_day).order_by('time')
+        week = Appointment.objects.filter(location__pk=p.hospital.pk, time__day__range=[current_day, current_day+7]).order_by('time')
+        return render(request, 'registry/alistnd.html',  {'appointments': appointments, 'hn_user': p, 'week': week})
+    return render(request, 'registry/alist.html',  {'appointments': appointments, 'hn_user': p,})
 
 
 def register(request):

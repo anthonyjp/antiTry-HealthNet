@@ -9,7 +9,8 @@
 <table border="1" >
      <tr>
         <th><a href="{% url 'registry:appt_create'%}"><h4>Create an appointment</h4></a></th>
-        <th>This Month</th>
+         <th>Day</th>
+
         </tr>
 <tr>
         <th>Edit</th>
@@ -17,9 +18,7 @@
     <th>Doctor</th>
         <th>Date</th>
     <th>Hospital</th>
-    {% if not is_nurse %}
-        <th>Delete</th>
-    {% endif %}
+
 </tr>
 {% for appointment in appointments %}
     <tr>
@@ -28,10 +27,32 @@
     <td>{{ appointment.doctor }}</td>
         <td>{{ appointment.time }}</td>
     <td>{{ appointment.location }}</td>
-        {% if not is_nurse %}
-    <td><a href="{% url 'registry:appt_delete' pk=appointment.pk %}">Delete</a></td>
-    {% endif %}
+
     </tr>
 {% endfor %}
-</table><br><br
+</table><br><br>
+    {% if not is_nurse %}
+        <table border="1" >
+     <tr>
+        <th><h4>Weekly</h4></th>
+        </tr>
+<tr>
+        <th>Edit</th>
+    <th>Patient</th>
+    <th>Doctor</th>
+        <th>Date</th>
+    <th>Hospital</th>
+</tr>
+    {% for week in week %}
+    <tr>
+    <td><a href="{% url 'registry:appt_edit' pk=week.pk %}">Edit</a></td>
+    <td>{{ week.patient }}</td>
+    <td>{{ week.doctor }}</td>
+        <td>{{ week.time }}</td>
+    <td>{{ week.location }}</td>
+
+    </tr>
+{% endfor %}
+</table>
+    {% endif %}
 {% endblock %}
