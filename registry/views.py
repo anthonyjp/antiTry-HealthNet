@@ -98,7 +98,7 @@ def login(request):
     return render(request, 'registry/login.html', {'form': form})
 
 def home(request):
-    patient = get_object_or_404(Patient)
+    patient =  request.user.hn_user
     return render(request, 'registry/base_user.html', {'patient': patient})
 
 def doc_nurse(request):
