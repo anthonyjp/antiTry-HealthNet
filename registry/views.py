@@ -10,7 +10,7 @@ from .forms import DeleteAppForm
 from .models.user_models import Patient, User
 from .models.info_models import Appointment, PatientContact
 from django.contrib.auth.decorators import login_required
-from datetime import datetime
+from datetime import datetime, timedelta
 import dateutil.parser
 import rules
 from django.utils import timezone
@@ -194,5 +194,13 @@ def Logs():
 
 @login_required(login_url='/login')
 def Log_actions(request):
-    return render(request, "registry/log.html", context={"action_list": Logs()})
+    fro = datetime.now() - timedelta(days=1)
+    to = datetime.now()
+
+    if 'from' in request.GET:
+        fro = dateutil.parser.parse(request.GET['from'])
+    if 'to' in request.GET:
+        to = dateutil.parser.parse(request.GET['to'])
+
+    return render(request, "registry/log.html", context={"action_list": Logs(), 'from': fro, 'to': to})
 
