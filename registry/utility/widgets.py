@@ -84,13 +84,17 @@ class DateTimeMultiWidget(widgets.MultiWidget):
         return dt + datetime.timedelta(0,rounding-seconds,-dt.microsecond)
 
     def decompress(self, value):
-        if value:
-            time = datetime.datetime.strptime(value, "%m/%d/%Y|%I:%M %p")
-        else:
+        if not value:
             time = datetime.datetime.now()
-
-        time = self.roundTime(time, roundTo=1800)
-        return [time.date(), time.time()]
+            time = self.roundTime(time, roundTo=1800)
+            return [time.date(), time.time()]
+        else:
+            if isinstance(value, datetime.datetime):
+                return [value.date(), value.time()]
+            else:
+                time = datetime.datetime.strptime(value, "%m/%d/%Y|%I:%M %p")
+                time = self.roundTime(time, roundTo=1800)
+                return [time.date(), time.time()]
 
     def format_output(self, rendered_widgets):
         return ''.join(rendered_widgets)
