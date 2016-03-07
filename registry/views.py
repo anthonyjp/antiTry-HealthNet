@@ -72,7 +72,7 @@ def apptUpdate(request, pk):
         form = AppointmentForm(instance=appointment)
     return render(request, 'registry/edit_appointment.html', {'appointment': form})
 
-#yes I know it is not finished
+
 def appt_detail(request, pk):
     appointment = get_object_or_404(Appointment, pk=pk)
     return render(request, 'registry/appointment_detail.html', {'appointment': appointment})
