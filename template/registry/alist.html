@@ -1,7 +1,9 @@
 {% extends 'registry/base_auth.html' %}
 {% load staticfiles %}
 {% load sass_tags %}
+{% load rules %}
 
+{% test_rule 'is_nurse' user.hn_user as is_nurse %}
 {% block content %}
 
 <table border="1" >
@@ -14,7 +16,9 @@
     <th>Doctor</th>
         <th>Date</th>
     <th>Hospital</th>
+    {% if not is_nurse %}
         <th>Delete</th>
+    {% endif %}
 </tr>
 {% for appointment in appointments %}
     <tr>
@@ -23,7 +27,9 @@
     <td>{{ appointment.doctor }}</td>
         <td>{{ appointment.time }}</td>
     <td>{{ appointment.location }}</td>
+        {% if not is_nurse %}
     <td><a href="{% url 'registry:appt_delete' pk=appointment.pk %}">Delete</a></td>
+    {% endif %}
     </tr>
 {% endfor %}
 </table>
