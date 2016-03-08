@@ -1,3 +1,22 @@
+registry.forms['user'] = (function(){
+    function disable() {
+
+        $('form').filter(':input').each(function(){
+            document.get("input").disabled = true;
+        });
+    }
+
+    function enable() {
+        document.getElementById("editable").disabled = false;
+    }
+
+
+    return {
+        'disable': disable,
+        'enable': enable
+    };
+})();
+
 $(document).ready(function(){
     //  When user clicks on tab, this code will be executed
     $("#tab-links li").click(function() {
@@ -16,13 +35,8 @@ $(document).ready(function(){
         //  Show the selected tab content
         $(selected_tab).fadeIn();
 
+        registry.forms.user.disable();
         //  At the end, we add return false so that the click on the link is not executed
         return false;
     });
 });
-
-function enable_text(status)
-{
-status=!status;
-	document.form.input.disabled = status;
-}

@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="{% sass_src 'registry/css/base_user.scss' %}"/>
 {% endblock %}
 
-{% block jsimport %}
-<script type="text/javascript" src="{% static 'registry/js/base_user.js' %}"></script>
+{% block _base_jsimport %}
+    <script type="text/javascript" src="{% static 'registry/js/base_user.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -24,8 +24,7 @@
     </ul>
 </div>
 
-<div onload="enable_text(false);" id="right">
-
+<div id="right">
 
     {% test_rule 'is_patient' hn_user as is_patient %}
     {% if is_patient %}
@@ -42,12 +41,16 @@
         <div id="tab-content">
             <div id="tab1" class="tab">
                 <form id="form">
-                    <label>First Name:</label><input id="patient_name" type="text" value="{{ hn_user.first_name }}"/><br>
-                    <label>Middle Initial:</label><input type="text" value="{{ hn_user.middle_initial }}"/><br>
-                    <label>Last Name:</label><input type="text" value="{{ hn_user.last_name }}"/><br>
-                    <label>Date of Birth:</label><input type="text" value="{{ hn_user.date_of_birth }}"/><br>
-                    <label>Gender:</label><input type="text" value="{{ hn_user.gender }}"/><br>
+                    <label>First Name:</label><input id="editable" type="text" value="{{ hn_user.first_name }}"/><br>
+                    <label>Middle Initial:</label><input class="editable" type="text" value="{{ hn_user.middle_initial }}"/><br>
+                    <label>Last Name:</label><input class="editable" type="text" value="{{ hn_user.last_name }}"/><br>
+                    <label>Date of Birth:</label><input class="editable" type="text" value="{{ hn_user.date_of_birth }}"/><br>
+                    <label>Gender:</label><input class="editable" type="text" value="{{ hn_user.gender }}"/><br>
                 </form>
+                <div id="buttons">
+                    <button onclick="registry.forms.user.enable();"><a>Edit</a></button>
+                    <button><a href="registry:homeUpdated">Submit</a></button>
+                </div>
             </div>
 
             <div id="tab2" class="tab">
@@ -60,15 +63,16 @@
 
             <div id="tab3" class="tab">
                 <form id="form">
-                    <label>First Name:</label><input type="text" value="{{ hn_user.insurance }}"/><br>
+                    <label>Insurance:</label><input type="text" value="{{ hn_user.insurance }}"/><br>
                 </form>
             </div>
 
             <div id="tab4" class="tab">
-                <p>Tab #4 content goes here!</p>
+                <p>Admission information will go here!</p>
             </div>
+
             <div id="tab5" class="tab">
-                <p>Tab #5 content goes here!</p>
+                <p>Inbox will go here!</p>
             </div>
         </div>
     {% endif %}
@@ -93,12 +97,8 @@
                 </form>
             </div>
 
-            <div id="tab2" class="tab">
-                <p>Tab #2 content goes here!</p>
-            </div>
-
             <div id="tab3" class="tab">
-                <p>Tab #3 content goes here!</p>
+                <p>Inbox will go here!</p>
             </div>
         </div>
     {% endif %}
@@ -123,18 +123,14 @@
             </div>
 
             <div id="tab2" class="tab">
-                <p>Tab #2 content goes here!</p>
+                <p>Logs will go here!</p>
             </div>
 
             <div id="tab3" class="tab">
-                <p>Tab #3 content goes here!</p>
+                <p>Inbox will go here!</p>
             </div>
         </div>
     {% endif %}
-    <div id="buttons">
-        <button><a>Edit</a></button>
-        <button><a>Submit</a></button>
-    </div>
 </div>
 
 {% endblock %}

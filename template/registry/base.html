@@ -62,6 +62,7 @@
     <script type="text/javascript" src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'lodash/dist/lodash.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'registry/js/base.js' %}"></script>
+    {% block _base_jsimport %}{% endblock %}
     {% block jsimport %}{% endblock %}
 
     {# Place all universally shared custom JavaScript above customjs #}

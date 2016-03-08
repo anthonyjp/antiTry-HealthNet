@@ -96,7 +96,7 @@ def appt_schedule(request):
         if form.is_valid():
             appointment = form.save(commit=False)
             appointment.save()
-            return redirect('registry:alist')
+            return redirect('registry:home')
     else:
         if 'start' in request.GET:
             form = AppointmentSchedulingForm(initial={'time': dateutil.parser.parse(request.GET['start'])})
@@ -144,6 +144,12 @@ def login(request):
 
 @login_required(login_url='/login')
 def home(request):
+    p = request.user.hn_user
+    hn_user = User.objects.get_subclass(pk=p.pk)
+    return render(request, 'registry/base_user.html', {'hn_user': hn_user})
+
+@login_required(login_url='/login')
+def homeUpdated(request, form):
     p = request.user.hn_user
     hn_user = User.objects.get_subclass(pk=p.pk)
     return render(request, 'registry/base_user.html', {'hn_user': hn_user})
