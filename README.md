@@ -53,7 +53,13 @@ This will run few a few steps:
 
 Steps 3 and 4 can be skipped by adding the `--no-migrate` flag. 
 
-This will create a new `dist` directory containing the packaged app. Then it can be extracted anywhere. Once extracted, run:
+This will create a new `dist` directory containing the packaged app. Then it can be extracted anywhere.
+
+---
+### Installation
+---
+
+Once extracted, simply run:
 
     pip install -r requirements.txt --user
     python manage.py migrate

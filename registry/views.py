@@ -10,7 +10,7 @@ from .forms import DeleteAppForm
 from .models.user_models import Patient, User
 from .models.info_models import Appointment, PatientContact
 from django.contrib.auth.decorators import login_required
-from datetime import datetime
+from datetime import datetime, timedelta
 import dateutil.parser
 import rules
 from django.utils import timezone
@@ -177,23 +177,33 @@ def Logs():
     logs = LogEntry.objects.all()
     action_list = []
     for l in logs:
+        time = str(l.action_time)
         user_id = str(l.user)
-        object_id = str(l.object_repr)
+        object_repr = str(l.object_repr)
+        object_id = str(l.object_id)
         action_flag = int(l.action_flag)
         log_action = ""
         if action_flag == 1:
-            log_action = user_id + " has added a new " + object_id + "."
+            log_action = user_id + " added a new " + object_repr + object_id + " at " + time + "."
             action_list.append(log_action)
         if action_flag == 2:
-            log_action = user_id + " has changed their " + object_id + "."
+            log_action = user_id + " changed their " + object_repr + object_id + " at " + time + "."
             action_list.append(log_action)
         if action_flag == 3:
-            log_action = user_id + " has deleted their " + object_id + "."
+            log_action = user_id + " deleted their " + object_repr + object_id + " at " + time + "."
             action_list.append(log_action)
 
     return action_list
 
 @login_required(login_url='/login')
 def Log_actions(request):
-    return render(request, "registry/log.html", context={"action_list": Logs()})
+    fro = datetime.now() - timedelta(days=1)
+    to = datetime.now()
+
+    if 'from' in request.GET:
+        fro = dateutil.parser.parse(request.GET['from'])
+    if 'to' in request.GET:
+        to = dateutil.parser.parse(request.GET['to'])
+
+    return render(request, "registry/log.html", context={"action_list": Logs(), 'from': fro, 'to': to})
 
