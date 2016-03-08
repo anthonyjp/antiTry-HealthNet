@@ -95,8 +95,11 @@ def appt_schedule(request):
         form = AppointmentSchedulingForm(request.POST)
         if form.is_valid():
             appointment = form.save(commit=False)
-            appointment.save()
-            return redirect('registry:home')
+            list = Appointment.objects.filter(doctor__pk=appointment.doctor_id).filter(time__hour=appointment.time.hour).filter(time__day=appointment.time.day)
+            patientlist = Appointment.objects.filter(patient__pk=appointment.patient_id).filter(time__hour=appointment.time.hour).filter(time__day=appointment.time.day)
+            if not (list.exists() or patientlist.exists()):
+                appointment.save()
+                return redirect('registry:alist')
     else:
         if 'start' in request.GET:
             form = AppointmentSchedulingForm(initial={'time': dateutil.parser.parse(request.GET['start'])})
