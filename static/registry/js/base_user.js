@@ -1,21 +1,110 @@
+
+if(!registry.base.has('forms'))
+    registry.base['forms'] = {};
+
 registry.forms['user'] = (function(){
-    function disable() {
 
-        $('form').filter(':input').each(function(){
-            document.get("input").disabled = true;
+    // TODO This works for demonstration, we should move to querying the server for user verification so people can't hook in by simple javascript.
+    // TODO We can do this by enumerating permissions and checking with the server immediately before edits are made
+    /*
+        This can be done by registering a User UUID to use and then querying a specific URL via AJAX to verify user can
+        do such things. Seriously. <3 AJAX.
+     */
+    var hooked = false;
+    var userUuid = null;
+    var originals = {};
+    var changed = {};
+
+    function getUrl() {
+        return '/user/' + userUuid + '/update/';
+    }
+
+    function hookEditability(canEdit, userId) {
+        if(hooked)
+            throw new Error('Attempt to reassign editability!');
+
+        hooked = true;
+
+        var editables = $('input.editable');
+        editables.prop('readonly', true);
+
+        if(canEdit) {
+            userUuid = userId;
+            // Add click listener to make fields readable
+            editables.on('click', function () {
+                $(this).prop('readonly', false);
+            });
+
+            // Add "blur" listeners such that when focus is lost they are made readonly again
+            editables.on('blur', function() {
+                $(this).prop('readonly', true);
+            });
+
+            // When a value has changed mark it for transition.
+            editables.on('change', function() {
+                var type = $(this).data('field');
+                var value = $(this).val();
+
+                // Reset to original if desired
+                if(value === originals[type]) {
+                    if(type in changed)
+                        delete changed[type];
+
+                    return;
+                }
+
+                changed[type] = $(this).val();
+            });
+
+            // Fill in original values
+            editables.each(function() {
+               originals[$(this).data('field')] = $(this).val();
+            });
+
+            $('a.hn-tab').on('click', updateUser);
+        } else {
+            editables.addClass('no-input');
+        }
+    }
+
+    function updateUser() {
+        if(userUuid === null)
+            return;
+
+        var csrf = $('[name="csrfmiddlewaretoken"]').val();
+        $.ajax({
+            url: getUrl(),
+            type: "POST",
+            data: changed,
+            cache: false,
+            dataType: "json",
+            headers: {'X-CSRFToken': csrf},
+            success: function(resp) {
+                console.log("resp: " + resp.toString());
+            },
+            failure: function(resp) {
+                console.log('failure');
+            }
         });
-    }
 
-    function enable() {
-        document.getElementById("editable").disabled = false;
-    }
+        for (var prop in changed) {
+            if(!changed.hasOwnProperty(prop))
+                continue;
 
+            if(prop in originals)
+                originals[prop] = changed[prop];
+        }
+
+        changed = {};
+    }
 
     return {
-        'disable': disable,
-        'enable': enable
+        'hook': hookEditability,
+        'updateUser': updateUser
     };
 })();
+
+Object.preventExtensions(registry.forms.user);
 
 $(document).ready(function(){
     //  When user clicks on tab, this code will be executed
@@ -35,8 +124,9 @@ $(document).ready(function(){
         //  Show the selected tab content
         $(selected_tab).fadeIn();
 
-        registry.forms.user.disable();
         //  At the end, we add return false so that the click on the link is not executed
         return false;
     });
 });
+
+$(window).bind('beforeunload', registry.forms.user.updateUser);

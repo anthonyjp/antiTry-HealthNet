@@ -24,6 +24,16 @@ input{
   width: 35%;
 }
 
+input.editable {
+  margin: 0 0 1em 0;
+  box-sizing: border-box;
+
+  &.no-input {
+    background-color: transparent;
+    border-style: none;
+  }
+}
+
 #left{
   float: left;
   width:15%;

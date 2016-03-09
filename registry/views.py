@@ -5,6 +5,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as django_login
 from django.contrib.auth import logout
 from django.contrib.auth.models import User as DjangoUser
+from django.http import HttpResponseNotFound, HttpResponse, Http404
+
 from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm
 from .forms import DeleteAppForm
 from .models.user_models import Patient, User
@@ -13,6 +15,8 @@ from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta
 import dateutil.parser
 import rules
+import json
+
 from django.utils import timezone
 # Create your views here.
 
@@ -212,4 +216,27 @@ def Log_actions(request):
         to = dateutil.parser.parse(request.GET['to'])
 
     return render(request, "registry/log.html", context={"action_list": Logs(), 'from': fro, 'to': to})
+
+
+def updateUser(request, pk):
+    try:
+        user = User.objects.get_subclass(pk=pk)
+    except User.DoesNotExist:
+        user = None
+
+    if user and request.method == 'POST':
+        successes = []
+        failures = []
+        for key, value in request.POST.items():
+            if hasattr(user, key):
+                setattr(user, key, value)
+                successes.append(key)
+            else:
+                failures.append(key)
+
+        user.save()
+        return HttpResponse(json.dumps({'successes': successes, 'failures': failures}), content_type='application/json', status=200)
+    else:
+        return Http404('Not a Possible Action')
+
 

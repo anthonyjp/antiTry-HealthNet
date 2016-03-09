@@ -18,4 +18,5 @@ urlpatterns = [
     url(r'^appointment/view$', views.alist, name='alist'),
     url(r'^appointment/(?P<pk>[0-9]+)/delete/$', views.appt_delete, name='appt_delete'),
     url(r'^log$', views.Log_actions, name='activity_log'),
+    url(r'^user/(?P<pk>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/update/$', views.updateUser, name='user_update'),
 ]

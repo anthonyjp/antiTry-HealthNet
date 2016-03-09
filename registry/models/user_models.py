@@ -37,7 +37,10 @@ class User(models.Model):
     objects = InheritanceManager()
 
     def __str__(self):
-        return "%s %s. %s" % (self.first_name, self.middle_initial, self.last_name)
+        if self.middle_initial:
+            return "%s %s. %s" % (self.first_name, self.middle_initial, self.last_name)
+        else:
+            return "%s %s" % (self.first_name, self.last_name)
 
 
 class Doctor(User):
@@ -50,7 +53,7 @@ class AdmissionInfo(models.Model):
 
     doctors = models.ManyToManyField(Doctor)
 
-    admission_time = models.OneToOneField(to=TimeRange, on_delete=models.SET_DEFAULT, default=True)
+    admission_time = models.OneToOneField(to=TimeRange, on_delete=models.SET_NULL, null=True)
     prescriptions = models.OneToOneField(to=Dictionary, on_delete=models.PROTECT)
 
 

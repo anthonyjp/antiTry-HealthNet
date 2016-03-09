@@ -3,6 +3,7 @@
 {% load rules %}
 {% load staticfiles %}
 {% load sass_tags %}
+{% load registry_tags %}
 
 {% block title %}HealthNet | Home{% endblock %}
 
@@ -25,45 +26,41 @@
 </div>
 
 <div id="right">
-
+    {% csrf_token %}
     {% test_rule 'is_patient' hn_user as is_patient %}
     {% if is_patient %}
         <!-- Patient -->
         <ul id = "tab-links">
-            <li><a href ="#tab1" rel="tab1">Personal</a></li>
-            <li><a href ="#tab2" rel="tab2">Medical</a></li>
-            <li><a href ="#tab3" rel="tab3">Insurance</a></li>
-            <li><a href ="#tab4" rel="tab4">Admission</a></li>
-            <li><a href="{% url 'registry:alist' %}" rel="tab4">Appointments</a></li>
-            <li><a href ="#tab5" rel="tab5">Inbox</a></li>
+            <li><a href ="#tab1" rel="tab1" class="hn-tab">Personal</a></li>
+            <li><a href ="#tab2" rel="tab2" class="hn-tab">Medical</a></li>
+            <li><a href ="#tab3" rel="tab3" class="hn-tab">Insurance</a></li>
+            <li><a href ="#tab4" rel="tab4" class="hn-tab">Admission</a></li>
+            <li><a href="{% url 'registry:alist' %}" rel="tab4" class="hn-tab">Appointments</a></li>
+            <li><a href ="#tab5" rel="tab5" class="hn-tab">Inbox</a></li>
         </ul>
 
         <div id="tab-content">
             <div id="tab1" class="tab">
                 <form id="form">
-                    <label>First Name:</label><input id="editable" type="text" value="{{ hn_user.first_name }}"/><br>
-                    <label>Middle Initial:</label><input class="editable" type="text" value="{{ hn_user.middle_initial }}"/><br>
-                    <label>Last Name:</label><input class="editable" type="text" value="{{ hn_user.last_name }}"/><br>
-                    <label>Date of Birth:</label><input class="editable" type="text" value="{{ hn_user.date_of_birth }}"/><br>
-                    <label>Gender:</label><input class="editable" type="text" value="{{ hn_user.gender }}"/><br>
+                    <label>First Name:</label><input data-field="first_name" class="editable" type="text" value="{{ hn_user.first_name }}"/><br>
+                    <label>Middle Initial:</label><input data-field="middle_initial" class="editable" type="text" value="{{ hn_user.middle_initial }}"/><br>
+                    <label>Last Name:</label><input data-field="last_name" class="editable" type="text" value="{{ hn_user.last_name }}"/><br>
+                    <label>Date of Birth:</label><input data-field="date_of_birth" class="editable" type="text" value="{{ hn_user.date_of_birth }}"/><br>
+                    <label>Gender:</label><input data-field="gender" class="editable" type="text" value="{% labelify hn_user.gender 'gender' %}"/><br>
                 </form>
-                <div id="buttons">
-                    <button onclick="registry.forms.user.enable();"><a>Edit</a></button>
-                    <button><a href="registry:homeUpdated">Submit</a></button>
-                </div>
             </div>
 
             <div id="tab2" class="tab">
                 <form id="form">
-                    <label>Height:</label><input type="text" value="{{ hn_user.height }}"/><br>
-                    <label>Weight:</label><input type="text" value="{{ hn_user.weight }}"/><br>
-                    <label>Blood Type:</label><input type="text" value="{{ hn_user.blood_type }}"/><br>
+                    <label>Height:</label><input data-field="height" class="editable" type="text" value="{{ hn_user.height }}"/><br>
+                    <label>Weight:</label><input data-field="weight" class="editable" type="text" value="{{ hn_user.weight }}"/><br>
+                    <label>Blood Type:</label><input data-field="blood_type" class="editable" type="text" value="{% labelify hn_user.blood_type 'blood' %}"/><br>
                 </form>
             </div>
 
             <div id="tab3" class="tab">
                 <form id="form">
-                    <label>Insurance:</label><input type="text" value="{{ hn_user.insurance }}"/><br>
+                    <label>Insurance:</label><input data-field="insurance" class="editable" type="text" value="{{ hn_user.insurance }}"/><br>
                 </form>
             </div>
 
@@ -79,21 +76,22 @@
 
             <!-- Doctor/Nurse -->
     {% test_rule 'is_doctor' hn_user as is_doctor %}
-    {% if is_doctor %}
+    {% test_rule 'is_nurse' hn_user as is_nurse %}
+    {% if is_doctor or is_nurse %}
         <ul id = "tab-links">
-            <li><a href ="#tab1" rel="tab1">Personal</a></li>
-            <li><a href="{% url 'registry:alist' %}" rel="tab2">Appointments</a></li>
-            <li><a href ="#tab3" rel="tab3">Inbox</a></li>
+            <li><a href ="#tab1" rel="tab1" class="hn-tab">Personal</a></li>
+            <li><a href="{% url 'registry:alist' %}" rel="tab2" class="hn-tab">Appointments</a></li>
+            <li><a href ="#tab3" rel="tab3" class="hn-tab">Inbox</a></li>
         </ul>
 
         <div id="tab-content">
             <div id="tab1" class="tab">
                 <form id="form">
-                    <label>First Name:</label><input type="text" value="{{ hn_user.first_name }}"/><br>
-                    <label>Middle Initial:</label><input type="text" value="{{ hn_user.middle_initial }}"/><br>
-                    <label>Last Name:</label><input type="text" value="{{ hn_user.last_name }}"/><br>
-                    <label>Date of Birth:</label><input type="text" value="{{ hn_user.date_of_birth }}"/><br>
-                    <label>Gender:</label><input type="text" value="{{ hn_user.gender }}"/><br>
+                    <label>First Name:</label><input data-field="first_name" class="editable" type="text" value="{{ hn_user.first_name }}"/><br>
+                    <label>Middle Initial:</label><input data-field="middle_initial" class="editable" type="text" value="{{ hn_user.middle_initial }}"/><br>
+                    <label>Last Name:</label><input data-field="last_name" class="editable" type="text" value="{{ hn_user.last_name }}"/><br>
+                    <label>Date of Birth:</label><input data-field="date_of_birth" class="editable" type="text" value="{{ hn_user.date_of_birth }}"/><br>
+                    <label>Gender:</label><input data-field="gender" class="editable" type="text" value="{% labelify hn_user.gender 'gender' %}"/><br>
                 </form>
             </div>
 
@@ -107,18 +105,18 @@
     {% test_rule 'is_administrator' hn_user as is_administrator %}
     {% if is_administrator %}
         <ul id = "tab-links">
-            <li><a href ="#tab1" rel="tab1">Personal</a></li>
-            <li><a href ="#tab2" rel="tab2">Logs/Stats</a></li>
-            <li><a href ="#tab3" rel="tab3">Inbox</a></li>
+            <li><a href ="#tab1" rel="tab1" class="hn-tab">Personal</a></li>
+            <li><a href ="#tab2" rel="tab2" class="hn-tab">Logs/Stats</a></li>
+            <li><a href ="#tab3" rel="tab3" class="hn-tab">Inbox</a></li>
         </ul>
         <div id="tab-content">
             <div id="tab1" class="tab">
                 <form id="form">
-                    <label>First Name:</label><input type="text" value="{{ hn_user.first_name }}"/><br>
-                    <label>Middle Initial:</label><input type="text" value="{{ hn_user.middle_initial }}"/><br>
-                    <label>Last Name:</label><input type="text" value="{{ hn_user.last_name }}"/><br>
-                    <label>Date of Birth:</label><input type="text" value="{{ hn_user.date_of_birth }}"/><br>
-                    <label>Gender:</label><input type="text" value="{{ hn_user.gender }}"/><br>
+                    <label>First Name:</label><input data-field="first_name" class="editable" type="text" value="{{ hn_user.first_name }}"/><br>
+                    <label>Middle Initial:</label><input data-field="middle_initial" data-class="editable" type="text" value="{{ hn_user.middle_initial }}"/><br>
+                    <label>Last Name:</label><input data-field="last_name" class="editable" type="text" value="{{ hn_user.last_name }}"/><br>
+                    <label>Date of Birth:</label><input data-field="date_of_birth" class="editable" type="text" value="{{ hn_user.date_of_birth }}"/><br>
+                    <label>Gender:</label><input data-field="gender" class="editable" type="text" value="{% labelify hn_user.gender 'gender' %}"/><br>
                 </form>
             </div>
 
@@ -133,4 +131,10 @@
     {% endif %}
 </div>
 
+{% endblock %}
+
+{% block customjs %}
+    <script type="text/javascript">
+        registry.forms.user.hook(true, "{{ hn_user.pk }}");
+    </script>
 {% endblock %}

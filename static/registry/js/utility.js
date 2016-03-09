@@ -8,7 +8,7 @@ registry.utility = (function() {
             return $(this).attr('datepicker') === '';
         }).each(function() {
             new Pikaday({field: $(this)[0], format: 'MM/DD/YYYY', yearRange: [1900, moment().year()]});
-            $(this).attr('readonly', true);
+            $(this).prop('readonly', true);
         });
     }
 
@@ -17,7 +17,12 @@ registry.utility = (function() {
             return $(this).attr('timepicker') === '';
         }).each(function() {
             $(this).timepicker({
+                'useSelect': true,
                 'timeFormat': 'h:i a'
+            });
+
+            $(this).on('click', function() {
+                $(this).timepicker('show');
             });
         });
     }
