@@ -187,7 +187,6 @@ LOGGING['filters']['suppress_deprecated'] = {
 }
 LOGGING['handlers']['console']['filters'].append('suppress_deprecated')
 
-
 class SuppressDeprecated(logging.Filter):
     def filter(self, record):
         WARNINGS_TO_SUPPRESS = [
@@ -196,3 +195,59 @@ class SuppressDeprecated(logging.Filter):
         ]
         # Return false to suppress message.
         return not any([warn in record.getMessage() for warn in WARNINGS_TO_SUPPRESS])
+
+
+#I have no idea what I'm doing
+LOGGING['formatters'][
+        'activity': {
+            'format': '[%(levelname)s] %(pathname)s <%(funcName)s>[%(lineno)s] : %(message)s',
+        },
+        'debug': {
+            'format': '[%(levelname)s] %(pathname)s <%(funcName)s>[%(lineno)s] : %(message)s',
+        },]
+LOGGING['handlers'][
+        'debug': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': '/HN_Activity_LOG.txt',
+            'formatter': 'debug',
+            'backupCount': 48,
+            'when': 'H',
+        },
+        'activity': {
+            'level': 'INFO',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': '/HN_Activity_LOG.txt',
+            'formatter': 'activity',
+            'backupCount': 48,
+            'when': 'H',
+        },
+        'error': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': '/HN_Activity_LOG.txt',
+            'formatter': 'activity',
+            'backupCount': 48,
+            'when': 'H',
+        },]
+LOGGING['loggers'][
+        'app.activity': {
+            'handlers': ["activity", "error", "debug"],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ["error", "activity", "debug"],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.security': {
+            'handlers': ["error", "activity"],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'py.warnings': {
+            'handlers': ["console", "debug"],
+        },]
+
+
