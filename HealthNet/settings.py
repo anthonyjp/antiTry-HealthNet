@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '1&!+0x75m@)f+-lqdwg3(=p2n=16m0o6j+!wa)8h75+_wut3kz'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -196,58 +196,81 @@ class SuppressDeprecated(logging.Filter):
         # Return false to suppress message.
         return not any([warn in record.getMessage() for warn in WARNINGS_TO_SUPPRESS])
 
+LOG_DIR = os.path.join(BASE_DIR, 'logs')
+DEBUG_LOG = os.path.join(LOG_DIR, 'hn_debug.log')
+ACTIVITY_LOG = os.path.join(LOG_DIR, 'hn_activity.log')
+ERROR_LOG = os.path.join(LOG_DIR, 'hn_error.log')
+
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+
+if not os.path.exists(DEBUG_LOG):
+    open(DEBUG_LOG, 'w').close()
+
+if not os.path.exists(ACTIVITY_LOG):
+    open(ACTIVITY_LOG, 'w').close()
+
+if not os.path.exists(ERROR_LOG):
+    open(ERROR_LOG, 'w').close()
 
 #I have no idea what I'm doing
-LOGGING['formatters'][
-        'activity': {
-            'format': '[%(levelname)s] %(pathname)s <%(funcName)s>[%(lineno)s] : %(message)s',
-        },
-        'debug': {
-            'format': '[%(levelname)s] %(pathname)s <%(funcName)s>[%(lineno)s] : %(message)s',
-        },]
-LOGGING['handlers'][
-        'debug': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': '/HN_Activity_LOG.txt',
-            'formatter': 'debug',
-            'backupCount': 48,
-            'when': 'H',
-        },
-        'activity': {
-            'level': 'INFO',
-            'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': '/HN_Activity_LOG.txt',
-            'formatter': 'activity',
-            'backupCount': 48,
-            'when': 'H',
-        },
-        'error': {
-            'level': 'ERROR',
-            'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': '/HN_Activity_LOG.txt',
-            'formatter': 'activity',
-            'backupCount': 48,
-            'when': 'H',
-        },]
-LOGGING['loggers'][
-        'app.activity': {
-            'handlers': ["activity", "error", "debug"],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'django.request': {
-            'handlers': ["error", "activity", "debug"],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'django.security': {
-            'handlers': ["error", "activity"],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'py.warnings': {
-            'handlers': ["console", "debug"],
-        },]
+LOGGING['formatters'] = {}
+LOGGING['formatters']['activity'] = {
+    'format': '[%(levelname)s] %(pathname)s <%(funcName)s>[%(lineno)s] : %(message)s',
+}
+LOGGING['formatters']['debug'] = {
+    'format': '[%(levelname)s] %(pathname)s <%(funcName)s>[%(lineno)s] : %(message)s',
+}
 
+LOGGING['handlers']['debug'] = {
+    'level': 'DEBUG',
+    'class': 'logging.handlers.TimedRotatingFileHandler',
+    'filename': DEBUG_LOG,
+    'formatter': 'debug',
+    'backupCount': 48,
+    'when': 'H',
+    'filters': [],
+}
+LOGGING['handlers']['debug']['filters'].append('suppress_deprecated')
 
+LOGGING['handlers']['activity'] = {
+    'level': 'INFO',
+    'class': 'logging.handlers.TimedRotatingFileHandler',
+    'filename': ACTIVITY_LOG,
+    'formatter': 'activity',
+    'backupCount': 48,
+    'when': 'H',
+}
+
+LOGGING['handlers']['error'] = {
+    'level': 'ERROR',
+    'class': 'logging.handlers.TimedRotatingFileHandler',
+    'filename': ERROR_LOG,
+    'formatter': 'activity',
+    'backupCount': 48,
+    'when': 'H',
+}
+
+LOGGING['loggers']['hn.activity'] = {
+    'handlers': ["activity", "error", "debug"],
+    'level': 'INFO',
+    'propagate': True,
+}
+
+LOGGING['loggers']['hn.request'] = {
+    'handlers': ["error", "activity", "debug"],
+    'level': 'ERROR',
+    'propagate': False,
+}
+
+LOGGING['loggers']['hn.security'] = {
+    'handlers': ["error", "activity"],
+    'level': 'ERROR',
+    'propagate': False,
+}
+
+LOGGING['loggers']['py.warnings'] = {
+    'handlers': ["console", "debug"],
+}
+
+AXES_LOGGER = 'hn.security'

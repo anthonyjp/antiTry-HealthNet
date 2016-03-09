@@ -16,9 +16,15 @@ from datetime import datetime, timedelta
 import dateutil.parser
 import rules
 import json
+import logging
 
 from django.utils import timezone
 # Create your views here.
+
+activitylog = logging.getLogger('hn.activity')
+requestlog = logging.getLogger('hn.request')
+securitylog = logging.getLogger('hn.security')
+
 
 @login_required(login_url='/login')
 def appt_delete(request, pk):
@@ -135,6 +141,7 @@ def detail(request, pk):
 
 
 def index(request):
+    activitylog.info('[%s] %s', request.get_full_path(), request.user if request.user else 'Anonymous')
     return render(request,'registry/landing.html')
 
 def login(request):
@@ -146,6 +153,7 @@ def login(request):
                 django_login(request, user)
                 return redirect(to=reverse('registry:home'))
     else:
+        activitylog.info('[%s] %s', request.get_full_path(), request.user if request.user else 'Anonymous')
         form = LoginForm()
     return render(request, 'registry/login.html', {'form': form})
 
