@@ -186,17 +186,16 @@ def Logs():
         time = str(l.action_time)
         user_id = str(l.user)
         object_repr = str(l.object_repr)
-        object_id = str(l.object_id)
         action_flag = int(l.action_flag)
         log_action = ""
         if action_flag == 1:
-            log_action = user_id + " added a new " + object_repr + object_id + " at " + time + "."
+            log_action = user_id + " added a new " + object_repr + " at [" + time + "]."
             action_list.append(log_action)
         if action_flag == 2:
-            log_action = user_id + " changed their " + object_repr + object_id + " at " + time + "."
+            log_action = user_id + " changed their " + object_repr + " at [" + time + "]."
             action_list.append(log_action)
         if action_flag == 3:
-            log_action = user_id + " deleted their " + object_repr + object_id + " at " + time + "."
+            log_action = user_id + " deleted their " + object_repr + " at [" + time + "]."
             action_list.append(log_action)
 
     return action_list
