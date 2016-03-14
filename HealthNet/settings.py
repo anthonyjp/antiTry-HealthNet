@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '1&!+0x75m@)f+-lqdwg3(=p2n=16m0o6j+!wa)8h75+_wut3kz'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -135,8 +135,6 @@ X_FRAME_OPTIONS = 'DENY'
 
 if not DEBUG:
     CSRF_COOKIE_HTTPONLY = True
-
-
 
 STATICFILES_FINDERS = {
     'django.contrib.staticfiles.finders.FileSystemFinder',
