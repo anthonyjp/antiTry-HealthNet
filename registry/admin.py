@@ -21,6 +21,7 @@ admin.site.register(PatientContact)
 admin.site.register(Contact)
 admin.site.register(Hospital)
 admin.site.register(Drug)
+admin.site.register(Prescription)
 
 admin.site.unregister(DjangoUser)
 

@@ -78,10 +78,7 @@
 					End means ending time of event.
 					allDay means if events is for entire day or not.
 				*/
-				select: function(start, end, allDay)
-				{
-                    window.location.href = "{% url 'registry:appt_create' %}?next={% url 'registry:calendar' %}&start=" + start.toISOString();
-				},
+
 				/*
 					editable: true allow user to edit events.
 				*/
@@ -99,7 +96,12 @@
                             allDay: false
                         }{% if not forloop.last %},{% endif %}
                     {% endfor %}
-				]
+				],
+
+                select: function(start, end, allDay)
+				{
+                    window.location.href = "{% url 'registry:appt_create' %}?next={% url 'registry:calendar' %}&start=" + start.toISOString();
+				}
 			});
 
 		});
