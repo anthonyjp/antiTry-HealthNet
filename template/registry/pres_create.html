@@ -1,0 +1,36 @@
+{% extends 'registry/base_auth.html' %}
+{% load static %}
+{% load sass_tags %}
+{% load crispy_forms_tags %}
+
+{% block title %}HealthNet | Prescription{% endblock %}
+{% block inner-title %}Prescription Creation{% endblock %}
+{% block set-active %}__NONE__{% endblock %}
+
+{% block cssimport %}
+    <link rel="stylesheet" href="{% static 'pikaday/css/pikaday.css' %}"/>
+    <link rel="stylesheet" href="{% static 'jt.timepicker/jquery.timepicker.css' %}"/>
+    <link href="{% static 'fullcalendar/dist/fullcalendar.min.css' %}" rel="stylesheet" />
+	<link href="{% static 'fullcalendar/dist/fullcalendar.print.css' %}" rel="stylesheet" media="print" />
+{% endblock %}
+
+{% block jsimport %}
+    <script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'pikaday/pikaday.js' %}"></script>
+    <script type="text/javascript" src="{% static 'pikaday/plugins/pikaday.jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'jt.timepicker/jquery.timepicker.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'registry/js/measurements.js' %}"></script>
+    <script type="text/javascript" src="{% static 'registry/js/utility.js' %}"></script>
+    <script type="text/javascript" src="{% static 'fullcalendar/dist/fullcalendar.min.js' %}"></script>
+{% endblock %}
+
+{% block inner-content %}
+    {% crispy form form.helper %}
+{% endblock %}
+
+{% block customjs %}
+    <script type="text/javascript">
+        registry.utility.hookDatepicker();
+        registry.utility.hookTimepicker();
+    </script>
+{% endblock %}
