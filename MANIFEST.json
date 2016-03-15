@@ -15,5 +15,13 @@
       "static/": "**/*.*",
       "template/": "**/*.*"
     }
+  },
+  "EXCLUDES": {
+    "files": [
+      "**/tests.py"
+    ],
+    "dirs": [
+
+    ]
   }
 }

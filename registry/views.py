@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.shortcuts import redirect, get_object_or_404
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as django_login
 from django.contrib.auth import logout
@@ -45,7 +45,7 @@ def pres_create(request):
 
 
 
-@login_required(login_url='/login')
+@login_required(login_url=reverse_lazy('registry:login'))
 def appt_delete(request, pk):
     delete = get_object_or_404(Appointment, id=pk)
     if request.method == 'POST':
@@ -61,15 +61,15 @@ def appt_delete(request, pk):
     return render(request, 'registry/appt_delete.html', template_vars)
 
 
-@login_required(login_url='/login')
+@login_required(login_url=reverse_lazy('registry:login'))
 def alist(request):
     q = request.user.hn_user
     p = User.objects.get_subclass(pk=q.pk)
     current_day = timezone.now().day
     current_month = timezone.now().month
-    if (rules.test_rule('is_patient',p)):
+    if rules.test_rule('is_patient',p):
         appointments = Appointment.objects.filter(patient__pk=p.pk, time__month=current_month).order_by('time')
-    elif (rules.test_rule('is_doctor',p)):
+    elif rules.test_rule('is_doctor',p):
         appointments = Appointment.objects.filter(doctor__pk=p.pk, time__month=current_month).order_by('time')
     else:
         appointments = Appointment.objects.filter(location__pk=p.hospital.pk, time__day=current_day).order_by('time')
@@ -105,6 +105,8 @@ def register(request):
                 contact.contact_user = user
 
             contact.save()
+            patient.contact_set.add(contact)
+            patient.save()
 
             return redirect('registry:index')
     else:
@@ -117,7 +119,7 @@ def appt_calendar(request):
     return render(request, 'registry/calendar.html', {'appointments': hn_user.appointment_set.all()})
 
 
-@login_required(login_url='/login')
+@login_required(login_url=reverse_lazy('registry:login'))
 def appt_schedule(request):
     #next is where it goes if you cancel
     next = None
@@ -141,7 +143,8 @@ def appt_schedule(request):
 
     return render(request, 'registry/appointment.html', {'form': form, 'next_url': next})
 
-@login_required(login_url='/login')
+
+@login_required(login_url=reverse_lazy('registry:login'))
 def appt_edit(request, pk):
     appt = get_object_or_404(Appointment, pk=pk)
     if request.method == "POST":
@@ -154,15 +157,11 @@ def appt_edit(request, pk):
         form = AppointmentSchedulingForm(instance=appt)
     return render(request, 'registry/edit_appointment.html', {'form': form})
 
-@login_required(login_url='/login')
-def detail(request, pk):
-    patient = get_object_or_404(Patient, pk=pk)
-    return render(request, 'registry/patient.html', {'patient': patient})
-
 
 def index(request):
-    activitylog.info('[%s] %s', request.get_full_path(), request.user if request.user else 'Anonymous')
+    activitylog.info('[%s] %s', request.get_full_path(), str(request.user) if request.user.is_authenticated() else 'Anonymous')
     return render(request,'registry/landing.html')
+
 
 def login(request):
     if request.method == "POST":
@@ -173,31 +172,31 @@ def login(request):
                 django_login(request, user)
                 return redirect(to=reverse('registry:home'))
     else:
-        activitylog.info('[%s] %s', request.get_full_path(), request.user if request.user else 'Anonymous')
+        activitylog.info('[%s] %s', request.get_full_path(), str(request.user) if request.user.is_authenticated() else 'Anonymous')
         form = LoginForm()
     return render(request, 'registry/login.html', {'form': form})
 
-@login_required(login_url='/login')
+
+@login_required(login_url=reverse_lazy('registry:login'))
 def home(request):
     p = request.user.hn_user
     hn_user = User.objects.get_subclass(pk=p.pk)
     return render(request, 'registry/base_user.html', {'hn_user': hn_user})
 
-@login_required(login_url='/login')
-def homeUpdated(request, form):
+
+@login_required(login_url=reverse_lazy('registry:login'))
+def home_updated(request, form):
     p = request.user.hn_user
     hn_user = User.objects.get_subclass(pk=p.pk)
     return render(request, 'registry/base_user.html', {'hn_user': hn_user})
 
-@login_required(login_url='/login')
-def doc_nurse(request):
-    return render(request, 'registry/doc_nurse.html')
 
-@login_required(login_url='/login')
+@login_required(login_url=reverse_lazy('registry:login'))
 def admins (request):
     return render(request, 'registry/admin.html')
 
-@login_required(login_url='/login')
+
+@login_required(login_url=reverse_lazy('registry:login'))
 def sign_out(request):
     if request.user:
         logout(request)
@@ -232,7 +231,7 @@ def Logs():
 
     return action_list
 
-@login_required(login_url='/login')
+@login_required(login_url=reverse_lazy('registry:login'))
 def Log_actions(request):
     fro = datetime.now() - timedelta(days=1)
     to = datetime.now()
@@ -245,7 +244,16 @@ def Log_actions(request):
     return render(request, "registry/log.html", context={"action_list": Logs(), 'from': fro, 'to': to})
 
 
-def updateUser(request, pk):
+@login_required(login_url=reverse_lazy('registry:login'))
+def view_user(request, pk):
+    owner = User.objects.get_subclass(pk=pk)
+    visitor = User.objects.get_subclass(pk=request.user.hn_user.pk)
+
+    return render(request, "registry/base_user.html", context={"hn_user": owner, "hn_visitor": visitor})
+
+
+@login_required(login_url=reverse_lazy('registry:login'))
+def update_user(request, pk):
     try:
         user = User.objects.get_subclass(pk=pk)
     except User.DoesNotExist:

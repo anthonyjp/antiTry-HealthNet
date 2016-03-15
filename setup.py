@@ -46,6 +46,7 @@ def main():
         call(['python', 'manage.py', 'makemigrations'])
         call(['python', 'manage.py', 'migrate'])
 
+    exclusion = manifest['EXCLUDES']
     manifest = manifest['INCLUDES']
 
     with zipfile.ZipFile(zip_filename, 'w') as z:
@@ -53,7 +54,11 @@ def main():
             z.write(file)
         for dir in manifest['dirs']:
             path = pathlib.Path(dir)
-            for p in path.glob(manifest['dirs'][dir]):
+            positives = path.glob(manifest['dirs'][dir])
+            for antiglob in exclusion['files']:
+                for p in path.glob(antiglob):
+                    positives = [x for x in positives if x != p]    # Very inefficient
+            for p in positives:
                 z.write(str(p))
 
     print("MAKE SURE TO SET DEBUG BACK TO TRUE FOR DEBUGGING!")
