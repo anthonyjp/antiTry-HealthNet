@@ -7,7 +7,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.models import User as DjangoUser
 from django.http import HttpResponseNotFound, HttpResponse, Http404
 
-from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm
+from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm, PrescriptionCreation
 from .forms import DeleteAppForm
 from .models.user_models import Patient, User
 from .models.info_models import Appointment, PatientContact
@@ -24,6 +24,25 @@ from django.utils import timezone
 activitylog = logging.getLogger('hn.activity')
 requestlog = logging.getLogger('hn.request')
 securitylog = logging.getLogger('hn.security')
+
+@login_required(login_url='/login')
+def pres_create(request):
+    #next is where it goes if you cancel
+    next = None
+    if request.method == "POST":
+        form = PrescriptionCreation(request.POST)
+        if form.is_valid():
+            pres = form.save(commit=False)
+            pres.save()
+            return redirect('registry:pres_create')
+    else:
+        form = PrescriptionCreation()
+
+        if 'next' in request.GET:
+            next = request.GET['next']
+
+    return render(request, 'registry/pres_create.html', {'form': form,  'next_url': next})
+
 
 
 @login_required(login_url='/login')
@@ -92,7 +111,7 @@ def register(request):
         form = PatientRegisterForm()
     return render(request, 'registry/new.html', {'form': form})
 
-
+@login_required(login_url='/login')
 def appt_calendar(request):
     hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     return render(request, 'registry/calendar.html', {'appointments': hn_user.appointment_set.all()})
@@ -100,6 +119,7 @@ def appt_calendar(request):
 
 @login_required(login_url='/login')
 def appt_schedule(request):
+    #next is where it goes if you cancel
     next = None
     if request.method == "POST":
         form = AppointmentSchedulingForm(request.POST)
@@ -109,7 +129,7 @@ def appt_schedule(request):
             patientlist = Appointment.objects.filter(patient__pk=appointment.patient_id).filter(time__hour=appointment.time.hour).filter(time__day=appointment.time.day)
             if not (list.exists() or patientlist.exists()):
                 appointment.save()
-                return redirect('registry:alist')
+                return redirect('registry:calendar')
     else:
         if 'start' in request.GET:
             form = AppointmentSchedulingForm(initial={'time': dateutil.parser.parse(request.GET['start'])})
@@ -129,7 +149,7 @@ def appt_edit(request, pk):
         if form.is_valid():
             appointment = form.save(commit=False)
             appointment.save()
-            return redirect('registry:alist')
+            return redirect('registry:calendar')
     else:
         form = AppointmentSchedulingForm(instance=appt)
     return render(request, 'registry/edit_appointment.html', {'form': form})
