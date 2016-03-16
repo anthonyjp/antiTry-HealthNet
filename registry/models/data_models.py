@@ -37,12 +37,13 @@ class Hospital(models.Model):
     def __str__(self):
         return self.name
 
-
 class Drug(models.Model):
     name = models.CharField(max_length=255)
+    #The company name, can have multiple
     providers = SeparatedValuesField()
+    #Multiple side effects separated by commas
     side_effects = SeparatedValuesField()
-    msdsLink = models.CharField(max_length=512)
+    #msdsLink = models.CharField(max_length=512)
 
     def __str__(self):
         return self.name

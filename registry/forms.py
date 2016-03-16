@@ -149,7 +149,7 @@ class HospitalRegisterForm(models.ModelForm):
 class AppointmentSchedulingForm(models.ModelForm):
     model = Appointment
 
-    time = DateTimeMultiField( )
+    time = DateTimeMultiField()
 
     def __init__(self, *args, **kwargs):
         super( AppointmentSchedulingForm, self ).__init__( *args, **kwargs )
@@ -193,6 +193,9 @@ class DeleteAppForm(forms.ModelForm):
 class PrescriptionCreation(forms.ModelForm):
     model = Prescription
 
+    start_time = DateTimeMultiField()
+    end_time = DateTimeMultiField()
+
     def __init__(self, *args, **kwargs):
         super(PrescriptionCreation, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -210,36 +213,14 @@ class PrescriptionCreation(forms.ModelForm):
                      'count',
                      'amount',
                      'refills',
-                     'time_range',
-                     ),
-            FormActions(
-                Submit( 'submit', 'Submit' ),
-                HTML(
-                    '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}{% url "registry:pre_create" %}{% endif %}>Cancel</a>' )
-            )
-        )
-
-    class Meta:
-        model = Prescription
-        fields = '__all__'
-
-
-class TimeRangeCreation(forms.ModelForm):
-    model = TimeRange
-
-    def __init__(self, *args, **kwargs):
-        super(TimeRangeCreation, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_class = 'form-horizontal hn-form prescription'
-        self.helper.form_method = 'POST'
-        self.helper.form_action = reverse_lazy('registry:pre_create')
-        self.helper.label_class = 'col-lg-2'
-        self.helper.field_class = 'col-lg-8'
-
-        self.helper.layout = Layout(
-            Fieldset('Time Range Creation',
-                     'start_time',
-                     'end_time',
+                     Div(
+                          Div('start_time', css_class='col-lg-3'),
+                          css_class='row',
+                      ),
+                     Div(
+                          Div('end_time', css_class='col-lg-3'),
+                          css_class='row',
+                      ),
                      ),
             FormActions(
                 Submit('submit', 'Submit'),
@@ -248,8 +229,9 @@ class TimeRangeCreation(forms.ModelForm):
             )
         )
 
-        #self.fields['start_time'].widget.attrs['datepicker'] = True
-        self.fields['end_time'].widget.attrs['datepicker'] = True
+        self.fields['start_time'].widget.attrs['timepicker'] = True
+        self.fields['end_time'].widget.attrs['timepicker'] = True
+
     class Meta:
-        model = TimeRange
-        fields = '__all__'
+        model = Prescription
+        fields = 'drug', 'patient', 'doctor', 'count', 'amount', 'refills'

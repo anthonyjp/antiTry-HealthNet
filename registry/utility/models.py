@@ -9,8 +9,8 @@ class TimeRange(models.Model):
     start_time = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField(null=True)
 
-    def extend(self, hours):
-        self.end_time += datetime.timedelta(hours=hours)
+    def extend(self, days):
+        self.end_time += datetime.timedelta(days=days)
         self.save()
 
     def duration(self):
@@ -22,6 +22,9 @@ class TimeRange(models.Model):
     def in_range(self, dt):
         assert(isinstance(dt, datetime.datetime))
         return self.start_time <= dt <= self.end_time
+
+    def __str__(self):
+        return (str(self.end_time))
 
 class Dictionary(models.Model):
     """

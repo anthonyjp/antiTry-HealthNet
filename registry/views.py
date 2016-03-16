@@ -11,6 +11,7 @@ from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm, Pr
 from .forms import DeleteAppForm
 from .models.user_models import Patient, User
 from .models.info_models import Appointment, PatientContact
+from .utility.models import TimeRange
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta
 import dateutil.parser
@@ -33,8 +34,14 @@ def pres_create(request):
         form = PrescriptionCreation(request.POST)
         if form.is_valid():
             pres = form.save(commit=False)
+            timeRange = TimeRange(
+                start_time=form.cleaned_data['start_time'],
+                end_time=form.cleaned_data['end_time']
+            )
+            timeRange.save()
+            pres.time_range = timeRange
             pres.save()
-            return redirect('registry:pres_create')
+            return redirect('registry:pre_create')
     else:
         form = PrescriptionCreation()
 
