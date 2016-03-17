@@ -26,7 +26,6 @@ class User(models.Model):
     middle_initial = models.CharField(max_length=1, blank=True, default='')
     last_name = models.CharField(max_length=255, default='Doe')
     date_of_birth = models.DateField()
-
     cur_hospital = models.ForeignKey(to=Hospital, related_name='%(app_label)s_%(class)s_cur_hospital',
                                      on_delete=models.SET_NULL, null=True)
 
@@ -92,7 +91,8 @@ class Prescription(models.Model):
     time_range = models.OneToOneField(to=TimeRange, on_delete=models.PROTECT)
 
     def __str__(self):
-        return "%s at %d dosage for %s" % (str(self.drug), self.amount, str(self.patient))
+        return "%s at %d dosage for %s prescribed by %s" % (str(self.drug), self.amount, str(self.patient),
+                                                            str(self.doctor))
 
     def is_valid(self):
         return not self.time_range.is_elapsed()

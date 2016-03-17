@@ -66,6 +66,7 @@ class PatientRegisterForm(models.ModelForm):
                       ),
                       'insurance',
                       'pref_hospital',
+                      'provider',
                       Div(
                           Div( 'security_question', css_class='col-lg-4' ),
                           Div( 'security_answer', css_class='col-md-4' ),
@@ -81,7 +82,7 @@ class PatientRegisterForm(models.ModelForm):
                           css_class='row',
                       ),
                       Div(
-                          Div( PrependedText( 'contact_primary', 'contact' ), css_class='col-lg-5' ),
+                          Div( PrependedText('contact_primary', 'contact' ), css_class='col-lg-5' ),
                           Div( 'contact_secondary', css_class='col-lg-5' ),
                           css_class='row'
                       )
@@ -110,7 +111,7 @@ class PatientRegisterForm(models.ModelForm):
         model = Patient
         fields = ('first_name', 'middle_initial', 'last_name', 'date_of_birth', 'gender',
                   'email', 'password', 'height', 'weight', 'blood_type',
-                  'insurance', 'pref_hospital', 'security_question', 'security_answer')
+                  'insurance', 'pref_hospital', 'provider', 'security_question', 'security_answer')
         widgets = {
             'password': widgets.PasswordInput
         }
@@ -210,7 +211,7 @@ class PrescriptionCreation(forms.ModelForm):
             Fieldset('Prescription Creation',
                      'drug',
                      'patient',
-                     'doctor',
+                     #'doctor',
                      'count',
                      'amount',
                      'refills',
@@ -235,7 +236,8 @@ class PrescriptionCreation(forms.ModelForm):
 
     class Meta:
         model = Prescription
-        fields = 'drug', 'patient', 'doctor', 'count', 'amount', 'refills'
+        fields = 'drug', 'patient', 'count', 'amount', 'refills'
+        exclude = ['doctor']
 
 class MessageCreation(forms.ModelForm):
     model = Message

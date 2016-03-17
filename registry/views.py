@@ -28,32 +28,40 @@ securitylog = logging.getLogger('hn.security')
 
 @login_required(login_url='/login')
 def pres_create(request):
+    q = request.user.hn_user
+    p = User.objects.get_subclass(pk=q.pk)
     #next is where it goes if you cancel
     next = None
-    if request.method == "POST":
-        form = PrescriptionCreation(request.POST)
-        if form.is_valid():
-            pres = form.save(commit=False)
-            timeRange = TimeRange(
-                start_time=form.cleaned_data['start_time'],
-                end_time=form.cleaned_data['end_time']
-            )
-            timeRange.save()
-            pres.time_range = timeRange
-            pres.save()
-            return redirect('registry:pre_create')
-    else:
-        form = PrescriptionCreation()
+    if rules.test_rule('is_doctor',p):
+        if request.method == "POST":
+            form = PrescriptionCreation(request.POST)
+            if form.is_valid():
+                pres = form.save(commit=False)
+                timeRange = TimeRange(
+                    start_time=form.cleaned_data['start_time'],
+                    end_time=form.cleaned_data['end_time']
+                )
+                timeRange.save()
+                pres.time_range = timeRange
+                pres.doctor = p
+                pres.save()
+                return redirect('registry:pre_create')
+        else:
+            form = PrescriptionCreation()
 
-        if 'next' in request.GET:
-            next = request.GET['next']
-
-    return render(request, 'registry/pres_create.html', {'form': form,  'next_url': next})
+            if 'next' in request.GET:
+                next = request.GET['next']
+        return render(request, 'registry/pres_create.html', {'form': form,  'next_url': next})
+    return HttpResponseNotFound('<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
 
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def appt_delete(request, pk):
+    q = request.user.hn_user
+    p = User.objects.get_subclass(pk=q.pk)
+    if rules.test_rule('is_nurse',p):
+        return HttpResponseNotFound('<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     delete = get_object_or_404(Appointment, id=pk)
     if request.method == 'POST':
         form = DeleteAppForm(request.POST, instance=delete)
