@@ -11,6 +11,7 @@ from crispy_forms.bootstrap import *
 from .models.user_models import Patient, Prescription
 from .models.data_models import Hospital
 from .models.info_models import Appointment
+from .models.message_models import Message,Inbox
 
 from .utility.widgets import HeightField, WeightField, DateTimeMultiField
 from .utility.options import BloodType, Relationship
@@ -235,3 +236,39 @@ class PrescriptionCreation(forms.ModelForm):
     class Meta:
         model = Prescription
         fields = 'drug', 'patient', 'doctor', 'count', 'amount', 'refills'
+
+class MessageCreation(forms.ModelForm):
+    model = Message
+
+    to = fields.EmailField()
+
+    def __init__(self, *args, **kwargs):
+        super(MessageCreation,self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal hn-form messsage'
+        self.helper.form_method = 'POST'
+        self.helper.form_action = reverse_lazy('')
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+
+        self.helper.layout = Layout(
+            Fieldset('New Message',
+                     'to',
+                     'content',
+                     Div(
+                         Div('to', css_class='col-lg-3'),
+                         css_class= 'row',
+                     ),
+                     Div(
+                         Div('content', css_class='col-lg-3'),
+                         css_class= 'row',
+                     ),
+            ),
+            FormActions(
+                Submit('submit','Submit'),
+                HTML('<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}{% url "registry:home" %}{% endif %}>Cancel</a>')
+            )
+        )
+    class Meta:
+        model = Message
+        fields = 'receiver', 'sender', 'content'

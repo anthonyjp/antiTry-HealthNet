@@ -166,8 +166,12 @@ def appt_edit(request, pk):
 
 
 def index(request):
-    activitylog.info('[%s] %s', request.get_full_path(), str(request.user) if request.user.is_authenticated() else 'Anonymous')
-    return render(request,'registry/landing.html')
+    if request.user.is_authenticated():
+        activitylog.info('[%s] %s', request.get_full_path(), str(request.user) if request.user.is_authenticated() else 'Anonymous')
+        return redirect('registry:home')
+    else:
+        activitylog.info('[%s] %s', request.get_full_path(), str(request.user) if request.user.is_authenticated() else 'Anonymous')
+        return render(request,'registry/landing.html')
 
 
 def login(request):
@@ -188,7 +192,12 @@ def login(request):
 def home(request):
     p = request.user.hn_user
     hn_user = User.objects.get_subclass(pk=p.pk)
-    return render(request, 'registry/base_user.html', {'hn_user': hn_user})
+    if (rules.test_rule('is_patient',hn_user)):
+        return render(request, 'registry/user_patient.html', {'hn_user': hn_user})
+    elif (rules.test_rule('is_doctor',hn_user)):
+        return render(request, 'registry/user_doctor.html', {'hn_user': hn_user})
+    else:
+        return render(request, 'registry/user_admin.html', {'hn_user': hn_user})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -197,10 +206,6 @@ def home_updated(request, form):
     hn_user = User.objects.get_subclass(pk=p.pk)
     return render(request, 'registry/base_user.html', {'hn_user': hn_user})
 
-
-@login_required(login_url=reverse_lazy('registry:login'))
-def admins (request):
-    return render(request, 'registry/admin.html')
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -280,5 +285,4 @@ def update_user(request, pk):
         return HttpResponse(json.dumps({'successes': successes, 'failures': failures}), content_type='application/json', status=200)
     else:
         return Http404('Not a Possible Action')
-
 

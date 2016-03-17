@@ -125,7 +125,7 @@ $(document).ready(function(){
         $(selected_tab).fadeIn();
 
         //  At the end, we add return false so that the click on the link is not executed
-        return false;
+        return true;
     });
 });
 
