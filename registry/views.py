@@ -9,6 +9,7 @@ from django.http import HttpResponseNotFound, HttpResponse, Http404
 
 from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm, PrescriptionCreation
 from .forms import DeleteAppForm
+from .forms import MessageCreation
 from .models.user_models import Patient, User
 from .models.info_models import Appointment, PatientContact
 from .utility.models import TimeRange
@@ -198,14 +199,16 @@ def login(request):
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def home(request):
+    if request.method == "POST":
+        form = MessageCreation(request.POST)
     p = request.user.hn_user
     hn_user = User.objects.get_subclass(pk=p.pk)
-    if (rules.test_rule('is_patient',hn_user)):
-        return render(request, 'registry/user_patient.html', {'hn_user': hn_user})
-    elif (rules.test_rule('is_doctor',hn_user)):
-        return render(request, 'registry/user_doctor.html', {'hn_user': hn_user})
+    if rules.test_rule('is_patient', hn_user):
+        return render(request, 'registry/user_patient.html', {'hn_user': hn_user}, {'form': form})
+    elif rules.test_rule('is_doctor', hn_user):
+        return render(request, 'registry/user_doctor.html', {'hn_user': hn_user}, {'form': form})
     else:
-        return render(request, 'registry/user_admin.html', {'hn_user': hn_user})
+        return render(request, 'registry/user_admin.html', {'hn_user': hn_user}, {'form': form})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))

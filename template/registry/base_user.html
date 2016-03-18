@@ -1,9 +1,10 @@
-{% extends 'registry/base.html' %}
+{% extends 'registry/base_auth.html' %}
 
 {% load rules %}
 {% load staticfiles %}
 {% load sass_tags %}
 {% load registry_tags %}
+{% load crispy_forms_tags %}
 
 {% block title %}HealthNet | Home{% endblock %}
 
@@ -45,7 +46,9 @@
             </div>
             {% block userContent %}{% endblock %}
             <div id="tab6" class="tab">
-                <p>Inbox will go here!</p>
+                {% block inner-content %}
+                    {% crispy form form.helper %}
+                {% endblock %}
             </div>
         </div>
 </div>

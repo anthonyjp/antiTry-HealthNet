@@ -17,6 +17,7 @@ from .utility.widgets import HeightField, WeightField, DateTimeMultiField
 from .utility.options import BloodType, Relationship
 from .utility.models import TimeRange
 
+
 class PatientRegisterForm(models.ModelForm):
     model = Patient
     first_name = fields.CharField(max_length=25)
@@ -201,7 +202,7 @@ class PrescriptionCreation(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PrescriptionCreation, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
+        self.helper = FormHelper( )
         self.helper.form_class = 'form-horizontal hn-form prescription'
         self.helper.form_method = 'POST'
         self.helper.form_action = reverse_lazy('registry:pre_create')
@@ -212,6 +213,7 @@ class PrescriptionCreation(forms.ModelForm):
             Fieldset('Prescription Creation',
                      'drug',
                      'patient',
+                     'doctor',
                      'count',
                      'amount',
                      'refills',
@@ -237,7 +239,7 @@ class PrescriptionCreation(forms.ModelForm):
 
     class Meta:
         model = Prescription
-        fields = 'drug', 'patient', 'count', 'amount', 'refills'
+        fields = 'drug', 'patient', 'doctor', 'count', 'amount', 'refills'
         exclude = ['doctor']
 
 class MessageCreation(forms.ModelForm):
@@ -247,7 +249,7 @@ class MessageCreation(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(MessageCreation,self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
+        self.helper = FormHelper( )
         self.helper.form_class = 'form-horizontal hn-form messsage'
         self.helper.form_method = 'POST'
         self.helper.form_action = reverse_lazy('')
@@ -272,6 +274,7 @@ class MessageCreation(forms.ModelForm):
                 HTML('<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}{% url "registry:home" %}{% endif %}>Cancel</a>')
             )
         )
+
     class Meta:
         model = Message
         fields = 'receiver', 'sender', 'content'
