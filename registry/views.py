@@ -1,9 +1,8 @@
-from django.shortcuts import render
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, render
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as django_login
-from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User as DjangoUser
 from django.http import HttpResponseNotFound, HttpResponse, Http404
 
@@ -13,8 +12,8 @@ from .forms import MessageCreation
 from .models.user_models import Patient, User
 from .models.info_models import Appointment, PatientContact
 from .utility.models import TimeRange
-from django.contrib.auth.decorators import login_required
 from datetime import datetime, timedelta
+
 import dateutil.parser
 import rules
 import json
@@ -68,30 +67,13 @@ def appt_delete(request, pk):
         form = DeleteAppForm(request.POST, instance=delete)
         if form.is_valid():
             delete.delete()
-            return redirect('registry:alist')
+            return redirect('registry:calendar')
 
     else:
         form = DeleteAppForm(instance=delete)
 
     template_vars = {'form': form}
     return render(request, 'registry/appt_delete.html', template_vars)
-
-
-@login_required(login_url=reverse_lazy('registry:login'))
-def alist(request):
-    q = request.user.hn_user
-    p = User.objects.get_subclass(pk=q.pk)
-    current_day = timezone.now().day
-    current_month = timezone.now().month
-    if rules.test_rule('is_patient',p):
-        appointments = Appointment.objects.filter(patient__pk=p.pk, time__month=current_month).order_by('time')
-    elif rules.test_rule('is_doctor',p):
-        appointments = Appointment.objects.filter(doctor__pk=p.pk, time__month=current_month).order_by('time')
-    else:
-        appointments = Appointment.objects.filter(location__pk=p.hospital.pk, time__day=current_day).order_by('time')
-        week = Appointment.objects.filter(location__pk=p.hospital.pk, time__day__range=[current_day, current_day+7]).order_by('time')
-        return render(request, 'registry/alistnd.html',  {'appointments': appointments, 'hn_user': p, 'week': week})
-    return render(request, 'registry/alist.html',  {'appointments': appointments, 'hn_user': p,})
 
 
 def register(request):
@@ -157,7 +139,7 @@ def appt_schedule(request):
         if 'next' in request.GET:
             next = request.GET['next']
 
-    return render(request, 'registry/appointment.html', {'form': form, 'next_url': next})
+    return render(request, 'registry/apot_create.html', {'form': form, 'next_url': next})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -171,7 +153,7 @@ def appt_edit(request, pk):
             return redirect('registry:calendar')
     else:
         form = AppointmentSchedulingForm(instance=appt)
-    return render(request, 'registry/edit_appointment.html', {'form': form})
+    return render(request, 'registry/appt_edit.html', {'form': form})
 
 
 def index(request):

@@ -1,5 +1,6 @@
 from django_enumfield import enum
 
+# Insurance Choices
 INSURANCE_CHOICES = (
     ('Self Insured', 'Self Insured'),
     ('Blue Cross Blue Shield', 'Blue Cross Blue Shield'),
@@ -8,6 +9,7 @@ INSURANCE_CHOICES = (
 )
 
 
+# Emergency Contact Relationships
 class Relationship(enum.Enum):
     SPOUSE = 0
     MOTHER = 1
@@ -19,6 +21,7 @@ class Relationship(enum.Enum):
     OTHER = 7
 
 
+# Blood Type
 class BloodType(enum.Enum):
     A = 0
     B = 1
@@ -35,6 +38,8 @@ class BloodType(enum.Enum):
     }
 
 
+
+# Gender Choices
 class Gender(enum.Enum):
     MALE = 0
     FEMALE = 1
@@ -45,6 +50,7 @@ class Gender(enum.Enum):
     }
 
 
+# Security Questions for security purposes
 class SecurityQuestion(enum.Enum):
     Q1 = 0
 
@@ -53,6 +59,7 @@ class SecurityQuestion(enum.Enum):
     }
 
 
+# Unit terms for which system of unit measurement
 class Units(enum.Enum):
     CUSTOMARY = 0
     METRIC = 1
