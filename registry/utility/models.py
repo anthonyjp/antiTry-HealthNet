@@ -5,7 +5,10 @@ from django.utils import timezone
 
 
 class TimeRange(models.Model):
-
+    """
+    A time range used within the Prescription model.
+    The end date can be extended.
+    """
     start_time = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField(null=True)
 
@@ -24,7 +27,7 @@ class TimeRange(models.Model):
         return self.start_time <= dt <= self.end_time
 
     def __str__(self):
-        return (str(self.end_time))
+        return str(self.end_time)
 
 class Dictionary(models.Model):
     """

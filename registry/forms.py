@@ -4,7 +4,6 @@ from django.core.urlresolvers import reverse_lazy
 from localflavor.us.forms import USPhoneNumberField
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout
 from crispy_forms.layout import *
 from crispy_forms.bootstrap import *
 
@@ -18,6 +17,11 @@ from .utility.options import BloodType, Relationship
 from .utility.models import TimeRange
 
 class PatientRegisterForm(models.ModelForm):
+    """
+    Name: PatientRegisterForm
+
+    It's a patient registration form based on the Patient Model.
+    """
     model = Patient
     first_name = fields.CharField(max_length=25)
     last_name = fields.CharField(max_length=30)
@@ -149,8 +153,13 @@ class HospitalRegisterForm(models.ModelForm):
 
 
 class AppointmentSchedulingForm(models.ModelForm):
-    model = Appointment
+    """
+    Name:   AppointmentSchedulingForm
 
+    It's a form for appointment scheduling based on the Appointment model
+    """
+
+    model = Appointment
     time = DateTimeMultiField()
 
     def __init__(self, *args, **kwargs):
@@ -186,14 +195,67 @@ class AppointmentSchedulingForm(models.ModelForm):
         model = Appointment
         fields = ('time', 'doctor', 'patient', 'location')
 
+class AppointmentEditForm(models.ModelForm):
+    """
+    Name:   AppointmentSchedulingForm
+
+    It's a form for appointment scheduling based on the Appointment model
+    """
+
+    model = Appointment
+    time = DateTimeMultiField()
+
+    def __init__(self, *args, **kwargs):
+        super(AppointmentEditForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal hn-form appointment'
+        self.helper.form_method = 'POST'
+        self.helper.form_action = reverse_lazy('registry:appt_create')
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+
+        self.helper.layout = Layout(
+            Fieldset('Appointment Editting',
+                    Div(
+                          Div('time', css_class='col-lg-3'),
+                          css_class='row',
+                    ),
+                    'doctor',
+                    'location',
+                    ),
+            FormActions(
+                Submit('submit', 'Submit'),
+                HTML(
+                    '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
+                    '{% url "registry:calendar" %}{% endif %}>Cancel</a>')
+            )
+        )
+
+        self.fields['time'].widget.attrs['timepicker'] = True
+
+    class Meta:
+        model = Appointment
+        fields = ('time', 'doctor', 'location')
+        exclude = ['patient']
+
 
 class DeleteAppForm(forms.ModelForm):
+    """
+    Name: DeleteAppForm
+
+    Deletion of Appointment form
+    """
     class Meta:
         model = Appointment
         fields = []
 
 
 class PrescriptionCreation(forms.ModelForm):
+    """
+    Name: PrescriptionCreation
+
+    Prescription Creation form based on the model Prescription
+    """
     model = Prescription
 
     start_time = DateTimeMultiField()
@@ -227,8 +289,7 @@ class PrescriptionCreation(forms.ModelForm):
             FormActions(
                 Submit('submit', 'Submit'),
                 HTML(
-                    '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
-                    '{% url "registry:pre_create" %}{% endif %}>Cancel</a>')
+                    '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}{% url "registry:pre_create" %}{% endif %}>Cancel</a>')
             )
         )
 
@@ -268,7 +329,7 @@ class MessageCreation(forms.ModelForm):
                      ),
             ),
             FormActions(
-                Submit('submit','Submit'),
+                Submit('submit', 'Submit'),
                 HTML('<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}{% url "registry:home" %}{% endif %}>Cancel</a>')
             )
         )

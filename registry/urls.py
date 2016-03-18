@@ -12,7 +12,6 @@ urlpatterns = [
     url(r'^home/$', views.home, name='home'),
     url(r'^appointment/calendar$', views.appt_calendar, name='calendar'),
     url(r'^appointment/update/(?P<pk>[0-9]+)/$', views.appt_edit, name='appt_edit'),
-    url(r'^appointment/view$', views.alist, name='alist'),
     url(r'^appointment/(?P<pk>[0-9]+)/delete/$', views.appt_delete, name='appt_delete'),
     url(r'^log$', views.Log_actions, name='activity_log'),
     url(r'^user/(?P<pk>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})', views.view_user, name='user_view'),
