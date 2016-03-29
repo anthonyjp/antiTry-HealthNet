@@ -210,7 +210,7 @@ class AppointmentEditForm(models.ModelForm):
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form appointment'
         self.helper.form_method = 'POST'
-        self.helper.form_action = reverse_lazy('registry:appt_create')
+        self.helper.form_action = reverse_lazy('registry:appt_edit')
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
 
@@ -257,16 +257,16 @@ class PrescriptionCreation(forms.ModelForm):
     Prescription Creation form based on the model Prescription
     """
     model = Prescription
-
     start_time = DateTimeMultiField()
     end_time = DateTimeMultiField()
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, doctor, *args, **kwargs):
         super(PrescriptionCreation, self).__init__(*args, **kwargs)
+
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form prescription'
         self.helper.form_method = 'POST'
-        self.helper.form_action = reverse_lazy('registry:pre_create')
+        self.helper.form_action = reverse_lazy('registry:pres_create')
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
 
@@ -289,10 +289,11 @@ class PrescriptionCreation(forms.ModelForm):
             FormActions(
                 Submit('submit', 'Submit'),
                 HTML(
-                    '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}{% url "registry:pre_create" %}{% endif %}>Cancel</a>')
+                    '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}{% url "registry:pres_create" %}{% endif %}>Cancel</a>')
             )
         )
 
+        self.fields['patient'].queryset = Patient.objects.filter(provider=doctor)
         self.fields['start_time'].widget.attrs['timepicker'] = True
         self.fields['end_time'].widget.attrs['timepicker'] = True
 

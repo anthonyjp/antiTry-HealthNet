@@ -6,8 +6,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User as DjangoUser
 from django.http import HttpResponseNotFound, HttpResponse, Http404
 
-from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm, PrescriptionCreation
-from .forms import DeleteAppForm
+#from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm, PrescriptionCreation,
+#from .forms import DeleteAppForm
+from .forms import *
 from .models.user_models import Patient, User
 from .models.info_models import Appointment, PatientContact
 from .utility.models import TimeRange
@@ -33,20 +34,21 @@ def pres_create(request):
     next = None
     if rules.test_rule('is_doctor',p):
         if request.method == "POST":
-            form = PrescriptionCreation(request.POST)
+            form = PrescriptionCreation(request.POST, p)
             if form.is_valid():
                 pres = form.save(commit=False)
                 timeRange = TimeRange(
                     start_time=form.cleaned_data['start_time'],
                     end_time=form.cleaned_data['end_time']
                 )
-                timeRange.save()
-                pres.time_range = timeRange
-                pres.doctor = p
-                pres.save()
-                return redirect('registry:pre_create')
+                if (timeRange.start_time < timeRange.end_time) and (timeRange.end_time > datetime.now()):
+                        timeRange.save()
+                        pres.time_range = timeRange
+                        pres.doctor = p
+                        pres.save()
+                        return redirect('registry:calendar')
         else:
-            form = PrescriptionCreation()
+            form = PrescriptionCreation(p)
 
             if 'next' in request.GET:
                 next = request.GET['next']
@@ -138,20 +140,20 @@ def appt_schedule(request):
         if 'next' in request.GET:
             next = request.GET['next']
 
-    return render(request, 'registry/apot_create.html', {'form': form, 'next_url': next})
+    return render(request, 'registry/appt_create.html', {'form': form, 'next_url': next})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def appt_edit(request, pk):
     appt = get_object_or_404(Appointment, pk=pk)
     if request.method == "POST":
-        form = AppointmentSchedulingForm(request.POST, instance=appt)
+        form = AppointmentEditForm(request.POST, instance=appt)
         if form.is_valid():
             appointment = form.save(commit=False)
             appointment.save()
             return redirect('registry:calendar')
     else:
-        form = AppointmentSchedulingForm(instance=appt)
+        form = AppointmentEditForm(instance=appt)
     return render(request, 'registry/appt_edit.html', {'form': form})
 
 
