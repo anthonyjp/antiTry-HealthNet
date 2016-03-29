@@ -16,7 +16,6 @@ from .utility.widgets import HeightField, WeightField, DateTimeMultiField
 from .utility.options import BloodType, Relationship
 from .utility.models import TimeRange
 
-
 class PatientRegisterForm(models.ModelForm):
     """
     Name: PatientRegisterForm
@@ -211,7 +210,7 @@ class AppointmentEditForm(models.ModelForm):
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form appointment'
         self.helper.form_method = 'POST'
-        self.helper.form_action = reverse_lazy('registry:appt_create')
+        self.helper.form_action = reverse_lazy('registry:appt_edit')
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
 
@@ -262,12 +261,13 @@ class PrescriptionCreation(forms.ModelForm):
     start_time = DateTimeMultiField()
     end_time = DateTimeMultiField()
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, doctor, *args, **kwargs):
         super(PrescriptionCreation, self).__init__(*args, **kwargs)
-        self.helper = FormHelper( )
+
+        self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form prescription'
         self.helper.form_method = 'POST'
-        self.helper.form_action = reverse_lazy('registry:pre_create')
+        self.helper.form_action = reverse_lazy('registry:pres_create')
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
 
@@ -275,7 +275,6 @@ class PrescriptionCreation(forms.ModelForm):
             Fieldset('Prescription Creation',
                      'drug',
                      'patient',
-                     'doctor',
                      'count',
                      'amount',
                      'refills',
@@ -291,16 +290,17 @@ class PrescriptionCreation(forms.ModelForm):
             FormActions(
                 Submit('submit', 'Submit'),
                 HTML(
-                    '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}{% url "registry:pre_create" %}{% endif %}>Cancel</a>')
+                    '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}{% url "registry:pres_create" %}{% endif %}>Cancel</a>')
             )
         )
 
+        self.fields['patient'].queryset = Patient.objects.filter(provider=doctor)
         self.fields['start_time'].widget.attrs['timepicker'] = True
         self.fields['end_time'].widget.attrs['timepicker'] = True
 
     class Meta:
         model = Prescription
-        fields = 'drug', 'patient', 'doctor', 'count', 'amount', 'refills'
+        fields = 'drug', 'patient', 'count', 'amount', 'refills'
         exclude = ['doctor']
 
 class MessageCreation(forms.ModelForm):
@@ -310,7 +310,7 @@ class MessageCreation(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(MessageCreation,self).__init__(*args, **kwargs)
-        self.helper = FormHelper( )
+        self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form messsage'
         self.helper.form_method = 'POST'
         self.helper.form_action = reverse_lazy('')
