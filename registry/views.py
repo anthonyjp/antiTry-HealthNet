@@ -37,7 +37,7 @@ def pres_create(request):
     next = None
     if rules.test_rule('is_doctor',p):
         if request.method == "POST":
-            form = PrescriptionCreation(request.POST, p)
+            form = PrescriptionCreation(request.POST, user=p)
             if form.is_valid():
                 pres = form.save(commit=False)
                 timeRange = TimeRange(
@@ -51,7 +51,7 @@ def pres_create(request):
                         pres.save()
                         return redirect('registry:calendar')
         else:
-            form = PrescriptionCreation(p)
+            form = PrescriptionCreation(user=p)
 
             if 'next' in request.GET:
                 next = request.GET['next']
@@ -124,9 +124,11 @@ def appt_calendar(request):
 @login_required(login_url=reverse_lazy('registry:login'))
 def appt_schedule(request):
     #next is where it goes if you cancel
+    q = request.user.hn_user
+    p = User.objects.get_subclass(pk=q.pk)
     next = None
     if request.method == "POST":
-        form = AppointmentSchedulingForm(request.POST)
+        form = AppointmentSchedulingForm(request.POST, user=p)
         if form.is_valid():
             appointment = form.save(commit=False)
             list = Appointment.objects.filter(doctor__pk=appointment.doctor_id).filter(time__hour=appointment.time.hour).filter(time__day=appointment.time.day)
@@ -136,9 +138,9 @@ def appt_schedule(request):
                 return redirect('registry:calendar')
     else:
         if 'start' in request.GET:
-            form = AppointmentSchedulingForm(initial={'time': dateutil.parser.parse(request.GET['start'])})
+            form = AppointmentSchedulingForm(user=p, initial={'time': dateutil.parser.parse(request.GET['start'])})
         else:
-            form = AppointmentSchedulingForm()
+            form = AppointmentSchedulingForm(user=p)
 
         if 'next' in request.GET:
             next = request.GET['next']
@@ -150,13 +152,13 @@ def appt_schedule(request):
 def appt_edit(request, pk):
     appt = get_object_or_404(Appointment, pk=pk)
     if request.method == "POST":
-        form = AppointmentEditForm(request.POST, instance=appt)
+        form = AppointmentEditForm(request.POST, instance=appt)#, obj=appt)
         if form.is_valid():
             appointment = form.save(commit=False)
             appointment.save()
             return redirect('registry:calendar')
     else:
-        form = AppointmentEditForm(instance=appt)
+        form = AppointmentEditForm(instance=appt)#, obj=appt)
     return render(request, 'registry/appt_edit.html', {'form': form})
 
 

@@ -7,7 +7,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import *
 from crispy_forms.bootstrap import *
 
-from .models.user_models import Patient, Prescription
+from .models.user_models import User, Patient, Prescription
 from .models.data_models import Hospital
 from .models.info_models import Appointment
 from .models.message_models import Message,Inbox
@@ -15,6 +15,8 @@ from .models.message_models import Message,Inbox
 from .utility.widgets import HeightField, WeightField, DateTimeMultiField
 from .utility.options import BloodType, Relationship
 from .utility.models import TimeRange
+
+import rules
 
 class PatientRegisterForm(models.ModelForm):
     """
@@ -163,6 +165,7 @@ class AppointmentSchedulingForm(models.ModelForm):
     time = DateTimeMultiField()
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
         super(AppointmentSchedulingForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form appointment'
@@ -188,7 +191,13 @@ class AppointmentSchedulingForm(models.ModelForm):
                     '{% url "registry:calendar" %}{% endif %}>Cancel</a>')
             )
         )
-
+        if rules.test_rule('is_patient', user):
+            self.fields['patient'].queryset = Patient.objects.get(uuid=user.uuid)
+            self.fields['doctor'].queryset = Patient.objects.get(uuid=user.uuid).provider
+        elif rules.test_rule('is_doctor', user):
+            self.fields['patient'].queryset = Patient.objects.filter(provider=user)
+        elif rules.test_rule('is_nurse', user):
+            self.fields['patient'].queryset = Patient.objects.filter(pref_hospital=user.hospital)
         self.fields['time'].widget.attrs['timepicker'] = True
 
     class Meta:
@@ -206,6 +215,7 @@ class AppointmentEditForm(models.ModelForm):
     time = DateTimeMultiField()
 
     def __init__(self, *args, **kwargs):
+        #appt = kwargs.pop('obj')
         super(AppointmentEditForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form appointment'
@@ -221,6 +231,7 @@ class AppointmentEditForm(models.ModelForm):
                           css_class='row',
                     ),
                     'doctor',
+                    'patient',
                     'location',
                     ),
             FormActions(
@@ -230,13 +241,14 @@ class AppointmentEditForm(models.ModelForm):
                     '{% url "registry:calendar" %}{% endif %}>Cancel</a>')
             )
         )
-
+        #self.fields['doctor'].queryset = appt.doctor
+        #self.fields['patient'].queryset = appt.patient
+        #self.fields['location'].queryset = appt.doctor.hospitals
         self.fields['time'].widget.attrs['timepicker'] = True
 
     class Meta:
         model = Appointment
-        fields = ('time', 'doctor', 'location')
-        exclude = ['patient']
+        fields = ('time', 'doctor', 'patient', 'location')
 
 
 class DeleteAppForm(forms.ModelForm):
@@ -255,15 +267,16 @@ class PrescriptionCreation(forms.ModelForm):
     Name: PrescriptionCreation
 
     Prescription Creation form based on the model Prescription
+    Doctors are limited to patients that have him/her as provider
     """
     model = Prescription
 
     start_time = DateTimeMultiField()
     end_time = DateTimeMultiField()
 
-    def __init__(self, doctor, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        doctor = kwargs.pop('user')
         super(PrescriptionCreation, self).__init__(*args, **kwargs)
-
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form prescription'
         self.helper.form_method = 'POST'
