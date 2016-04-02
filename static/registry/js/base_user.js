@@ -127,6 +127,63 @@ $(document).ready(function(){
         //  At the end, we add return false so that the click on the link is not executed
         return true;
     });
+
+    $("#checkAll").change(function () {
+        $("input:checkbox").prop('checked', $(this).prop("checked"));
+    });
+
+    // Highlight a whole row from inbox table
+    $("#inbox tr").not(':first').hover(
+      function () {
+        $(this).children().css("backgroundColor","#f3fef7");
+      },
+      function () {
+        $(this).children().css("backgroundColor","#e3eee7");
+      }
+    );
+
 });
 
 $(window).bind('beforeunload', registry.forms.user.updateUser);
+
+$("#inbox tr").not(':first').click(function() {
+        //  Hide all tab content
+        $(".tab").hide();
+
+        //  Here we get the href value of the selected tab
+        var selected_tab = $(this).attr("href");
+
+        //  Show the selected tab content
+        $(selected_tab).fadeIn();
+
+        //  At the end, we add return false so that the click on the link is not executed
+        return true;
+});
+
+$("#buttons").click(function() {
+        //  Hide all tab content
+        $(".tab").hide();
+
+        //  Here we get the href value of the selected tab
+        var selected_tab = $(this).find("a").attr("href");
+
+        //  Show the selected tab content
+        $(selected_tab).fadeIn();
+
+        //  At the end, we add return false so that the click on the link is not executed
+        return true;
+});
+
+$("#button").click(function() {
+        //  Hide all tab content
+        $(".tab").hide();
+
+        //  Here we get the href value of the selected tab
+        var selected_tab = $(this).find("a").attr("href");
+
+        //  Show the selected tab content
+        $(selected_tab).fadeIn();
+
+        //  At the end, we add return false so that the click on the link is not executed
+        return true;
+});

@@ -8,6 +8,9 @@
 
     <title>{% block title %}HealthNet{% endblock %}</title>
 
+    <link rel="shortcut icon" href="../static/registry/img/favicon/favicon.ico">
+
+
     {#  All universally shared CSS stylesheets should go above the cssimport block  #}
     <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap-theme.min.css' %}"/>
@@ -28,7 +31,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand healthnet" href="{% url 'registry:index' %}"><div id="pic"><img src="../static/registry/img/logo.png"></img></div></a>
+                <a class="navbar-brand healthnet" href="{% url 'registry:index' %}"><div><img id="pic" src="../static/registry/img/logo/Logo_Large_White.png"></img></div></a>
             </div>
 
             <div class="collapse navbar-collapse" id="hn-navbar">

@@ -124,6 +124,11 @@ class PatientRegisterForm(models.ModelForm):
 
 
 class LoginForm(forms.Form):
+    """
+    Name:   LoginForm
+
+    It's a form that allows users to log into the system
+    """
     email = fields.EmailField()
     password = fields.CharField(max_length=255, widget=widgets.PasswordInput)
 
@@ -149,6 +154,11 @@ class LoginForm(forms.Form):
 
 
 class HospitalRegisterForm(models.ModelForm):
+    """
+    Name:   HospitalRegisterForm
+
+    Hospital registration form based on the Hospital model
+    """
     class Meta:
         model = Hospital
         fields = ('name', 'address', 'state', 'zipcode', 'identifiers')
@@ -220,7 +230,7 @@ class AppointmentEditForm(models.ModelForm):
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form appointment'
         self.helper.form_method = 'POST'
-        self.helper.form_action = reverse_lazy('registry:appt_edit')
+        #self.helper.form_action = reverse_lazy('registry:appt_edit')
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
 
@@ -280,7 +290,7 @@ class PrescriptionCreation(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form prescription'
         self.helper.form_method = 'POST'
-        self.helper.form_action = reverse_lazy('registry:pres_create')
+        #self.helper.form_action = reverse_lazy('registry:pres_create')
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
 
@@ -316,26 +326,29 @@ class PrescriptionCreation(forms.ModelForm):
         fields = 'drug', 'patient', 'count', 'amount', 'refills'
         exclude = ['doctor']
 
-class MessageCreation(forms.ModelForm):
-    model = Message
 
-    to = fields.EmailField()
+class MessageCreation(forms.ModelForm):
+    """
+    Name: MessageCreation
+
+    Message Creation form based on the model Message
+    """
+
+    model = Message
 
     def __init__(self, *args, **kwargs):
         super(MessageCreation,self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form messsage'
         self.helper.form_method = 'POST'
-        self.helper.form_action = reverse_lazy('')
+        # self.helper.form_action = reverse_lazy('')
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
 
         self.helper.layout = Layout(
             Fieldset('New Message',
-                     'to',
-                     'content',
                      Div(
-                         Div('to', css_class='col-lg-3'),
+                         Div('receiver', css_class='col-lg-3'),
                          css_class= 'row',
                      ),
                      Div(
@@ -351,4 +364,4 @@ class MessageCreation(forms.ModelForm):
 
     class Meta:
         model = Message
-        fields = 'receiver', 'sender', 'content'
+        fields = 'receiver', 'content'

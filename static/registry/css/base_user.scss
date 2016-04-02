@@ -1,16 +1,7 @@
-/*----- Tabs -----*/
+@import "constants";
 
-#form{
-  display: block;
-  width: 50%;
-  margin: 0 auto;
-}
-
-#buttons{
-  margin-left: auto;
-  margin-right: auto;
-  width: 12%;
-  margin-top: 1%;
+table{
+  width: 100%;
 }
 
 label{
@@ -34,6 +25,98 @@ input.editable {
   }
 }
 
+p{
+  margin: 0%;
+}
+
+/*----- Tabs -----*/
+#form{
+  display: block;
+  width: 50%;
+  margin: 0 auto;
+}
+
+#calendar{
+  margin-left: auto;
+  margin-right: auto;
+  width: 90%;
+  text-align: center;
+  font-size: 14px;
+  font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+}
+
+#calendar td{
+  //height: 50px;
+}
+
+#calendar .fc-event-container{
+  font-size: 12px;
+}
+
+#imgPic{
+  margin-left: 10%;
+}
+
+#avatar{
+  height: 100px;
+  box-shadow: 0 0 5px 2px #B3B3B3;
+  margin-bottom: 2%;
+}
+
+#leftName{
+  font-weight: bold;
+  font-size: 120%;
+}
+
+#leftDOB{
+  margin-left: 12%;
+}
+
+#buttons{
+  margin-left: auto;
+  margin-right: auto;
+  width: 25%;
+  margin-top: 1%;
+}
+
+#button{
+  margin-bottom: 1%;
+}
+
+#check{
+  width: 2%;
+}
+
+.inboxHead{
+  background-color: #AEBEB4;
+  text-align: center;
+  color: white;
+  font-family: $healthnet-standard-font;
+  padding-left: 1%;
+  border: .25px solid white;
+}
+
+.inboxBody{
+  background-color: #e3eee7;
+  text-align: center;
+  border: 1px solid white;
+  //color: #f3fef7;
+}
+
+.messageHead{
+  padding-left: .5%;
+  background-color: #AEBEB4;
+  color: white;
+}
+
+.messageBody{
+  border: 1px solid #AEBEB4;
+  padding-bottom: 24%;
+  padding-top: 1%;
+  padding-left: 1%;
+  padding-right: 1%;
+}
+
 #left{
   float: left;
   width:15%;
@@ -45,6 +128,10 @@ input.editable {
   box-shadow:-1px 1px 1px rgba(0,0,0,0.15);
   background:#fff;
   margin-top: 3%;
+}
+
+#left li{
+  list-style-type: none;
 }
 
 #right{

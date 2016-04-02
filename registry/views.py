@@ -135,7 +135,7 @@ def appt_schedule(request):
             patientlist = Appointment.objects.filter(patient__pk=appointment.patient_id).filter(time__hour=appointment.time.hour).filter(time__day=appointment.time.day)
             if not (list.exists() or patientlist.exists()):
                 appointment.save()
-                return redirect('registry:calendar')
+                return redirect('registry:home')
     else:
         if 'start' in request.GET:
             form = AppointmentSchedulingForm(user=p, initial={'time': dateutil.parser.parse(request.GET['start'])})
@@ -187,16 +187,29 @@ def login(request):
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def home(request):
-    if request.method == "POST":
-        form = MessageCreation(request.POST)
     p = request.user.hn_user
     hn_user = User.objects.get_subclass(pk=p.pk)
+    form = MessageCreation(request.POST)
+    #pres_form = PrescriptionCreation(request.POST)
+
     if rules.test_rule('is_patient', hn_user):
-        return render(request, 'registry/user_patient.html', {'hn_user': hn_user}, {'form': form})
+        return render(request,
+                      'registry/user_patient.html',
+                      {'form': form,
+                       'hn_user': hn_user,
+                       'appointments': hn_user.appointment_set.all()
+                       })
+
     elif rules.test_rule('is_doctor', hn_user):
-        return render(request, 'registry/user_doctor.html', {'hn_user': hn_user}, {'form': form})
+        return render(request,
+                      'registry/user_doctor.html',
+                      {'form': form,
+                      # 'pres_form': pres_form,
+                       'hn_user': hn_user,
+                       'appointments': hn_user.appointment_set.all()
+                       })
     else:
-        return render(request, 'registry/user_admin.html', {'hn_user': hn_user}, {'form': form})
+        return render(request, 'registry/user_admin.html', {'hn_user': hn_user})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -204,7 +217,6 @@ def home_updated(request, form):
     p = request.user.hn_user
     hn_user = User.objects.get_subclass(pk=p.pk)
     return render(request, 'registry/base_user.html', {'hn_user': hn_user})
-
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -241,6 +253,7 @@ def Logs():
             action_list.append(log_action)
 
     return action_list
+
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def Log_actions(request):

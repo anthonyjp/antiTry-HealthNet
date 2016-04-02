@@ -10,19 +10,21 @@
 
 {% block cssimport %}
     <link rel="stylesheet" href="{% sass_src 'registry/css/base_user.scss' %}"/>
+    {% block calendar_cssimport %}{% endblock %}
 {% endblock %}
 
 {% block _base_jsimport %}
     <script type="text/javascript" src="{% static 'registry/js/base_user.js' %}"></script>
+    {% block calendar_jsimport %}{% endblock %}
 {% endblock %}
 
 {% block content %}
 
 <div id="left">
     <ul>
-        <li>Picture</li>
-        <li>{{ hn_user.first_name }} {{hn_user.middle_initial}} {{hn_user.last_name }}</li>
-        <li>{{ hn_user.date_of_birth }}</li>
+        <li><div id="imgPic"><img id="avatar" src="../static/registry/img/logo/Logo_Small.png" /></div></li>
+        <li><p id="leftName">{{ hn_user.first_name }} {{hn_user.middle_initial}} {{hn_user.last_name }}</p></li>
+        <li><p id="leftDOB">{{ hn_user.date_of_birth }}</p></li>
     </ul>
 </div>
 
@@ -31,7 +33,7 @@
         <ul id="tab-links">
             <li><a href ="#tab1" rel="tab1" class="hn-tab">Personal</a></li>
             {% block userLinks %}{% endblock %}
-            <li><a href ="#tab6" rel="tab3" class="hn-tab">Inbox</a></li>
+            <li><a href ="#tab6" rel="tab6" class="hn-tab">Inbox</a></li>
         </ul>
 
         <div id="tab-content">
@@ -41,15 +43,73 @@
                     <label>Middle Initial:</label><input data-field="middle_initial" class="editable" type="text" value="{{ hn_user.middle_initial }}"/><br>
                     <label>Last Name:</label><input data-field="last_name" class="editable" type="text" value="{{ hn_user.last_name }}"/><br>
                     <label>Date of Birth:</label><input data-field="date_of_birth" class="editable" type="text" value="{{ hn_user.date_of_birth }}"/><br>
-                    <label>Gender:</label><input data-field="gender" class="editable" type="text" value="{% labelify hn_user.gender 'gender' %}"/><br>
+                    <label>Gender:</label><input data-field="gender" class="editable" type="text" value="{{ hn_user.gender }}"/><br>
                 </form>
             </div>
-            {% block userContent %}{% endblock %}
+
             <div id="tab6" class="tab">
-                {% block inner-content %}
-                    {% crispy form form.helper %}
-                {% endblock %}
+                <table id="inbox">
+                    <thead>
+                        <th id="check"><div class="inboxHead"><input type="checkbox" id="checkAll"/></div></th>
+                        <th><div class="inboxHead">From</div></th>
+                        <th><div class="inboxHead">Title</div></th>
+                        <th><div class="inboxHead">Date</div></th>
+                    </thead>
+                    <tbody>
+                        <tr href="#tab7">
+                            <td class="inboxBody"><input type="checkbox"/></td>
+                            <td class="inboxBody">Dr. Blah Blahh</td>
+                            <td class="inboxBody">Medical Exams</td>
+                            <td class="inboxBody">March 20th</td>
+                        </tr>
+
+                        <tr href="#tab7">
+                            <td class="inboxBody"><input type="checkbox"/></td>
+                            <td class="inboxBody">Dr. Blah Blahh</td>
+                            <td class="inboxBody">Medical Exams</td>
+                            <td class="inboxBody">March 20th</td>
+                        </tr>
+
+                        <tr href="#tab7">
+                            <td class="inboxBody"><input type="checkbox"/></td>
+                            <td class="inboxBody">Dr. Blah Blahh</td>
+                            <td class="inboxBody">Medical Exams</td>
+                            <td class="inboxBody">March 20th</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div id="buttons">
+                    <a href="#tab8"><button>New Message</button></a>
+                    <a href="#tab6"><button>Delete Message(s)</button></a>
+                </div>
             </div>
+
+            <div id="tab7" class="tab">
+                <div id="button">
+                    <a href="#tab6"><button>< Back</button></a>
+                </div>
+                <table id="message">
+                    <tr>
+                        <td class="messageHead">From: Dr Blah</td>
+                    </tr>
+                    <tr>
+                        <td class="messageHead">Date: March 20th</td>
+                    </tr>
+                    <tr>
+                        <td class="messageHead">Medical Exams</td>
+                    </tr>
+                    <tr>
+                        <td class="messageBody"><p>ksldjflksjdfklsjdkljfklsdjklfjskldlfsldjfs<p></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="tab8" class="tab">
+                {% crispy form form.helper %}
+            </div>
+
+            {% block userContent %}{% endblock %}
         </div>
 </div>
 {% endblock %}
