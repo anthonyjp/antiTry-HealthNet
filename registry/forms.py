@@ -225,7 +225,8 @@ class AppointmentEditForm(models.ModelForm):
     time = DateTimeMultiField()
 
     def __init__(self, *args, **kwargs):
-        #appt = kwargs.pop('obj')
+        appt_id = kwargs.pop('appt_id')
+        hospital = Appointment.objects.get(pk=appt_id).doctor.hospitals
         super(AppointmentEditForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form appointment'
@@ -235,30 +236,28 @@ class AppointmentEditForm(models.ModelForm):
         self.helper.field_class = 'col-lg-8'
 
         self.helper.layout = Layout(
-            Fieldset('Appointment Editting',
+            Fieldset('Appointment Editing',
                     Div(
                           Div('time', css_class='col-lg-3'),
                           css_class='row',
                     ),
-                    'doctor',
-                    'patient',
                     'location',
                     ),
             FormActions(
                 Submit('submit', 'Submit'),
                 HTML(
                     '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
-                    '{% url "registry:calendar" %}{% endif %}>Cancel</a>')
+                    '{% url "registry:calendar" %}{% endif %}>Cancel</a> '
+                )
             )
         )
-        #self.fields['doctor'].queryset = appt.doctor
-        #self.fields['patient'].queryset = appt.patient
-        #self.fields['location'].queryset = appt.doctor.hospitals
+
+        self.fields['location'].queryset = hospital
         self.fields['time'].widget.attrs['timepicker'] = True
 
     class Meta:
         model = Appointment
-        fields = ('time', 'doctor', 'patient', 'location')
+        fields = ('time', 'location')
 
 
 class DeleteAppForm(forms.ModelForm):
@@ -271,6 +270,15 @@ class DeleteAppForm(forms.ModelForm):
         model = Appointment
         fields = []
 
+class DeletePresForm(forms.ModelForm):
+    """
+    Name: DeletePresForm
+
+    Deletion of Pres form
+    """
+    class Meta:
+        model = Prescription
+        fields = []
 
 class PrescriptionCreation(forms.ModelForm):
     """

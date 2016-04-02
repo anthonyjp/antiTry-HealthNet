@@ -67,6 +67,12 @@ def appt_delete(request, pk):
     if rules.test_rule('is_nurse',p):
         return HttpResponseNotFound('<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     delete = get_object_or_404(Appointment, id=pk)
+    if rules.test_rule('is_patient',p):
+        if delete.patient.pk != p.pk:
+            return HttpResponseNotFound('<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    if rules.test_rule('is_doctor',p):
+        if delete.doctor.pk != p.pk:
+            return HttpResponseNotFound('<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     if request.method == 'POST':
         form = DeleteAppForm(request.POST, instance=delete)
         if form.is_valid():
@@ -78,6 +84,30 @@ def appt_delete(request, pk):
 
     template_vars = {'form': form}
     return render(request, 'registry/appt_delete.html', template_vars)
+
+@login_required(login_url=reverse_lazy('registry:login'))
+def pres_delete(request, pk):
+    q = request.user.hn_user
+    p = User.objects.get_subclass(pk=q.pk)
+    if rules.test_rule('is_nurse',p):
+        return HttpResponseNotFound('<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    delete = get_object_or_404(Prescription, id=pk)
+    if rules.test_rule('is_patient',p):
+            return HttpResponseNotFound('<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    if rules.test_rule('is_doctor',p):
+        if delete.doctor.pk != p.pk:
+            return HttpResponseNotFound('<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    if request.method == 'POST':
+        form = DeletePresForm(request.POST, instance=delete)
+        if form.is_valid():
+            delete.delete()
+            return redirect('registry:calendar')
+
+    else:
+        form = DeletePresForm(instance=delete)
+
+    template_vars = {'form': form}
+    return render(request, 'registry/pres_delete.html', template_vars)
 
 
 def register(request):
@@ -150,16 +180,32 @@ def appt_schedule(request):
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def appt_edit(request, pk):
+    initial_appointment = get_object_or_404(Appointment, pk=pk)
     appt = get_object_or_404(Appointment, pk=pk)
+    initial_start_time = appt.time
+    initial_doctor = appt.doctor.uuid
+    error = ""
     if request.method == "POST":
-        form = AppointmentEditForm(request.POST, instance=appt)#, obj=appt)
+        form = AppointmentEditForm(request.POST, instance=appt, appt_id=pk)
         if form.is_valid():
             appointment = form.save(commit=False)
-            appointment.save()
-            return redirect('registry:calendar')
+            list = Appointment.objects.filter(doctor__pk=appointment.doctor_id).filter(time__hour=appointment.time.hour).filter(time__day=appointment.time.day)
+            if initial_doctor == appointment.doctor.uuid:
+                if initial_start_time == appointment.time:
+                    appointment.save()
+                    return redirect('registry:calendar')
+                else:
+                    if not (list.exists()):
+                        appointment.save()
+                        return redirect('registry:calendar')
+            else:
+                if not (list.exists()):
+                    appointment.save()
+                    return redirect('registry:calendar')
+            error = "Appointment Edit Failure: Date/Time Conflicting"
     else:
-        form = AppointmentEditForm(instance=appt)#, obj=appt)
-    return render(request, 'registry/appt_edit.html', {'form': form})
+        form = AppointmentEditForm(instance=appt, appt_id=pk)
+    return render(request, 'registry/appt_edit.html', {'form': form, 'appt': initial_appointment, 'error': error})
 
 
 def index(request):

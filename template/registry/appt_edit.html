@@ -25,8 +25,17 @@
 {% endblock %}
 
 {% block inner-content %}
+    {{ error }}<br>
+    Original Appointment Information:<br>
+    Patient: {{ appt.patient}}<br>
+    Doctor: {{ appt.doctor}}<br>
+    Time: {{ appt.time}}<br>
+    Hospital: {{ appt.location}}<br>
+
+
     {% crispy form form.helper%}
-{% endblock %}
+
+   {% endblock %}
 
 {% block customjs %}
     <script type="text/javascript">
