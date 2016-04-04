@@ -1,10 +1,10 @@
-{% extends 'registry/base_auth.html' %}
+{% extends 'registry/base/base_auth.html' %}
 {% load static %}
 {% load sass_tags %}
 {% load crispy_forms_tags %}
 
-{% block title %}HealthNet | Prescription{% endblock %}
-{% block inner-title %}Prescription Creation{% endblock %}
+{% block title %}HealthNet | Appointment{% endblock %}
+{% block inner-title %}Appointment Editing{% endblock %}
 {% block set-active %}__NONE__{% endblock %}
 
 {% block cssimport %}
@@ -25,8 +25,17 @@
 {% endblock %}
 
 {% block inner-content %}
-    {% crispy form form.helper %}
-{% endblock %}
+    {{ error }}<br>
+    Original Appointment Information:<br>
+    Patient: {{ appt.patient}}<br>
+    Doctor: {{ appt.doctor}}<br>
+    Time: {{ appt.time}}<br>
+    Hospital: {{ appt.location}}<br>
+
+
+    {% crispy form form.helper%}
+
+   {% endblock %}
 
 {% block customjs %}
     <script type="text/javascript">

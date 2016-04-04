@@ -47,7 +47,7 @@ def rx_create(request):
 
             if 'next' in request.GET:
                 next_location = request.GET['next']
-        return render(request, 'registry/pres_create.html', {'form': form, 'next_url': next_location})
+        return render(request, 'registry/data/rx_create.html', {'form': form, 'next_url': next_location})
     return HttpResponseNotFound(
             '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
 
@@ -78,7 +78,7 @@ def appt_delete(request, pk):
         form = DeleteAppForm(instance=delete)
 
     template_vars = {'form': form}
-    return render(request, 'registry/appt_delete.html', template_vars)
+    return render(request, 'registry/data/appt_delete.html', template_vars)
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -106,7 +106,7 @@ def pres_delete(request, pk):
         form = DeletePresForm(instance=delete)
 
     template_vars = {'form': form}
-    return render(request, 'registry/pres_delete.html', template_vars)
+    return render(request, 'registry/data/rx_delete.html', template_vars)
 
 
 def register(request):
@@ -144,13 +144,13 @@ def register(request):
             return redirect('registry:index')
     else:
         form = PatientRegisterForm()
-    return render(request, 'registry/new.html', {'form': form})
+    return render(request, 'registry/register.html', {'form': form})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def appt_calendar(request):
     hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
-    return render(request, 'registry/calendar.html', {'appointments': hn_user.appointment_set.all()})
+    return render(request, 'registry/data/appt_calendar.html', {'appointments': hn_user.appointment_set.all()})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -181,7 +181,7 @@ def appt_schedule(request):
         if 'next' in request.GET:
             next_location = request.GET['next']
 
-    return render(request, 'registry/appt_create.html', {'form': form, 'next_url': next_location})
+    return render(request, 'registry/data/appt_create.html', {'form': form, 'next_url': next_location})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -212,7 +212,7 @@ def appt_edit(request, pk):
             error = "Appointment Edit Failure: Date/Time Conflicting"
     else:
         form = AppointmentEditForm(instance=appt, appt_id=pk)
-    return render(request, 'registry/appt_edit.html', {'form': form, 'appt': initial_appointment, 'error': error})
+    return render(request, 'registry/data/appt_edit.html', {'form': form, 'appt': initial_appointment, 'error': error})
 
 
 def index(request):
@@ -249,7 +249,7 @@ def home(request):
 
     if rules.test_rule('is_patient', hn_user):
         return render(request,
-                      'registry/user_patient.html',
+                      'registry/users/user_patient.html',
                       {'form': form,
                        'hn_user': hn_user,
                        'appointments': hn_user.appointment_set.all()
@@ -257,13 +257,13 @@ def home(request):
 
     elif rules.test_rule('is_doctor', hn_user):
         return render(request,
-                      'registry/user_doctor.html',
+                      'registry/users/user_doctor.html',
                       {'form': form,
                        'hn_user': hn_user,
                        'appointments': hn_user.appointment_set.all()
                        })
     else:
-        return render(request, 'registry/user_admin.html', {'hn_user': hn_user})
+        return render(request, 'registry/users/user_admin.html', {'hn_user': hn_user})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -320,7 +320,8 @@ def view_user(request, pk):
     owner = User.objects.get_subclass(pk=pk)
     visitor = User.objects.get_subclass(pk=request.user.hn_user.pk)
 
-    return render(request, "registry/base_user.html", context={"hn_user": owner, "hn_visitor": visitor})
+    return render(request, "registry/users/../template/registry/base/base_user.html",
+                  context={"hn_user": owner, "hn_visitor": visitor})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))

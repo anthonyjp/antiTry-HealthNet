@@ -1,18 +1,18 @@
-{% extends 'registry/base_user.html' %}
+{% extends 'registry/base/base.html' %}
 
 {% load static %}
 {% load sass_tags %}
 {% load registry_tags %}
-{% load crispy_forms_tags %}
 
+{% block title %}HealthNet | Calendar{% endblock %}
 {% block set-active %}__NONE__{% endblock %}
 
-{% block calendar_cssimport %}
+{% block cssimport %}
 	<link href="{% static 'fullcalendar/dist/fullcalendar.min.css' %}" rel="stylesheet" />
 	<link href="{% static 'fullcalendar/dist/fullcalendar.print.css' %}" rel="stylesheet" media="print" />
 {% endblock %}
 
-{% block calendar_jsimport %}
+{% block jsimport %}
     <script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
 	<!--FullCalendar-->
 	<script src="{% static 'fullcalendar/dist/fullcalendar.min.js' %}"></script>
@@ -100,7 +100,7 @@
 
                 select: function(start, end, allDay)
 				{
-                    window.location.href = "{% url 'registry:appt_create' %}?next={% url 'registry:home' %}&start=" + start.toISOString();
+                    window.location.href = "{% url 'registry:appt_create' %}?next={% url 'registry:calendar' %}&start=" + start.toISOString();
 				}
 			});
 
@@ -108,36 +108,25 @@
 
 	</script>
 {% endblock %}
-
-{% block userLinks %}
-    <li><a href ="#tab2" rel="tab2" class="hn-tab">Medical</a></li>
-    <li><a href ="#tab3" rel="tab3" class="hn-tab">Insurance</a></li>
-    <li><a href ="#tab4" rel="tab4" class="hn-tab">Admission</a></li>
-    <li><a href="#tab5" rel="tab5" class="hn-tab">Appointments</a></li>
+{% block customcss %}
+	<style type="text/css">
+		body
+		{
+			margin-top: 40px;
+			text-align: center;
+			font-size: 14px;
+			font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		}
+		#calendar
+		{
+			width: 300px;
+		}
+	</style>
+{% endblock %}
+{% block content %}
+	<!--FullCalendar container div-->
+    <div class="container calendar">
+	<div id="calendar"></div>
+    </div>
 {% endblock %}
 
-{% block userContent %}
-            <div id="tab2" class="tab">
-                <form id="form">
-                    <label>Height:</label><input data-field="height" class="editable" type="text" value="{{ hn_user.height }}"/><br>
-                    <label>Weight:</label><input data-field="weight" class="editable" type="text" value="{{ hn_user.weight }}"/><br>
-                    <label>Blood Type:</label><input data-field="blood_type" class="editable" type="text" value="{% labelify hn_user.blood_type 'blood' %}"/><br>
-                </form>
-            </div>
-
-            <div id="tab3" class="tab">
-                <form id="form">
-                    <label>Insurance:</label><input data-field="insurance" class="editable" type="text" value="{{ hn_user.insurance }}"/><br>
-                </form>
-            </div>
-
-            <div id="tab4" class="tab">
-                <p>Admission information will go here!</p>
-            </div>
-
-            <div id="tab5" class="tab">
-                <div class="container calendar">
-                    <div id="calendar"></div>
-                </div>
-            </div>
-{% endblock %}

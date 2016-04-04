@@ -1,18 +1,18 @@
-{% extends 'registry/base.html' %}
+{% extends 'registry/users/../base/base_user.html' %}
 
 {% load static %}
 {% load sass_tags %}
 {% load registry_tags %}
+{% load crispy_forms_tags %}
 
-{% block title %}HealthNet | Calendar{% endblock %}
 {% block set-active %}__NONE__{% endblock %}
 
-{% block cssimport %}
+{% block calendar_cssimport %}
 	<link href="{% static 'fullcalendar/dist/fullcalendar.min.css' %}" rel="stylesheet" />
 	<link href="{% static 'fullcalendar/dist/fullcalendar.print.css' %}" rel="stylesheet" media="print" />
 {% endblock %}
 
-{% block jsimport %}
+{% block calendar_jsimport %}
     <script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
 	<!--FullCalendar-->
 	<script src="{% static 'fullcalendar/dist/fullcalendar.min.js' %}"></script>
@@ -100,7 +100,7 @@
 
                 select: function(start, end, allDay)
 				{
-                    window.location.href = "{% url 'registry:appt_create' %}?next={% url 'registry:calendar' %}&start=" + start.toISOString();
+                    window.location.href = "{% url 'registry:appt_create' %}?next={% url 'registry:home' %}&start=" + start.toISOString();
 				}
 			});
 
@@ -108,25 +108,19 @@
 
 	</script>
 {% endblock %}
-{% block customcss %}
-	<style type="text/css">
-		body
-		{
-			margin-top: 40px;
-			text-align: center;
-			font-size: 14px;
-			font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
-		}
-		#calendar
-		{
-			width: 300px;
-		}
-	</style>
-{% endblock %}
-{% block content %}
-	<!--FullCalendar container div-->
-    <div class="container calendar">
-	<div id="calendar"></div>
-    </div>
-{% endblock %}
 
+{% block userLinks %}
+    <li><a href="#tab5" rel="tab5" class="hn-tab">Appointments</a></li>
+{% endblock %}
+{% block userContent %}
+    <div id="tab5" class="tab">
+        <div class="container calendar">
+            <div id="calendar"></div>
+        </div>
+    </div>
+
+
+{#    <div id="tab9" class="tab">#}
+{#        {% crispy pres_form form.helper %}#}
+{#    </div>#}
+{% endblock %}

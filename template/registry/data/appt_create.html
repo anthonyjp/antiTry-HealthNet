@@ -1,10 +1,10 @@
-{% extends 'registry/base_auth.html' %}
+{% extends 'registry/base/base_auth.html' %}
 {% load static %}
 {% load sass_tags %}
 {% load crispy_forms_tags %}
 
 {% block title %}HealthNet | Appointment{% endblock %}
-{% block inner-title %}Appointment Editing{% endblock %}
+{% block inner-title %}Appointment Scheduling{% endblock %}
 {% block set-active %}__NONE__{% endblock %}
 
 {% block cssimport %}
@@ -25,17 +25,8 @@
 {% endblock %}
 
 {% block inner-content %}
-    {{ error }}<br>
-    Original Appointment Information:<br>
-    Patient: {{ appt.patient}}<br>
-    Doctor: {{ appt.doctor}}<br>
-    Time: {{ appt.time}}<br>
-    Hospital: {{ appt.location}}<br>
-
-
-    {% crispy form form.helper%}
-
-   {% endblock %}
+    {% crispy form form.helper %}
+{% endblock %}
 
 {% block customjs %}
     <script type="text/javascript">
