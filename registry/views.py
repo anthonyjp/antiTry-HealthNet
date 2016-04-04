@@ -3,8 +3,8 @@ import logging
 from datetime import datetime, timedelta
 
 import dateutil.parser
-import rules
 from django.contrib.admin.models import LogEntry
+from django.contrib.auth.models import User as DjangoUser
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as django_login
 from django.contrib.auth.decorators import login_required
@@ -12,7 +12,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseNotFound, HttpResponse, Http404
 from django.shortcuts import redirect, get_object_or_404, render
 
-from registry.models import User, Appointment, PatientContact
+from registry.models import User, Appointment, PatientContact, Prescription, Inbox
 from .forms import *
 from .utility.models import TimeRange
 
@@ -320,7 +320,7 @@ def view_user(request, pk):
     owner = User.objects.get_subclass(pk=pk)
     visitor = User.objects.get_subclass(pk=request.user.hn_user.pk)
 
-    return render(request, "registry/users/../template/registry/base/base_user.html",
+    return render(request, "registry/base/base_user.html",
                   context={"hn_user": owner, "hn_visitor": visitor})
 
 

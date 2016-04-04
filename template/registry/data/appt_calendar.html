@@ -100,7 +100,7 @@
 
                 select: function(start, end, allDay)
 				{
-                    window.location.href = "{% url 'registry:appt_create' %}?next={% url 'registry:calendar' %}&start=" + start.toISOString();
+                    window.location.href = "{% url 'registry:appt_create' %}?next={% url 'registry:appt_calendar' %}&start=" + start.toISOString();
 				}
 			});
 
