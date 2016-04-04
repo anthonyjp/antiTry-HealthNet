@@ -1,10 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from django.contrib.auth.models import User as DjangoUser
-from .models.user_models import *
-from .models.info_models import *
-from .models.message_models import *
 
 # Register your models here.
 
@@ -23,18 +19,20 @@ admin.site.register(Contact)
 admin.site.register(Hospital)
 admin.site.register(Drug)
 admin.site.register(Prescription)
-admin.site.register(Message)
 admin.site.register(Inbox)
 
 admin.site.unregister(DjangoUser)
+
 
 class DjangoUserChangeForm(UserChangeForm):
     class Meta(UserChangeForm.Meta):
         model = DjangoUser
 
+
 class DjangoUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = DjangoUser
+
 
 class DjangoUserAdmin(UserAdmin):
     form = DjangoUserChangeForm

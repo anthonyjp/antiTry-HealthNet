@@ -1,6 +1,8 @@
 /*.egg-info
 /dist
 /bower_components
+/node_modules
+/jspm_packages
 /private_static
 /.idea/*
 

@@ -1,22 +1,14 @@
-from django.forms import forms, models, fields, widgets
-from django import forms
-from django.core.urlresolvers import reverse_lazy
-from localflavor.us.forms import USPhoneNumberField
-
+import rules
+from crispy_forms.bootstrap import *
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import *
-from crispy_forms.bootstrap import *
+from django.core.urlresolvers import reverse_lazy
+from django.forms import forms, models, fields, widgets
+from localflavor.us.forms import USPhoneNumberField
 
-from .models.user_models import User, Patient, Prescription
-from .models.data_models import Hospital
-from .models.info_models import Appointment
-from .models.message_models import Message,Inbox
-
-from .utility.widgets import HeightField, WeightField, DateTimeMultiField
 from .utility.options import BloodType, Relationship
-from .utility.models import TimeRange
+from .utility.widgets import HeightField, WeightField, DateTimeMultiField
 
-import rules
 
 class PatientRegisterForm(models.ModelForm):
     """
@@ -47,56 +39,56 @@ class PatientRegisterForm(models.ModelForm):
         self.helper.field_class = 'col-lg-8'
 
         self.helper.layout = Layout(
-            Fieldset('Patient Registration',
-                      Div(
-                          Div('first_name', css_class='col-lg-5'),
-                          Div('middle_initial', css_class='col-md-2'),
-                          Div('last_name', css_class='col-md-5'),
-                          css_class='row',
-                      ),
-                      Div(
-                          Div('date_of_birth', css_class='col-lg-3'),
-                          Div('gender', css_class='col-md-1'),
-                          css_class='row',
-                      ),
-                      Div(
-                          Div('email', css_class='col-lg-5'),
-                          Div('password', css_class='col-md-5'),
-                          css_class='row',
-                      ),
-                      Div(
-                          Div('height', css_class='col-lg-4'),
-                          Div('weight', css_class='col-md-4'),
-                          Div('blood_type', css_class='cool-md-2'),
-                          css_class='row',
-                      ),
-                      'insurance',
-                      'pref_hospital',
-                      'provider',
-                      Div(
-                          Div('security_question', css_class='col-lg-4'),
-                          Div('security_answer', css_class='col-md-4'),
-                          css_class='row',
-                      ),
-                      Div(
-                          Div('contact_name', css_class='col-lg-5'),
-                          Div('contact_relationship', css_class='col-lg-3'),
-                          css_class='row',
-                      ),
-                      Div(
-                          Div('contact_email', css_class='col-lg-5' ),
-                          css_class='row',
-                      ),
-                      Div(
-                          Div(PrependedText('contact_primary', 'contact'), css_class='col-lg-5'),
-                          Div('contact_secondary', css_class='col-lg-5'),
-                          css_class='row'
-                      )
-                      ),
-            FormActions(
-                Submit('submit', 'Submit'),
-                HTML('<a class="btn btn-default" href={% url "registry:index" %}>Cancel</a>')
-            )
+                Fieldset('Patient Registration',
+                         Div(
+                                 Div('first_name', css_class='col-lg-5'),
+                                 Div('middle_initial', css_class='col-md-2'),
+                                 Div('last_name', css_class='col-md-5'),
+                                 css_class='row',
+                         ),
+                         Div(
+                                 Div('date_of_birth', css_class='col-lg-3'),
+                                 Div('gender', css_class='col-md-1'),
+                                 css_class='row',
+                         ),
+                         Div(
+                                 Div('email', css_class='col-lg-5'),
+                                 Div('password', css_class='col-md-5'),
+                                 css_class='row',
+                         ),
+                         Div(
+                                 Div('height', css_class='col-lg-4'),
+                                 Div('weight', css_class='col-md-4'),
+                                 Div('blood_type', css_class='cool-md-2'),
+                                 css_class='row',
+                         ),
+                         'insurance',
+                         Div(
+                                 Div('security_question', css_class='col-lg-4'),
+                                 Div('security_answer', css_class='col-md-4'),
+                                 css_class='row',
+                         ),
+                         'pref_hospital',
+                         'provider',
+                         Div(
+                                 Div('contact_name', css_class='col-lg-5'),
+                                 Div('contact_relationship', css_class='col-lg-3'),
+                                 css_class='row',
+                         ),
+                         Div(
+                                 Div('contact_email', css_class='col-lg-5'),
+                                 css_class='row',
+                         ),
+                         Div(
+                                 Div(PrependedText('contact_primary', 'contact'), css_class='col-lg-5'),
+                                 Div('contact_secondary', css_class='col-lg-5'),
+                                 css_class='row'
+                         )
+                         ),
+                FormActions(
+                        Submit('submit', 'Submit'),
+                        HTML('<a class="btn btn-default" href={% url "registry:index" %}>Cancel</a>')
+                )
         )
 
         self.fields['first_name'].widget.attrs['size'] = 40
@@ -105,6 +97,7 @@ class PatientRegisterForm(models.ModelForm):
         self.fields['password'].widget.attrs['size'] = 40
 
         self.fields['pref_hospital'].required = False
+        self.fields['provider'].required = False
         self.fields['middle_initial'].required = False
         self.fields['middle_initial'].label = 'M.I.'
         self.fields['middle_initial'].widget.attrs['maxlength'] = 1
@@ -133,7 +126,7 @@ class LoginForm(forms.Form):
     password = fields.CharField(max_length=255, widget=widgets.PasswordInput)
 
     def __init__(self, *args, **kwargs):
-        super( LoginForm, self).__init__(*args, **kwargs)
+        super(LoginForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form login'
         self.helper.form_method = 'POST'
@@ -142,14 +135,14 @@ class LoginForm(forms.Form):
         self.helper.field_class = 'col-lg-8'
 
         self.helper.layout = Layout(
-            Fieldset('HealthNet Login',
-                     'email',
-                     'password',
-                    ),
-            FormActions(
-                Submit('login', 'Log In'),
-                HTML('<a class="btn btn-default" href={% url "registry:index" %}>Cancel</a>')
-            )
+                Fieldset('HealthNet Login',
+                         'email',
+                         'password',
+                         ),
+                FormActions(
+                        Submit('login', 'Log In'),
+                        HTML('<a class="btn btn-default" href={% url "registry:index" %}>Cancel</a>')
+                )
         )
 
 
@@ -159,6 +152,7 @@ class HospitalRegisterForm(models.ModelForm):
 
     Hospital registration form based on the Hospital model
     """
+
     class Meta:
         model = Hospital
         fields = ('name', 'address', 'state', 'zipcode', 'identifiers')
@@ -185,21 +179,21 @@ class AppointmentSchedulingForm(models.ModelForm):
         self.helper.field_class = 'col-lg-8'
 
         self.helper.layout = Layout(
-            Fieldset('Appointment Scheduling',
-                    Div(
-                          Div('time', css_class='col-lg-3'),
-                          css_class='row',
-                    ),
-                    'doctor',
-                    'patient',
-                    'location',
-                    ),
-            FormActions(
-                Submit('submit', 'Submit'),
-                HTML(
-                    '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
-                    '{% url "registry:calendar" %}{% endif %}>Cancel</a>')
-            )
+                Fieldset('Appointment Scheduling',
+                         Div(
+                                 Div('time', css_class='col-lg-3'),
+                                 css_class='row',
+                         ),
+                         'doctor',
+                         'patient',
+                         'location',
+                         ),
+                FormActions(
+                        Submit('submit', 'Submit'),
+                        HTML(
+                                '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
+                                '{% url "registry:calendar" %}{% endif %}>Cancel</a>')
+                )
         )
         if rules.test_rule('is_patient', user):
             self.fields['patient'].queryset = Patient.objects.get(uuid=user.uuid)
@@ -213,6 +207,7 @@ class AppointmentSchedulingForm(models.ModelForm):
     class Meta:
         model = Appointment
         fields = ('time', 'doctor', 'patient', 'location')
+
 
 class AppointmentEditForm(models.ModelForm):
     """
@@ -231,25 +226,25 @@ class AppointmentEditForm(models.ModelForm):
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form appointment'
         self.helper.form_method = 'POST'
-        #self.helper.form_action = reverse_lazy('registry:appt_edit')
+        # self.helper.form_action = reverse_lazy('registry:appt_edit')
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
 
         self.helper.layout = Layout(
-            Fieldset('Appointment Editing',
-                    Div(
-                          Div('time', css_class='col-lg-3'),
-                          css_class='row',
-                    ),
-                    'location',
-                    ),
-            FormActions(
-                Submit('submit', 'Submit'),
-                HTML(
-                    '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
-                    '{% url "registry:calendar" %}{% endif %}>Cancel</a> '
+                Fieldset('Appointment Editing',
+                         Div(
+                                 Div('time', css_class='col-lg-3'),
+                                 css_class='row',
+                         ),
+                         'location',
+                         ),
+                FormActions(
+                        Submit('submit', 'Submit'),
+                        HTML(
+                                '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
+                                '{% url "registry:calendar" %}{% endif %}>Cancel</a> '
+                        )
                 )
-            )
         )
 
         self.fields['location'].queryset = hospital
@@ -260,27 +255,31 @@ class AppointmentEditForm(models.ModelForm):
         fields = ('time', 'location')
 
 
-class DeleteAppForm(forms.ModelForm):
+class DeleteAppForm(models.ModelForm):
     """
     Name: DeleteAppForm
 
     Deletion of Appointment form
     """
+
     class Meta:
         model = Appointment
         fields = []
 
-class DeletePresForm(forms.ModelForm):
+
+class DeletePresForm(models.ModelForm):
     """
     Name: DeletePresForm
 
     Deletion of Pres form
     """
+
     class Meta:
         model = Prescription
         fields = []
 
-class PrescriptionCreation(forms.ModelForm):
+
+class PrescriptionCreation(models.ModelForm):
     """
     Name: PrescriptionCreation
 
@@ -298,31 +297,33 @@ class PrescriptionCreation(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form prescription'
         self.helper.form_method = 'POST'
-        #self.helper.form_action = reverse_lazy('registry:pres_create')
+        # self.helper.form_action = reverse_lazy('registry:pres_create')
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
 
         self.helper.layout = Layout(
-            Fieldset('Prescription Creation',
-                     'drug',
-                     'patient',
-                     'count',
-                     'amount',
-                     'refills',
-                     Div(
-                          Div('start_time', css_class='col-lg-3'),
-                          css_class='row',
-                      ),
-                     Div(
-                          Div('end_time', css_class='col-lg-3'),
-                          css_class='row',
-                      ),
-                     ),
-            FormActions(
-                Submit('submit', 'Submit'),
-                HTML(
-                    '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}{% url "registry:pres_create" %}{% endif %}>Cancel</a>')
-            )
+                Fieldset('Prescription Creation',
+                         'drug',
+                         'patient',
+                         'count',
+                         'amount',
+                         'refills',
+                         Div(
+                                 Div('start_time', css_class='col-lg-3'),
+                                 css_class='row',
+                         ),
+                         Div(
+                                 Div('end_time', css_class='col-lg-3'),
+                                 css_class='row',
+                         ),
+                         ),
+                FormActions(
+                        Submit('submit', 'Submit'),
+                        HTML(
+                                '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
+                                '{% url "registry:pres_create" %}{% endif %}>Cancel</a>'
+                        )
+                )
         )
 
         self.fields['patient'].queryset = Patient.objects.filter(provider=doctor)
@@ -335,7 +336,7 @@ class PrescriptionCreation(forms.ModelForm):
         exclude = ['doctor']
 
 
-class MessageCreation(forms.ModelForm):
+class MessageCreation(models.ModelForm):
     """
     Name: MessageCreation
 
@@ -345,7 +346,7 @@ class MessageCreation(forms.ModelForm):
     model = Message
 
     def __init__(self, *args, **kwargs):
-        super(MessageCreation,self).__init__(*args, **kwargs)
+        super(MessageCreation, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form messsage'
         self.helper.form_method = 'POST'
@@ -354,20 +355,21 @@ class MessageCreation(forms.ModelForm):
         self.helper.field_class = 'col-lg-8'
 
         self.helper.layout = Layout(
-            Fieldset('New Message',
-                     Div(
-                         Div('receiver', css_class='col-lg-3'),
-                         css_class= 'row',
-                     ),
-                     Div(
-                         Div('content', css_class='col-lg-3'),
-                         css_class= 'row',
-                     ),
-            ),
-            FormActions(
-                Submit('submit', 'Submit'),
-                HTML('<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}{% url "registry:home" %}{% endif %}>Cancel</a>')
-            )
+                Fieldset('New Message',
+                         Div(
+                                 Div('receiver', css_class='col-lg-3'),
+                                 css_class='row',
+                         ),
+                         Div(
+                                 Div('content', css_class='col-lg-3'),
+                                 css_class='row',
+                         ),
+                         ),
+                FormActions(
+                        Submit('submit', 'Submit'),
+                        HTML(
+                                '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}{% url "registry:home" %}{% endif %}>Cancel</a>')
+                )
         )
 
     class Meta:

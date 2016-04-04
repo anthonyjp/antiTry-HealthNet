@@ -1,7 +1,7 @@
 import rules
-
 from rules.predicates import predicate
-from .models.user_models import Patient, Doctor, Nurse, Administrator, User
+
+from registry.models import Patient, Doctor, Nurse, Administrator, User
 
 
 def is_user(user_type):

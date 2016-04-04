@@ -1,7 +1,8 @@
 from typing import Union, TypeVar
 
-from .models.user_models import User, Doctor, Nurse, Patient
 from rules.predicates import predicate
+
+from registry.models import User, Doctor, Nurse, Patient
 
 T = TypeVar('T', User)
 

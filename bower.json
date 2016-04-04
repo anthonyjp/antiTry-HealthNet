@@ -29,6 +29,10 @@
     "pikaday": "^1.4.0",
     "moment": "momentjs#^2.11.2",
     "fullcalendar": "^2.6.1",
-    "jt.timepicker": "jquery-timepicker-jt#^1.8.9"
+    "jt.timepicker": "jquery-timepicker-jt#^1.8.9",
+    "sprintf": "^1.0.3",
+    "chance": "^1.0.0",
+    "vex": "^2.3.3",
+    "selectize": "^0.12.1"
   }
 }

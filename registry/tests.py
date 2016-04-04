@@ -1,11 +1,9 @@
-from django.test import TestCase, Client
+import datetime as dt
 
 from django.core.urlresolvers import reverse
-from .models.user_models import *
+from django.test import TestCase, Client
 
 from .utility.options import *
-
-import datetime as dt
 
 c = Client()
 

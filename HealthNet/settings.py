@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # 'hijack',
     'compat',
     'crispy_forms',
+    'annoying',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -157,7 +158,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'private_static')
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
+    os.path.join(BASE_DIR, 'static'),
 ]
 
 # AXES SETTINGS - Do not change without permission

@@ -1,4 +1,5 @@
 Django==1.9.1
+django-annoying==0.9.0
 django-appconf==1.0.1
 django-axes==1.6.0
 django-bower==5.1.0
@@ -11,9 +12,9 @@ django-jet==0.1.4
 django-localflavor==1.2
 django-model-utils==2.4
 django-sass-processor==0.3.4
-libsass==0.10.1
-Pint==0.7.1
-python-dateutil==2.5.0
-pytz==2015.7
+libsass==0.11.0
+Pint==0.7.2
+python-dateutil==2.5.2
+pytz==2016.3
 rules==1.1.1
 six==1.10.0

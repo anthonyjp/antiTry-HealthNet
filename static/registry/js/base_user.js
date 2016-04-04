@@ -1,4 +1,3 @@
-
 if(!registry.base.has('forms'))
     registry.base['forms'] = {};
 

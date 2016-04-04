@@ -1,78 +1,73 @@
-from django.shortcuts import redirect, get_object_or_404, render
-from django.core.urlresolvers import reverse, reverse_lazy
-from django.contrib.auth import authenticate, logout
-from django.contrib.auth import login as django_login
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User as DjangoUser
-from django.http import HttpResponseNotFound, HttpResponse, Http404
-
-from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm, PrescriptionCreation
-from .forms import DeleteAppForm
-from .forms import MessageCreation
-#from .forms import PatientRegisterForm, LoginForm, AppointmentSchedulingForm, PrescriptionCreation,
-#from .forms import DeleteAppForm
-from .forms import *
-from .models.user_models import Patient, User
-from .models.info_models import Appointment, PatientContact
-from .utility.models import TimeRange
+import json
+import logging
 from datetime import datetime, timedelta
 
 import dateutil.parser
 import rules
-import json
-import logging
+from django.contrib.admin.models import LogEntry
+from django.contrib.auth import authenticate, logout
+from django.contrib.auth import login as django_login
+from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseNotFound, HttpResponse, Http404
+from django.shortcuts import redirect, get_object_or_404, render
 
-from django.utils import timezone
-# Create your views here.
+from registry.models import User, Appointment, PatientContact
+from .forms import *
+from .utility.models import TimeRange
 
-activitylog = logging.getLogger('hn.activity')
-requestlog = logging.getLogger('hn.request')
-securitylog = logging.getLogger('hn.security')
+activity_log = logging.getLogger('hn.activity')
+request_log = logging.getLogger('hn.request')
+security_log = logging.getLogger('hn.security')
 
-@login_required(login_url='/login')
-def pres_create(request):
+
+@login_required(login_url=reverse_lazy('registry:login'))
+def rx_create(request):
     q = request.user.hn_user
     p = User.objects.get_subclass(pk=q.pk)
-    #next is where it goes if you cancel
-    next = None
-    if rules.test_rule('is_doctor',p):
+    # next_location is where it goes if you cancel
+    next_location = None
+    if rules.test_rule('is_doctor', p):
         if request.method == "POST":
             form = PrescriptionCreation(request.POST, user=p)
             if form.is_valid():
-                pres = form.save(commit=False)
-                timeRange = TimeRange(
-                    start_time=form.cleaned_data['start_time'],
-                    end_time=form.cleaned_data['end_time']
+                rx = form.save(commit=False)
+                timerange = TimeRange(
+                        start_time=form.cleaned_data['start_time'],
+                        end_time=form.cleaned_data['end_time']
                 )
-                if (timeRange.start_time < timeRange.end_time) and (timeRange.end_time > datetime.now()):
-                        timeRange.save()
-                        pres.time_range = timeRange
-                        pres.doctor = p
-                        pres.save()
-                        return redirect('registry:calendar')
+                if (timerange.start_time < timerange.end_time) and (timerange.end_time > datetime.now()):
+                    timerange.save()
+                    rx.time_range = timerange
+                    rx.doctor = p
+                    rx.save()
+                    return redirect('registry:calendar')
         else:
             form = PrescriptionCreation(user=p)
 
             if 'next' in request.GET:
-                next = request.GET['next']
-        return render(request, 'registry/pres_create.html', {'form': form,  'next_url': next})
-    return HttpResponseNotFound('<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
-
+                next_location = request.GET['next']
+        return render(request, 'registry/pres_create.html', {'form': form, 'next_url': next_location})
+    return HttpResponseNotFound(
+            '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def appt_delete(request, pk):
     q = request.user.hn_user
     p = User.objects.get_subclass(pk=q.pk)
-    if rules.test_rule('is_nurse',p):
-        return HttpResponseNotFound('<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    if rules.test_rule('is_nurse', p):
+        return HttpResponseNotFound(
+                '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     delete = get_object_or_404(Appointment, id=pk)
-    if rules.test_rule('is_patient',p):
+    if rules.test_rule('is_patient', p):
         if delete.patient.pk != p.pk:
-            return HttpResponseNotFound('<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
-    if rules.test_rule('is_doctor',p):
+            return HttpResponseNotFound(
+                    '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    if rules.test_rule('is_doctor', p):
         if delete.doctor.pk != p.pk:
-            return HttpResponseNotFound('<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+            return HttpResponseNotFound(
+                    '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     if request.method == 'POST':
         form = DeleteAppForm(request.POST, instance=delete)
         if form.is_valid():
@@ -85,18 +80,22 @@ def appt_delete(request, pk):
     template_vars = {'form': form}
     return render(request, 'registry/appt_delete.html', template_vars)
 
+
 @login_required(login_url=reverse_lazy('registry:login'))
 def pres_delete(request, pk):
     q = request.user.hn_user
     p = User.objects.get_subclass(pk=q.pk)
-    if rules.test_rule('is_nurse',p):
-        return HttpResponseNotFound('<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    if rules.test_rule('is_nurse', p):
+        return HttpResponseNotFound(
+                '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     delete = get_object_or_404(Prescription, id=pk)
-    if rules.test_rule('is_patient',p):
-            return HttpResponseNotFound('<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
-    if rules.test_rule('is_doctor',p):
+    if rules.test_rule('is_patient', p):
+        return HttpResponseNotFound(
+                '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    if rules.test_rule('is_doctor', p):
         if delete.doctor.pk != p.pk:
-            return HttpResponseNotFound('<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+            return HttpResponseNotFound(
+                    '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     if request.method == 'POST':
         form = DeletePresForm(request.POST, instance=delete)
         if form.is_valid():
@@ -117,16 +116,18 @@ def register(request):
             patient = form.save(commit=False)
             username = '%s%s%s' % (patient.first_name, patient.middle_initial, patient.last_name)
             patient.auth_user = DjangoUser.objects.create_user(username, form.cleaned_data['email'],
-                                                         form.cleaned_data['password'])
+                                                               form.cleaned_data['password'])
+            patient.inbox = Inbox.objects.create()
             patient.save()
+            patient.inbox.save()
 
             contact = PatientContact(
-                patient=patient,
-                relationship=form.cleaned_data['contact_relationship'],
-                contact_name=form.cleaned_data['contact_name'],
-                contact_primary=form.cleaned_data['contact_primary'],
-                contact_secondary=form.cleaned_data['contact_secondary'],
-                contact_email=form.cleaned_data['contact_email']
+                    patient=patient,
+                    relationship=form.cleaned_data['contact_relationship'],
+                    contact_name=form.cleaned_data['contact_name'],
+                    contact_primary=form.cleaned_data['contact_primary'],
+                    contact_secondary=form.cleaned_data['contact_secondary'],
+                    contact_email=form.cleaned_data['contact_email']
             )
             try:
                 user = User.objects.get(auth_user__email=form.cleaned_data['contact_email'])
@@ -145,7 +146,8 @@ def register(request):
         form = PatientRegisterForm()
     return render(request, 'registry/new.html', {'form': form})
 
-@login_required(login_url='/login')
+
+@login_required(login_url=reverse_lazy('registry:login'))
 def appt_calendar(request):
     hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     return render(request, 'registry/calendar.html', {'appointments': hn_user.appointment_set.all()})
@@ -153,17 +155,21 @@ def appt_calendar(request):
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def appt_schedule(request):
-    #next is where it goes if you cancel
     q = request.user.hn_user
     p = User.objects.get_subclass(pk=q.pk)
-    next = None
+
+    next_location = None
     if request.method == "POST":
         form = AppointmentSchedulingForm(request.POST, user=p)
         if form.is_valid():
             appointment = form.save(commit=False)
-            list = Appointment.objects.filter(doctor__pk=appointment.doctor_id).filter(time__hour=appointment.time.hour).filter(time__day=appointment.time.day)
-            patientlist = Appointment.objects.filter(patient__pk=appointment.patient_id).filter(time__hour=appointment.time.hour).filter(time__day=appointment.time.day)
-            if not (list.exists() or patientlist.exists()):
+            appt_list = Appointment.objects.filter(doctor__pk=appointment.doctor_id) \
+                .filter(time__hour=appointment.time.hour, time__day=appointment.time.day)
+
+            pateint_list = Appointment.objects.filter(patient__pk=appointment.patient_id) \
+                .filter(time__hour=appointment.time.hour, time__day=appointment.time.day)
+
+            if not (appt_list.exists() or pateint_list.exists()):
                 appointment.save()
                 return redirect('registry:home')
     else:
@@ -173,9 +179,9 @@ def appt_schedule(request):
             form = AppointmentSchedulingForm(user=p)
 
         if 'next' in request.GET:
-            next = request.GET['next']
+            next_location = request.GET['next']
 
-    return render(request, 'registry/appt_create.html', {'form': form, 'next_url': next})
+    return render(request, 'registry/appt_create.html', {'form': form, 'next_url': next_location})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -189,17 +195,18 @@ def appt_edit(request, pk):
         form = AppointmentEditForm(request.POST, instance=appt, appt_id=pk)
         if form.is_valid():
             appointment = form.save(commit=False)
-            list = Appointment.objects.filter(doctor__pk=appointment.doctor_id).filter(time__hour=appointment.time.hour).filter(time__day=appointment.time.day)
+            appt_list = Appointment.objects.filter(doctor__pk=appointment.doctor_id).filter(
+                    time__hour=appointment.time.hour).filter(time__day=appointment.time.day)
             if initial_doctor == appointment.doctor.uuid:
                 if initial_start_time == appointment.time:
                     appointment.save()
                     return redirect('registry:calendar')
                 else:
-                    if not (list.exists()):
+                    if not (appt_list.exists()):
                         appointment.save()
                         return redirect('registry:calendar')
             else:
-                if not (list.exists()):
+                if not (appt_list.exists()):
                     appointment.save()
                     return redirect('registry:calendar')
             error = "Appointment Edit Failure: Date/Time Conflicting"
@@ -210,11 +217,13 @@ def appt_edit(request, pk):
 
 def index(request):
     if request.user.is_authenticated():
-        activitylog.info('[%s] %s', request.get_full_path(), str(request.user) if request.user.is_authenticated() else 'Anonymous')
+        activity_log.info('[%s] %s', request.get_full_path(),
+                          str(request.user) if request.user.is_authenticated() else 'Anonymous')
         return redirect('registry:home')
     else:
-        activitylog.info('[%s] %s', request.get_full_path(), str(request.user) if request.user.is_authenticated() else 'Anonymous')
-        return render(request,'registry/landing.html')
+        activity_log.info('[%s] %s', request.get_full_path(),
+                          str(request.user) if request.user.is_authenticated() else 'Anonymous')
+        return render(request, 'registry/landing.html')
 
 
 def login(request):
@@ -226,7 +235,8 @@ def login(request):
                 django_login(request, user)
                 return redirect(to=reverse('registry:home'))
     else:
-        activitylog.info('[%s] %s', request.get_full_path(), str(request.user) if request.user.is_authenticated() else 'Anonymous')
+        activity_log.info('[%s] %s', request.get_full_path(),
+                          str(request.user) if request.user.is_authenticated() else 'Anonymous')
         form = LoginForm()
     return render(request, 'registry/login.html', {'form': form})
 
@@ -236,7 +246,6 @@ def home(request):
     p = request.user.hn_user
     hn_user = User.objects.get_subclass(pk=p.pk)
     form = MessageCreation(request.POST)
-    #pres_form = PrescriptionCreation(request.POST)
 
     if rules.test_rule('is_patient', hn_user):
         return render(request,
@@ -250,19 +259,11 @@ def home(request):
         return render(request,
                       'registry/user_doctor.html',
                       {'form': form,
-                      # 'pres_form': pres_form,
                        'hn_user': hn_user,
                        'appointments': hn_user.appointment_set.all()
                        })
     else:
         return render(request, 'registry/user_admin.html', {'hn_user': hn_user})
-
-
-@login_required(login_url=reverse_lazy('registry:login'))
-def home_updated(request, form):
-    p = request.user.hn_user
-    hn_user = User.objects.get_subclass(pk=p.pk)
-    return render(request, 'registry/base_user.html', {'hn_user': hn_user})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -273,13 +274,13 @@ def sign_out(request):
     return redirect(to=reverse('registry:index'))
 
 
-from django.contrib.admin.models import LogEntry
 # LogEntry Action flags meaning:
 # ADDITION = 1
 # CHANGE = 2
 # DELETION = 3
 
-def Logs():
+
+def get_log_data():
     logs = LogEntry.objects.all()
     action_list = []
     for l in logs:
@@ -287,7 +288,7 @@ def Logs():
         user_id = str(l.user)
         object_repr = str(l.object_repr)
         action_flag = int(l.action_flag)
-        log_action = ""
+
         if action_flag == 1:
             log_action = user_id + " added a new " + object_repr + " at [" + time + "]."
             action_list.append(log_action)
@@ -302,7 +303,7 @@ def Logs():
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
-def Log_actions(request):
+def log_actions(request):
     fro = datetime.now() - timedelta(days=1)
     to = datetime.now()
 
@@ -311,7 +312,7 @@ def Log_actions(request):
     if 'to' in request.GET:
         to = dateutil.parser.parse(request.GET['to'])
 
-    return render(request, "registry/log.html", context={"action_list": Logs(), 'from': fro, 'to': to})
+    return render(request, "registry/log.html", context={"action_list": get_log_data(), 'from': fro, 'to': to})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -340,7 +341,7 @@ def update_user(request, pk):
                 failures.append(key)
 
         user.save()
-        return HttpResponse(json.dumps({'successes': successes, 'failures': failures}), content_type='application/json', status=200)
+        return HttpResponse(json.dumps({'successes': successes, 'failures': failures}), content_type='application/json',
+                            status=200)
     else:
         return Http404('Not a Possible Action')
-
