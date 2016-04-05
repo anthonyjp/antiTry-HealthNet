@@ -1,5 +1,26 @@
 from django_enumfield import enum
 
+# Log Action Types
+class logAction(enum.Enum):
+    APPT_CREATE = 0
+    APPT_DELETE = 1
+    APPT_EDIT = 2
+    PRES_CREATE = 3
+    PRES_DELETE = 4
+    TEST_UPLOAD = 5
+    TEST_RELEASE = 6
+    PROFILE_VIEW = 7
+    PA_ADMIT = 8
+    PA_DISCHARGE = 9
+    PA_TRANSFER = 10
+    MSG_SEND = 11
+
+# Admit options
+class admitOptions(enum.Enum):
+    EMERGENCY = 0
+    SURGERY = 1
+    OBSERVANCE = 2
+
 # Insurance Choices
 INSURANCE_CHOICES = (
     ('Self Insured', 'Self Insured'),

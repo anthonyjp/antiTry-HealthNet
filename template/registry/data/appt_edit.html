@@ -34,7 +34,7 @@
 
 
     {% crispy form form.helper%}
-
+    <a href="{% url 'registry:appt_delete' appt.pk %}"> Delete Appointment</a>
    {% endblock %}
 
 {% block customjs %}

@@ -3,6 +3,7 @@ import logging
 from datetime import datetime, timedelta
 
 import dateutil.parser
+import rules
 from django.contrib.admin.models import LogEntry
 from django.contrib.auth.models import User as DjangoUser
 from django.contrib.auth import authenticate, logout
@@ -100,7 +101,7 @@ def pres_delete(request, pk):
         form = DeletePresForm(request.POST, instance=delete)
         if form.is_valid():
             delete.delete()
-            return redirect('registry:calendar')
+            return redirect('registry:home')
 
     else:
         form = DeletePresForm(instance=delete)
@@ -159,19 +160,28 @@ def appt_schedule(request):
     p = User.objects.get_subclass(pk=q.pk)
 
     next_location = None
+    error = ""
+    location_found = False
     if request.method == "POST":
         form = AppointmentSchedulingForm(request.POST, user=p)
         if form.is_valid():
             appointment = form.save(commit=False)
-            appt_list = Appointment.objects.filter(doctor__pk=appointment.doctor_id) \
-                .filter(time__hour=appointment.time.hour, time__day=appointment.time.day)
-
-            pateint_list = Appointment.objects.filter(patient__pk=appointment.patient_id) \
-                .filter(time__hour=appointment.time.hour, time__day=appointment.time.day)
-
-            if not (appt_list.exists() or pateint_list.exists()):
-                appointment.save()
-                return redirect('registry:home')
+            if rules.test_rule('time_gt', appointment.time, datetime.now()):
+                for hospital in appointment.doctor.hospitals.all():
+                    if appointment.location == hospital:
+                        location_found = True
+                if location_found:
+                    list = Appointment.objects.filter(doctor__pk=appointment.doctor_id).filter(time__hour=appointment.time.hour).filter(time__day=appointment.time.day)
+                    patientlist = Appointment.objects.filter(patient__pk=appointment.patient_id).filter(time__hour=appointment.time.hour).filter(time__day=appointment.time.day)
+                    if not (list.exists() or patientlist.exists()):
+                        appointment.save()
+                        return redirect('registry:home')
+                    else:
+                        error = "Appointment Error: DateTime conflict"
+                else:
+                    error = "Appointment Error: Doctor does not work in " + appointment.location.name
+            else:
+                error = "Appointment Error: That date and time has already happen."
     else:
         if 'start' in request.GET:
             form = AppointmentSchedulingForm(user=p, initial={'time': dateutil.parser.parse(request.GET['start'])})
@@ -181,7 +191,7 @@ def appt_schedule(request):
         if 'next' in request.GET:
             next_location = request.GET['next']
 
-    return render(request, 'registry/data/appt_create.html', {'form': form, 'next_url': next_location})
+    return render(request, 'registry/appt_create.html', {'form': form, 'next_url': next_location, 'error': error})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -263,7 +273,6 @@ def home(request):
                        'appointments': hn_user.appointment_set.all()
                        })
     else:
-        return render(request, 'registry/users/user_admin.html', {'hn_user': hn_user})
         return render(request,
                       'registry/user_admin.html',
                       {'hn_user': hn_user,
