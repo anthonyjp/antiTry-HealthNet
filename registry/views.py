@@ -191,7 +191,7 @@ def appt_schedule(request):
         if 'next' in request.GET:
             next_location = request.GET['next']
 
-    return render(request, 'registry/appt_create.html', {'form': form, 'next_url': next_location, 'error': error})
+    return render(request, 'registry/data/appt_create.html', {'form': form, 'next_url': next_location, 'error': error})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -274,7 +274,7 @@ def home(request):
                        })
     else:
         return render(request,
-                      'registry/user_admin.html',
+                      'registry/users/user_admin.html',
                       {'hn_user': hn_user,
                        'form': form,
                        })
@@ -284,7 +284,7 @@ def home(request):
 def home_updated(request, form):
     p = request.user.hn_user
     hn_user = User.objects.get_subclass(pk=p.pk)
-    return render(request, 'registry/base_user.html', {'hn_user': hn_user})
+    return render(request, 'registry/base/base_user.html', {'hn_user': hn_user})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
