@@ -1,13 +1,15 @@
 import rules
+
+from .models import *
+from .utility.options import BloodType, Relationship
+from .utility.widgets import HeightField, WeightField, DateTimeMultiField
+
 from crispy_forms.bootstrap import *
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import *
 from django.core.urlresolvers import reverse_lazy
-from django.forms import forms, models, fields, widgets
 from localflavor.us.forms import USPhoneNumberField
-
-from .utility.options import BloodType, Relationship
-from .utility.widgets import HeightField, WeightField, DateTimeMultiField
+from django.forms import forms, models, fields, widgets
 
 
 class PatientRegisterForm(models.ModelForm):
