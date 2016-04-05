@@ -1,7 +1,8 @@
 from django_enumfield import enum
 
-# Log Action Types
-class logAction(enum.Enum):
+
+class LogAction(enum.Enum):
+    # Log Action Types
     APPT_CREATE = 0
     APPT_DELETE = 1
     APPT_EDIT = 2
@@ -14,9 +15,11 @@ class logAction(enum.Enum):
     PA_DISCHARGE = 9
     PA_TRANSFER = 10
     MSG_SEND = 11
+    ST_CREATE = 12
 
-# Admit options
-class admitOptions(enum.Enum):
+
+class AdmitOptions(enum.Enum):
+    # Admit options
     EMERGENCY = 0
     SURGERY = 1
     OBSERVANCE = 2
@@ -58,8 +61,9 @@ class BloodType(enum.Enum):
         UNKNOWN: '--'
     }
 
-#Hospital Roles
+
 class Role(enum.Enum):
+    #Hospital Roles
     ADMIN = 0
     DOCTOR = 1
     NURSE = 2
@@ -71,8 +75,9 @@ class Role(enum.Enum):
         NURSE: 'Nurse'
     }
 
-# Gender Choices
+
 class Gender(enum.Enum):
+    # Gender Choices
     MALE = 0
     FEMALE = 1
 
