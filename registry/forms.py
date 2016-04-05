@@ -191,6 +191,7 @@ class StaffRegistrationForm(forms.Form):
             )
         )
 
+
 class LoginForm(forms.Form):
     """
     Name:   LoginForm

@@ -3,9 +3,7 @@ import logging
 from datetime import datetime, timedelta
 
 import dateutil.parser
-import rules
 from django.contrib.admin.models import LogEntry
-from django.contrib.auth.models import User as DjangoUser
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as django_login
 from django.contrib.auth.decorators import login_required
@@ -13,7 +11,6 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseNotFound, HttpResponse, Http404
 from django.shortcuts import redirect, get_object_or_404, render
 
-from registry.models import User, Appointment, PatientContact, Prescription, Inbox
 from .forms import *
 from .utility.models import TimeRange
 
@@ -171,9 +168,15 @@ def appt_schedule(request):
                     if appointment.location == hospital:
                         location_found = True
                 if location_found:
-                    list = Appointment.objects.filter(doctor__pk=appointment.doctor_id).filter(time__hour=appointment.time.hour).filter(time__day=appointment.time.day)
-                    patientlist = Appointment.objects.filter(patient__pk=appointment.patient_id).filter(time__hour=appointment.time.hour).filter(time__day=appointment.time.day)
-                    if not (list.exists() or patientlist.exists()):
+                    dlist = Appointment.objects.filter(
+                        doctor__pk=appointment.doctor_id).filter(
+                        time__hour=appointment.time.hour).filter(
+                        time__day=appointment.time.day)
+                    patientlist = Appointment.objects.filter(
+                        patient__pk=appointment.patient_id).filter(
+                        time__hour=appointment.time.hour).filter(
+                        time__day=appointment.time.day)
+                    if not (dlist.exists() or patientlist.exists()):
                         appointment.save()
                         return redirect('registry:home')
                     else:
@@ -191,7 +194,7 @@ def appt_schedule(request):
         if 'next' in request.GET:
             next_location = request.GET['next']
 
-    return render(request, 'registry/appt_create.html', {'form': form, 'next_url': next_location, 'error': error})
+    return render(request, 'registry/data/appt_create.html', {'form': form, 'next_url': next_location, 'error': error})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -274,17 +277,17 @@ def home(request):
                        })
     else:
         return render(request,
-                      'registry/user_admin.html',
+                      'registry/users/user_admin.html',
                       {'hn_user': hn_user,
                        'form': form,
                        })
 
 
-@login_required(login_url=reverse_lazy('registry:login'))
-def home_updated(request, form):
-    p = request.user.hn_user
-    hn_user = User.objects.get_subclass(pk=p.pk)
-    return render(request, 'registry/base_user.html', {'hn_user': hn_user})
+# @login_required(login_url=reverse_lazy('registry:login'))
+# def home_updated(request, form):
+#     p = request.user.hn_user
+#     hn_user = User.objects.get_subclass(pk=p.pk)
+#     return render(request, 'registry/base_user.html', {'hn_user': hn_user})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -367,4 +370,3 @@ def update_user(request, pk):
                             status=200)
     else:
         return Http404('Not a Possible Action')
-
