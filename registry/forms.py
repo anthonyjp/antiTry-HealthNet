@@ -1,5 +1,3 @@
-import rules
-
 from .models import *
 from .utility.options import *
 from .utility.widgets import HeightField, WeightField, DateTimeMultiField
