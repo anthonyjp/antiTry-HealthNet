@@ -110,17 +110,67 @@
 {% endblock %}
 
 {% block userLinks %}
-    <li><a href="#tab5" rel="tab5" class="hn-tab">Appointments</a></li>
+    <li><a href="#tab2" rel="tab2" class="hn-tab">Patients</a></li>
+    <li><a href="#tab3" rel="tab3" class="hn-tab">Appointments</a></li>
+
 {% endblock %}
 {% block userContent %}
-    <div id="tab5" class="tab">
+
+    <div id="tab2" class="tab">
+        <table id="patient">
+                    <thead>
+                        <tr>
+                            <th id="theader">
+                                <div class="patientHead">
+                                    <p id="patientTitle">Patients<p>
+                                    <div id="patientSearch" class="patientHead">Search:
+                                        <input id="patientSearchBar" type="text" placeholder="Search for Patient ...">
+                                    </div>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr href="#tab7">
+                            <td class="patientBody">
+                                <div>
+                                    <div id="patientPic"><img id="patientAvatar" src="../static/registry/img/logo/Logo_Small.png" /></div>
+                                    <ul>
+                                        <li><p id="patientName">{{ hn_user.first_name }} {{hn_user.middle_initial}} {{hn_user.last_name }}</p></li>
+                                        <li><p id="patientDOB">{{ hn_user.date_of_birth }}</p></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr href="#tab7">
+                            <td class="patientBody">
+                                <div>
+                                    <div id="patientPic"><img id="patientAvatar" src="../static/registry/img/logo/Logo_Small.png" /></div>
+                                    <ul>
+                                        <li><p id="patientName">{{ hn_user.first_name }} {{hn_user.middle_initial}} {{hn_user.last_name }}</p></li>
+                                        <li><p id="patientDOB">{{ hn_user.date_of_birth }}</p></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr href="#tab7">
+                            <td class="patientBody">
+                                <div>
+                                    <div id="patientPic"><img id="patientAvatar" src="../static/registry/img/logo/Logo_Small.png" /></div>
+                                    <ul>
+                                        <li><p id="patientName">{{ hn_user.first_name }} {{hn_user.middle_initial}} {{hn_user.last_name }}</p></li>
+                                        <li><p id="patientDOB">{{ hn_user.date_of_birth }}</p></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+    </div>
+
+    <div id="tab3" class="tab">
         <div class="container calendar">
             <div id="calendar"></div>
         </div>
     </div>
-
-
-{#    <div id="tab9" class="tab">#}
-{#        {% crispy pres_form form.helper %}#}
-{#    </div>#}
 {% endblock %}

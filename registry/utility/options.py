@@ -37,7 +37,18 @@ class BloodType(enum.Enum):
         UNKNOWN: '--'
     }
 
+#Hospital Roles
+class Role(enum.Enum):
+    ADMIN = 0
+    DOCTOR = 1
+    NURSE = 2
 
+
+    labels = {
+        ADMIN: 'Admin',
+        DOCTOR: 'Doctor',
+        NURSE: 'Nurse'
+    }
 
 # Gender Choices
 class Gender(enum.Enum):

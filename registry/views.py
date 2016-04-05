@@ -264,6 +264,18 @@ def home(request):
                        })
     else:
         return render(request, 'registry/users/user_admin.html', {'hn_user': hn_user})
+        return render(request,
+                      'registry/user_admin.html',
+                      {'hn_user': hn_user,
+                       'form': form,
+                       })
+
+
+@login_required(login_url=reverse_lazy('registry:login'))
+def home_updated(request, form):
+    p = request.user.hn_user
+    hn_user = User.objects.get_subclass(pk=p.pk)
+    return render(request, 'registry/base_user.html', {'hn_user': hn_user})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -346,3 +358,4 @@ def update_user(request, pk):
                             status=200)
     else:
         return Http404('Not a Possible Action')
+

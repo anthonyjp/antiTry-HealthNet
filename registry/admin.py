@@ -40,7 +40,7 @@ class DjangoUserAdmin(UserAdmin):
     add_form = DjangoUserCreationForm
     add_fieldsets = (
         (None, {
-            'fields': ('email','username', 'password1', 'password2', 'first_name', 'last_name')
+            'fields': ('email', 'username', 'password1', 'password2', 'first_name', 'last_name')
         }),
     )
     UserAdmin.fieldsets[0][1]['fields'] = ('email', 'username', 'password')

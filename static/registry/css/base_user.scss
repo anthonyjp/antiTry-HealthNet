@@ -29,6 +29,63 @@ p{
   margin: 0%;
 }
 
+.patientHead{
+  text-align: center;
+}
+
+#patientPic{
+  float: left;
+  margin-right: 1%;
+}
+
+#patientAvatar{
+  height: 50px;
+}
+
+#patientName{
+  font-weight: bold;
+  padding-top: .15%;
+}
+
+.patientHead{
+  background-color: #AEBEB4;
+  text-align: center;
+  color: white;
+  font-family: $healthnet-standard-font;
+  font-size: 17px;
+  padding-top: .2%;
+  padding-bottom: .2%;
+}
+
+#patientTitle{
+  float: left;
+  margin-left: 45%;
+}
+
+.patientBody{
+  background-color: #e3eee7;
+  border: 1px solid white;
+  //color: #f3fef7;
+}
+
+#patientSearch{
+  padding-right: 5%;
+  text-align: right;
+  font-size: 12px;
+  padding-top: .2%;
+  padding-bottom: .2%;
+}
+
+#patientSearchBar{
+  color: black;
+  font-family: "Times New Roman";
+  width: 25%
+}
+
+li{
+  list-style: none;
+}
+
 /*----- Tabs -----*/
 #form{
   display: block;

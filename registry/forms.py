@@ -1,7 +1,7 @@
 import rules
 
 from .models import *
-from .utility.options import BloodType, Relationship
+from .utility.options import *
 from .utility.widgets import HeightField, WeightField, DateTimeMultiField
 
 from crispy_forms.bootstrap import *
@@ -9,8 +9,11 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import *
 from django.core.urlresolvers import reverse_lazy
 from localflavor.us.forms import USPhoneNumberField
+from localflavor.us.forms import USZipCodeField
+from localflavor.us.forms import USStateSelect
 from django.forms import forms, models, fields, widgets
 
+import rules
 
 class PatientRegisterForm(models.ModelForm):
     """
@@ -117,6 +120,76 @@ class PatientRegisterForm(models.ModelForm):
             'password': widgets.PasswordInput
         }
 
+
+class StaffRegistrationForm(forms.Form):
+    """
+    Name: StaffRegistrationForm
+
+    It's a form that allows admin users to create a new staff user.
+    """
+
+    first_name = fields.CharField(max_length=25)
+    middle_initial = fields.CharField(max_length=1)
+    last_name = fields.CharField(max_length=30)
+
+    email = fields.EmailField()
+    password = fields.CharField(max_length=255, widget=widgets.PasswordInput)
+
+    date_of_birth = fields.DateTimeField()
+    gender = fields.ChoiceField(choices=Gender.choices(), initial=Gender.MALE)
+    role = fields.ChoiceField(choices=Role.choices(), initial=Role.DOCTOR)
+
+    address_line_one = fields.CharField(max_length=255)
+    address_line_two = fields.CharField(max_length=255)
+    address_city = fields.CharField(max_length=255)
+    address_state = USStateSelect()
+    address_zipcode = USZipCodeField()
+
+    def __init__(self, *args, **kwargs):
+        super(StaffRegistrationForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal hn-form login'
+        self.helper.form_method = 'POST'
+        self.helper.label_class = 'control-label col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+
+        self.helper.layout = Layout(
+            Fieldset('Staff Registration',
+                     Div(
+                        Div('name_prefix', css_class='col-lg-2'),
+                        Div('first_name', css_class='col-lg-2'),
+                        Div('middle_initial', css_class='col-md-2'),
+                        Div('last_name', css_class='col-md-2'),
+                        Div('name_suffix', css_class='col-lg-2'),
+                        css_class='row',
+                     ),
+                     Div(
+                         Div('email', css_class='col-lg-3'),
+                         Div('password', css_class='col-lg-3')
+                     ),
+                     Div(
+                        Div('date_of_birth', css_class='col-lg-5'),
+                        Div('gender', css_class='col-lg-3'),
+                        Div('Role', css_class='col-lg-3'),
+                        css_class='row',
+                     ),
+                     Div(
+                        Div('address_line_one', css_class='col-lg-5'),
+                        Div('address_line_two', css_class='col-lg-5'),
+                        css_class='row',
+                     ),
+                     Div(
+                        Div('address_city', css_class='col-lg-5'),
+                        Div('address_state', css_class='col-lg-5'),
+                        Div('address_zipcode', css_class='col-lg-5'),
+                        css_class='row',
+                     )
+                    ),
+            FormActions(
+                Submit('submit', 'Submit'),
+                HTML('<a class="btn btn-default" href={% url "registry:home" %}>Cancel</a>')
+            )
+        )
 
 class LoginForm(forms.Form):
     """
