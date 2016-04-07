@@ -16,7 +16,6 @@ urlpatterns = [
     url(r'^home$', views.home, name='home'),
     url(r'^log$', views.log_actions, name='logs'),
     url(r'^appt$', views.appt_schedule, name='appt_create'),
-    url(r'^appt/calendar$', views.appt_calendar, name='appt_calendar'),
     url(r'^appt/(?P<pk>[0-9]+)$', views.appt_edit, name='appt_edit'),
     url(r'^appt/(?P<pk>[0-9]+)/delete$', views.appt_delete, name='appt_delete'),
     url(uuid_url(r'^user/{uuid}$'), views.view_user, name='user_view'),

@@ -39,7 +39,7 @@ def rx_create(request):
                     rx.time_range = timerange
                     rx.doctor = p
                     rx.save()
-                    return redirect('registry:calendar')
+                    return redirect('registry:home')
         else:
             form = PrescriptionCreation(user=p)
 
@@ -70,7 +70,7 @@ def appt_delete(request, pk):
         form = DeleteAppForm(request.POST, instance=delete)
         if form.is_valid():
             delete.delete()
-            return redirect('registry:calendar')
+            return redirect('registry:home')
 
     else:
         form = DeleteAppForm(instance=delete)
@@ -144,13 +144,6 @@ def register(request):
         form = PatientRegisterForm()
     return render(request, 'registry/register.html', {'form': form})
 
-
-@login_required(login_url=reverse_lazy('registry:login'))
-def appt_calendar(request):
-    hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
-    return render(request, 'registry/data/appt_calendar.html', {'appointments': hn_user.appointment_set.all()})
-
-
 @login_required(login_url=reverse_lazy('registry:login'))
 def appt_schedule(request):
     q = request.user.hn_user
@@ -210,19 +203,22 @@ def appt_edit(request, pk):
             appointment = form.save(commit=False)
             appt_list = Appointment.objects.filter(doctor__pk=appointment.doctor_id).filter(
                     time__hour=appointment.time.hour).filter(time__day=appointment.time.day)
-            if initial_doctor == appointment.doctor.uuid:
-                if initial_start_time == appointment.time:
-                    appointment.save()
-                    return redirect('registry:calendar')
+            if rules.test_rule('time_gt', appointment.time, datetime.now()):
+                if initial_doctor == appointment.doctor.uuid:
+                    if initial_start_time == appointment.time:
+                        appointment.save()
+                        return redirect('registry:home')
+                    else:
+                        if not (appt_list.exists()):
+                            appointment.save()
+                            return redirect('registry:home')
                 else:
                     if not (appt_list.exists()):
                         appointment.save()
-                        return redirect('registry:calendar')
+                        return redirect('registry:home')
+                error = "Appointment Edit Failure: Date/Time Conflicting"
             else:
-                if not (appt_list.exists()):
-                    appointment.save()
-                    return redirect('registry:calendar')
-            error = "Appointment Edit Failure: Date/Time Conflicting"
+                error = "Appointment Error: That date and time has already happen."
     else:
         form = AppointmentEditForm(instance=appt, appt_id=pk)
     return render(request, 'registry/data/appt_edit.html', {'form': form, 'appt': initial_appointment, 'error': error})

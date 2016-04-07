@@ -1,4 +1,5 @@
 from .models import *
+
 from .utility.options import *
 from .utility.widgets import HeightField, WeightField, DateTimeMultiField
 
@@ -266,7 +267,7 @@ class AppointmentSchedulingForm(models.ModelForm):
                         Submit('submit', 'Submit'),
                         HTML(
                                 '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
-                                '{% url "registry:calendar" %}{% endif %}>Cancel</a>')
+                                '{% url "registry:home" %}{% endif %}>Cancel</a>')
                 )
         )
         if rules.test_rule('is_patient', user):
@@ -316,7 +317,7 @@ class AppointmentEditForm(models.ModelForm):
                         Submit('submit', 'Submit'),
                         HTML(
                                 '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
-                                '{% url "registry:calendar" %}{% endif %}>Cancel</a> '
+                                '{% url "registry:home" %}{% endif %}>Cancel</a> '
                         )
                 )
         )
