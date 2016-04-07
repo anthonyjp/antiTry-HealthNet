@@ -255,6 +255,9 @@ def home(request):
     p = request.user.hn_user
     hn_user = User.objects.get_subclass(pk=p.pk)
     form = MessageCreation(request.POST)
+    patients = Patient.objects.filter(provider=hn_user)
+    pres = Prescription.objects.filter(doctor=hn_user)
+
 
     if rules.test_rule('is_patient', hn_user):
         return render(request,
@@ -269,7 +272,8 @@ def home(request):
                       'registry/users/user_doctor.html',
                       {'form': form,
                        'hn_user': hn_user,
-                       'appointments': hn_user.appointment_set.all()
+                       'appointments': hn_user.appointment_set.all(),
+                       'patients': patients
                        })
     else:
         return render(request,

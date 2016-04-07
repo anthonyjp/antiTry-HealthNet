@@ -127,6 +127,27 @@ $(document).ready(function(){
         return true;
     });
 
+    $("#innertab-links li").click(function() {
+        //  First remove class "active" from currently active tab
+        $("#innertab-links li").removeClass('active');
+
+        //  Now add class "active" to the selected/clicked tab
+        $(this).addClass("active");
+
+        //  Hide all tab content
+        $(".innertab").hide();
+
+        //  Here we get the href value of the selected tab
+        var selected_tab = $(this).find("a").attr("href");
+
+        //  Show the selected tab content
+        $(selected_tab).fadeIn();
+
+        //  At the end, we add return false so that the click on the link is not executed
+        return true;
+    });
+
+
     $("#checkAll").change(function () {
         $("input:checkbox").prop('checked', $(this).prop("checked"));
     });
@@ -141,11 +162,83 @@ $(document).ready(function(){
       }
     );
 
+        // Highlight a whole row from inbox table
+    $("#patient tr").not(':first').hover(
+      function () {
+        $(this).children().css("backgroundColor","#f3fef7");
+      },
+      function () {
+        $(this).children().css("backgroundColor","#e3eee7");
+      }
+    );
+
+    $('#patientSearchBar').keyup(function()
+	{
+		searchTable($(this).val());
+	});
+
 });
+
+function searchTable(inputVal)
+{
+
+    var notfound = document.createElement('tr');
+            var nottd = document.createElement('td');
+            var notdiv = document.createElement('div');
+            var nottext = document.createTextNode('No patient has been found.');
+            notdiv.appendChild(nottext);
+            nottd.id = 'nottd';
+            nottd.className = 'patientBody';
+            nottd.appendChild(notdiv);
+            notfound.appendChild(nottd);
+
+	var table = $('#patient');
+	table.find('tr').each(function(index, row)
+	{
+		var allCells = $(row).find('td');
+		if(allCells.length > 0)
+		{
+			var found = false;
+            $('#nottd').hide();
+
+			allCells.each(function(index, td)
+			{
+				var regExp = new RegExp(inputVal, 'i');
+				if(regExp.test($(td).text()))
+				{
+					found = true;
+					return false;
+				}
+			});
+			if(found == true)$(row).show();
+            else{
+                $(row).hide();
+                //$('#patient').append(notfound);
+            };
+		}
+	});
+}
 
 $(window).bind('beforeunload', registry.forms.user.updateUser);
 
 $("#inbox tr").not(':first').click(function() {
+        //  Hide all tab content
+
+        var obj = $(this).textContent();
+
+        $(".tab").hide();
+
+        //  Here we get the href value of the selected tab
+        var selected_tab = $(this).attr("href");
+
+        //  Show the selected tab content
+        $(selected_tab).fadeIn();
+
+        //  At the end, we add return false so that the click on the link is not executed
+        return true;
+});
+
+$("#patient tr").not(':first').click(function() {
         //  Hide all tab content
         $(".tab").hide();
 

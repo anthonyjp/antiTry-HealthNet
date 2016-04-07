@@ -76,10 +76,53 @@ p{
   padding-bottom: .2%;
 }
 
+#presbuttons{
+  width: 30%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#prestable{
+
+}
+
+#leftTD{
+  width: 20%;
+}
+
+#rightTD{
+  width: 80%;
+}
+
+#patientButtons{
+  width: 55%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#patientButtons button{
+  width: 150px;
+  margin-top: 5%;
+  font-size: 12px;
+}
+
 #patientSearchBar{
   color: black;
   font-family: "Times New Roman";
   width: 25%
+}
+
+#patientLeft{
+  padding-top: 4%;
+  padding-bottom: 1%;
+  border-radius:3px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.15);
+  background:#fff;
+}
+
+#patientRight{
+  margin-top: -5%;
+  padding-left: 2%;
 }
 
 li{
@@ -143,6 +186,23 @@ li{
 #check{
   width: 2%;
 }
+
+.presHead{
+  background-color: #AEBEB4;
+  text-align: center;
+  color: white;
+  font-family: $healthnet-standard-font;
+  padding-left: 1%;
+  border: .25px solid white;
+}
+
+.presBody{
+  background-color: #e3eee7;
+  text-align: center;
+  border: 1px solid white;
+  //color: #f3fef7;
+}
+
 
 .inboxHead{
   background-color: #AEBEB4;
@@ -254,5 +314,65 @@ li{
         }
 
         .tab.active {
+            display:block;
+        }
+
+.innertabs {
+    width:100%;
+    display:inline-block;
+    border-radius:3px 3px 0px 0px;
+}
+
+    /*----- Tab Links -----*/
+    /* Clearfix */
+    #innertab-links:after {
+        display:block;
+        clear:both;
+        content:'';
+    }
+
+    #innertab-links li {
+        margin:0px 5px;
+        float:left;
+        list-style:none;
+    }
+
+        #innertab-links a {
+            padding:9px 15px;
+            display:inline-block;
+            border-radius:3px 3px 0px 0px;
+            background:#7FB5DA;
+            font-size:16px;
+            font-weight:600;
+            color:#4c4c4c;
+            transition:all linear 0.15s;
+        }
+
+        #innertab-links a:hover {
+            background:#a7cce5;
+            text-decoration:none;
+        }
+
+    li.active a, li.active a:hover {
+        background:#fff;
+        color:#4c4c4c;
+    }
+
+    /*----- Content of Tabs -----*/
+    #innertab-content {
+        padding:15px;
+        border-radius:3px;
+        box-shadow:-1px 1px 1px rgba(0,0,0,0.15);
+        background:#fff;
+    }
+
+        .innertab {
+            display:none;
+            border-radius:3px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.15);
+            background:#fff;
+        }
+
+        .innertab.active {
             display:block;
         }

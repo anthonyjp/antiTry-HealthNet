@@ -37,7 +37,7 @@
         </ul>
 
         <div id="tab-content">
-            <div id="tab1" class="tab">
+            <div id="tab1" class="tab" style="display: block;">
                 <form id="form">
                     <label>First Name:</label><input data-field="first_name" class="editable" type="text" value="{{ hn_user.first_name }}" /><br>
                     <label>Middle Initial:</label><input data-field="middle_initial" class="editable" type="text" value="{{ hn_user.middle_initial }}"/><br>
@@ -50,10 +50,12 @@
             <div id="tab6" class="tab">
                 <table id="inbox">
                     <thead>
-                        <th id="check"><div class="inboxHead"><input type="checkbox" id="checkAll"/></div></th>
-                        <th><div class="inboxHead">From</div></th>
-                        <th><div class="inboxHead">Title</div></th>
-                        <th><div class="inboxHead">Date</div></th>
+                        <tr>
+                            <th id="check"><div class="inboxHead"><input type="checkbox" id="checkAll"/></div></th>
+                            <th><div class="inboxHead">From</div></th>
+                            <th><div class="inboxHead">Title</div></th>
+                            <th><div class="inboxHead">Date</div></th>
+                        </tr>
                     </thead>
                     <tbody>
                         <tr href="#tab7">
