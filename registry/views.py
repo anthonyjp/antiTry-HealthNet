@@ -13,6 +13,7 @@ from django.shortcuts import redirect, get_object_or_404, render
 
 from .forms import *
 from .utility.models import TimeRange
+from .models import *
 
 activity_log = logging.getLogger('hn.activity')
 request_log = logging.getLogger('hn.request')
@@ -49,6 +50,38 @@ def rx_create(request):
     return HttpResponseNotFound(
             '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
 
+@login_required(login_url=reverse_lazy('registry:login'))
+def patient_admit(request):
+    #patient = get_object_or_404(Patient, uuid=uuid)
+    user = request.user.hn_user
+    subuser = User.objects.get_subclass(pk=user.pk)
+    # next_location is where it goes if you cancel
+    next_location = None
+    if rules.test_rule('is_doctor', subuser) or rules.test_rule('is_nurse', subuser):
+        if request.method == "POST":
+            form = PatientAdmitForm(request.POST, user)
+            if form.is_valid():
+                admit_request = form.save(commit=False)
+                timerange = TimeRange(
+                        start_time=datetime.now(),
+                        end_time=None
+                )
+                timerange.save()
+                admit_request.admission_time = timerange
+                admit_request.admitted_by = user
+                patient = admit_request.patient
+                patient.admission_status = True
+                admit_request.save()
+                return redirect('registry:home')
+        else:
+            form = PatientAdmitForm(user)
+
+            if 'next' in request.GET:
+                next_location = request.GET['next']
+        return render(request, 'registry/data/patient_admit.html', {'form': form, 'next_url': next_location})
+    return HttpResponseNotFound(
+            '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def appt_delete(request, pk):
@@ -80,7 +113,7 @@ def appt_delete(request, pk):
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
-def pres_delete(request, pk):
+def rx_delete(request, pk):
     q = request.user.hn_user
     p = User.objects.get_subclass(pk=q.pk)
     if rules.test_rule('is_nurse', p):
@@ -163,12 +196,12 @@ def appt_schedule(request):
                         location_found = True
                 if location_found:
                     dlist = Appointment.objects.filter(
-                        doctor__pk=appointment.doctor_id).filter(
-                        time__hour=appointment.time.hour).filter(
+                        doctor__pk=appointment.doctor_id,
+                        time__hour=appointment.time.hour,
                         time__day=appointment.time.day)
                     patientlist = Appointment.objects.filter(
-                        patient__pk=appointment.patient_id).filter(
-                        time__hour=appointment.time.hour).filter(
+                        patient__pk=appointment.patient_id,
+                        time__hour=appointment.time.hour,
                         time__day=appointment.time.day)
                     if not (dlist.exists() or patientlist.exists()):
                         appointment.save()

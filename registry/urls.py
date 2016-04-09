@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'^login$', views.login, name='login'),
     url(r'^logout$', views.sign_out, name='logout'),
     url(r'^home$', views.home, name='home'),
+    url(r'^patient_admit$', views.patient_admit, name='patient_admit'),
     url(r'^log$', views.log_actions, name='logs'),
     url(r'^appt$', views.appt_schedule, name='appt_create'),
     url(r'^appt/(?P<pk>[0-9]+)$', views.appt_edit, name='appt_edit'),
@@ -21,5 +22,5 @@ urlpatterns = [
     url(r'^patient_viewing/(?P<uuid>.*)$', views.patient_viewing, name='patient_viewing'),
     url(uuid_url(r'^user/{uuid}/update$'), views.update_user, name='user_update'),
     url(r'^rx/create$', views.rx_create, name='rx_create'),
-    url(r'^rx/(?P<pk>[0-9]+)/delete/$', views.pres_delete, name='rx_create'),
+    url(r'^rx/(?P<pk>[0-9]+)/delete/$', views.rx_delete, name='rx_delete'),
 ]

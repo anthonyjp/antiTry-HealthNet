@@ -9,7 +9,7 @@ from localflavor.us.us_states import STATE_CHOICES
 from registry.utility.options import Relationship
 from model_utils.managers import InheritanceManager
 
-from registry.utility.options import BloodType, Gender, INSURANCE_CHOICES
+from registry.utility.options import BloodType, Gender, INSURANCE_CHOICES, AdmitOptions
 from registry.utility.options import SecurityQuestion as SecQ
 from registry.utility.models import TimeRange, Dictionary, SeparatedValuesField
 
@@ -107,17 +107,6 @@ class User(models.Model):
 class Doctor(User):
     hospitals = models.ManyToManyField(Hospital, related_name='provider_to')
 
-
-class AdmissionInfo(models.Model):
-    patient = models.TextField()
-    admitted_by = models.TextField()
-
-    doctors = models.ManyToManyField(Doctor)
-
-    admission_time = models.OneToOneField(to=TimeRange, on_delete=models.SET_NULL, null=True)
-    prescriptions = models.OneToOneField(to=Dictionary, on_delete=models.PROTECT)
-
-
 class Nurse(User):
     hospital = models.ForeignKey(Hospital)
 
@@ -127,17 +116,29 @@ class Patient(User):
     weight = models.PositiveIntegerField()
 
     provider = models.ForeignKey(to=Doctor, related_name='providers', on_delete=models.SET_NULL, null=True)
-    admission_status = models.OneToOneField(to=AdmissionInfo, related_name='patient_status', on_delete=models.SET_NULL,
-                                            null=True)
+    #admission_status = models.OneToOneField(to=AdmissionInfo, related_name='patient_status', on_delete=models.SET_NULL,
+    #                                        null=True)
+    admission_status = models.BooleanField(default=False)
     pref_hospital = models.ForeignKey(to=Hospital, related_name='%(app_label)s_%(class)s_pref_hospital',
                                       on_delete=models.SET_NULL, null=True)
 
     blood_type = models.SmallIntegerField(choices=BloodType.choices(), default=BloodType.UNKNOWN)
     insurance = models.CharField(max_length=40, choices=INSURANCE_CHOICES, default=INSURANCE_CHOICES[0][0])
-
+    transfer_request = models.BooleanField(default=False)
 
 class Administrator(User):
     is_sysadmin = models.BooleanField(default=False)
+
+class Admittance(models.Model):
+    patient = models.ForeignKey(to=Patient, on_delete=models.CASCADE)
+    admitted_by = models.ForeignKey(to=User, on_delete=models.SET_NULL, related_name='admitted_by', null=True)
+    hospital = models.ForeignKey(Hospital)
+    reason = models.SmallIntegerField(choices=AdmitOptions.choices(), default=AdmitOptions.EMERGENCY)
+    admission_time = models.OneToOneField(to=TimeRange, on_delete=models.SET_NULL, null=True)
+    request = models.BooleanField(default=False)
+    def __str__(self):
+        return "%s was admitted by %s to %s on %s" % \
+               (self.patient, self.admitted_by, self.hospital, self.admission_time.start_time)
 
 
 class Prescription(models.Model):
@@ -205,7 +206,7 @@ class MedicalTest(MedicalData):
 
 
 class MedicalHistory(MedicalData):
-    admission_details = models.OneToOneField(to=AdmissionInfo, on_delete=models.CASCADE)
+    admission_details = models.OneToOneField(to=Admittance, on_delete=models.CASCADE)
 
 
 class Contact(models.Model):
