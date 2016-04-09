@@ -224,22 +224,8 @@ $(window).bind('beforeunload', registry.forms.user.updateUser);
 $("#inbox tr").not(':first').click(function() {
         //  Hide all tab content
 
-        var obj = $(this).textContent();
+        //var obj = $(this).textContent();
 
-        $(".tab").hide();
-
-        //  Here we get the href value of the selected tab
-        var selected_tab = $(this).attr("href");
-
-        //  Show the selected tab content
-        $(selected_tab).fadeIn();
-
-        //  At the end, we add return false so that the click on the link is not executed
-        return true;
-});
-
-$("#patient tr").not(':first').click(function() {
-        //  Hide all tab content
         $(".tab").hide();
 
         //  Here we get the href value of the selected tab
@@ -253,6 +239,20 @@ $("#patient tr").not(':first').click(function() {
 });
 
 $("#buttons").click(function() {
+        //  Hide all tab content
+        $(".tab").hide();
+
+        //  Here we get the href value of the selected tab
+        var selected_tab = $(this).find("a").attr("href");
+
+        //  Show the selected tab content
+        $(selected_tab).fadeIn();
+
+        //  At the end, we add return false so that the click on the link is not executed
+        return true;
+});
+
+$("#presbuttons").click(function() {
         //  Hide all tab content
         $(".tab").hide();
 

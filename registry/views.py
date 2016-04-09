@@ -252,12 +252,9 @@ def login(request):
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def home(request):
-    p = request.user.hn_user
-    hn_user = User.objects.get_subclass(pk=p.pk)
+    hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     form = MessageCreation(request.POST)
     patients = Patient.objects.filter(provider=hn_user)
-    pres = Prescription.objects.filter(doctor=hn_user)
-
 
     if rules.test_rule('is_patient', hn_user):
         return render(request,
@@ -267,7 +264,7 @@ def home(request):
                        'appointments': hn_user.appointment_set.all()
                        })
 
-    elif rules.test_rule('is_doctor', hn_user):
+    elif rules.test_rule('is_doctor', hn_user or 'is_nurse', hn_user):
         return render(request,
                       'registry/users/user_doctor.html',
                       {'form': form,
@@ -281,6 +278,21 @@ def home(request):
                       {'hn_user': hn_user,
                        'form': form,
                        })
+
+
+@login_required(login_url=reverse_lazy('registry:login'))
+def patient_viewing(request, uuid):
+    hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    patient = Patient.objects.filter(uuid=uuid)
+    rx_form = PrescriptionCreation(request.POST, user=hn_user)
+    rxs = Prescription.objects.filter(doctor=hn_user, patient=patient)
+
+    return render(request,
+                  'registry/users/patient_viewing.html',
+                  {'hn_user': hn_user,
+                   'patient': patient,
+                   'rx_form': rx_form,
+                   'rxs': rxs})
 
 
 # @login_required(login_url=reverse_lazy('registry:login'))

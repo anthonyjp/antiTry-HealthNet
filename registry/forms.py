@@ -14,6 +14,7 @@ from django.forms import forms, models, fields, widgets
 
 import rules
 
+
 class PatientRegisterForm(models.ModelForm):
     """
     Name: PatientRegisterForm
@@ -378,11 +379,20 @@ class PrescriptionCreation(models.ModelForm):
 
         self.helper.layout = Layout(
                 Fieldset('Prescription Creation',
-                         'drug',
-                         'patient',
-                         'count',
-                         'amount',
-                         'refills',
+                         Div(
+                             Div('drug', css_class='col-lg-3'),
+                             css_class='row',
+                         ),
+                         Div(
+                             Div('patient', css_class='col-lg-3'),
+                             css_class='row',
+                         ),
+                         Div(
+                             Div('count', css_class='col-lg-3'),
+                             Div('amount', css_class='col-lg-3'),
+                             Div('refills', css_class='col-lg-3'),
+                             css_class='row',
+                         ),
                          Div(
                                  Div('start_time', css_class='col-lg-3'),
                                  css_class='row',
@@ -396,7 +406,7 @@ class PrescriptionCreation(models.ModelForm):
                         Submit('submit', 'Submit'),
                         HTML(
                                 '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
-                                '{% url "registry:pres_create" %}{% endif %}>Cancel</a>'
+                                '{% url "registry:home" %}{% endif %}>Cancel</a>'
                         )
                 )
         )

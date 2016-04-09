@@ -132,12 +132,14 @@
                     </thead>
                     <tbody>
                         {% for p in patients %}
-                        <tr href="#tab4">
+                        <tr>
+
                             <td class="patientBody">
                                 <div>
                                     <div id="patientPic"><img id="patientAvatar" src="../static/registry/img/logo/Logo_Small.png" /></div>
                                     <ul>
-                                        <li><p id="patientName">{{ p.first_name }} {{p.middle_initial}} {{p.last_name }}</p></li>
+                                        <li><a href="{% url 'registry:patient_viewing' p.uuid %}">
+                                            <p id="patientName">{{ p.first_name }} {{p.middle_initial}} {{p.last_name }}</p></a></li>
                                         <li><p id="patientDOB">{{ p.date_of_birth }}</p></li>
                                     </ul>
                                 </div>
@@ -194,8 +196,8 @@
                             </tbody>
                         </table>
                         <div id="presbuttons">
-                            <a href="#tab8"><button>Delete Prescription(s)</button></a>
-                            <a href="#tab6"><button>Add Prescription</button></a>
+                            <a href="#tab5"><button>Delete Prescription(s)</button></a>
+                            <a href="#tab5"><button>Add Prescription</button></a>
                         </div>
                     </div>
                 </div>
@@ -209,5 +211,9 @@
         <div class="container calendar">
             <div id="calendar"></div>
         </div>
+    </div>
+
+    <div id="tab5" class="tab">
+{#       {% crispy pres_form pres_form.helper %}#}
     </div>
 {% endblock %}
