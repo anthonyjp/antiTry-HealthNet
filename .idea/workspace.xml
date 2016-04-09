@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2c481091-0e1c-4f9a-b572-33a14b532b6e" name="Default" comment="Fix broken template references in views">
+    <list default="true" id="2c481091-0e1c-4f9a-b572-33a14b532b6e" name="Default" comment="We really need to stop committing migrations and workspace xmls if we can...">
       <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/registry/migrations/0001_initial.py" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/registry/views.py" afterPath="$PROJECT_DIR$/registry/views.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/template/registry/users/user_doctor.html" afterPath="$PROJECT_DIR$/template/registry/users/user_doctor.html" />
     </list>
     <list id="575ad12e-fc51-4387-8fe9-8205024f9dd6" name="New changelist" comment="New changelist" />
     <ignored path="HealthNet.iws" />
@@ -51,10 +52,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="admin.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="admin.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/registry/admin.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.63109046">
+            <state vertical-scroll-proportion="0.0">
               <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
@@ -88,20 +89,53 @@
       <file leaf-file-name="user_doctor.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/template/registry/users/user_doctor.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="1.3076923">
-              <caret line="94" column="51" selection-start-line="94" selection-start-column="42" selection-end-line="94" selection-end-column="51" />
-              <folding />
+            <state vertical-scroll-proportion="-47.73077">
+              <caret line="193" column="25" selection-start-line="193" selection-start-column="25" selection-end-line="193" selection-end-column="25" />
+              <folding>
+                <marker date="1460234527039" expanded="true" signature="149:193" placeholder="{% block set-active ... %}" />
+                <marker date="1460234527039" expanded="true" signature="195:432" placeholder="{% block calendar_cssimport ... %}" />
+                <marker date="1460234527039" expanded="true" signature="725:3141" placeholder="..." />
+                <marker date="1460234527039" expanded="true" signature="729:761" placeholder="/*...*/" />
+                <marker date="1460234527039" expanded="true" signature="796:3128" placeholder="{...}" />
+                <marker date="1460234527039" expanded="true" signature="801:913" placeholder="/*...*/" />
+                <marker date="1460234527039" expanded="true" signature="944:1125" placeholder="/*...*/" />
+                <marker date="1460234527039" expanded="true" signature="1177:3121" placeholder="{&quot;defaultView&quot;: 'agendaWeek'...}" />
+                <marker date="1460234527039" expanded="true" signature="1183:1427" placeholder="/*...*/" />
+                <marker date="1460234527039" expanded="true" signature="1444:1544" placeholder="{&quot;left&quot;: 'prev,next today'...}" />
+                <marker date="1460234527039" expanded="true" signature="1550:1671" placeholder="/*...*/" />
+                <marker date="1460234527039" expanded="true" signature="1707:1829" placeholder="/*...*/" />
+                <marker date="1460234527039" expanded="true" signature="1977:2231" placeholder="/*...*/" />
+                <marker date="1460234527039" expanded="true" signature="2237:2293" placeholder="/*...*/" />
+                <marker date="1460234527039" expanded="true" signature="2319:2435" placeholder="/*...*/" />
+                <marker date="1460234527039" expanded="true" signature="2448:2910" placeholder="[...]" />
+                <marker date="1460234527039" expanded="true" signature="2470:2904" placeholder="{% for appt in appointments ... %}" />
+                <marker date="1460234527039" expanded="true" signature="2525:2834" placeholder="{&quot;title&quot;: &quot;{{ appt.patient|stringify }} &amp; Dr. {{ appt.doctor|stringify }}&quot;...}" />
+                <marker date="1460234527039" expanded="true" signature="2834:2871" placeholder="{% if not forloop.last ... %}" />
+                <marker date="1460234527039" expanded="true" signature="2970:3116" placeholder="{...}" />
+                <marker date="1460234527039" expanded="true" signature="3159:3336" placeholder="{% block userLinks ... %}" />
+                <marker date="1460234527039" expanded="true" signature="3337:7880" placeholder="{% block userContent ... %}" />
+                <marker date="1460234527039" expanded="true" signature="3392:4087" placeholder="..." />
+                <marker date="1460234527039" expanded="true" signature="3421:4087" placeholder="..." />
+                <marker date="1460234527039" expanded="true" signature="3449:4033" placeholder="..." />
+                <marker date="1460234527039" expanded="true" signature="3478:4004" placeholder="..." />
+                <marker date="1460234527039" expanded="true" signature="3524:3974" placeholder="..." />
+                <marker date="1460234527039" expanded="true" signature="3582:3940" placeholder="..." />
+                <marker date="1460234527039" expanded="true" signature="3651:3688" placeholder="..." />
+                <marker date="1460234527039" expanded="true" signature="3732:3901" placeholder="..." />
+                <marker date="1460234527039" expanded="true" signature="4061:4087" placeholder="..." />
+                <marker date="1460234527039" expanded="true" signature="7854:7864" placeholder="..." />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/registry/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="286" column="28" selection-start-line="286" selection-start-column="28" selection-end-line="286" selection-end-column="28" />
+            <state vertical-scroll-proportion="0.11135371">
+              <caret line="266" column="77" selection-start-line="266" selection-start-column="77" selection-end-line="266" selection-end-column="77" />
               <folding>
-                <marker date="1459877403269" expanded="false" signature="0:697" placeholder="import ..." />
+                <element signature="e#0#11#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -112,7 +146,22 @@
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="-0.0">
               <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
+              <folding>
+                <marker date="1460234525126" expanded="true" signature="27:45" placeholder="{...}" />
+                <marker date="1460234525126" expanded="true" signature="52:125" placeholder="{...}" />
+                <marker date="1460234525126" expanded="true" signature="132:149" placeholder="{...}" />
+                <marker date="1460234525126" expanded="true" signature="166:295" placeholder="{...}" />
+                <marker date="1460234525126" expanded="true" signature="229:293" placeholder="{...}" />
+                <marker date="1460234525126" expanded="true" signature="298:315" placeholder="{...}" />
+                <marker date="1460234525126" expanded="true" signature="329:354" placeholder="{...}" />
+                <marker date="1460234525126" expanded="true" signature="367:405" placeholder="{...}" />
+                <marker date="1460234525126" expanded="true" signature="421:440" placeholder="{...}" />
+                <marker date="1460234525126" expanded="true" signature="513:686" placeholder="{...}" />
+                <marker date="1460234525126" expanded="true" signature="701:739" placeholder="{...}" />
+                <marker date="1460234525126" expanded="true" signature="753:832" placeholder="{...}" />
+                <marker date="1460234525126" expanded="true" signature="848:955" placeholder="{...}" />
+                <marker date="1460234525126" expanded="true" signature="5690:5728" placeholder="{...}" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -120,8 +169,8 @@
       <file leaf-file-name="appt_create.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/template/registry/data/appt_create.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-1.9615384">
-              <caret line="21" column="59" selection-start-line="21" selection-start-column="51" selection-end-line="21" selection-end-column="59" />
+            <state vertical-scroll-proportion="-9.153846">
+              <caret line="14" column="14" selection-start-line="14" selection-start-column="14" selection-end-line="14" selection-end-column="14" />
               <folding />
             </state>
           </provider>
@@ -130,8 +179,8 @@
       <file leaf-file-name="user_admin.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/template/registry/users/user_admin.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-6.1923075">
-              <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+            <state vertical-scroll-proportion="-5.230769">
+              <caret line="8" column="32" selection-start-line="8" selection-start-column="32" selection-end-line="8" selection-end-column="32" />
               <folding />
             </state>
           </provider>
@@ -141,37 +190,8 @@
         <entry file="file://$PROJECT_DIR$/registry/forms.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#21#0" expanded="true" />
-                <marker date="1459877064931" expanded="true" signature="5498:8362" placeholder="..." />
-                <marker date="1459877064931" expanded="true" signature="8392:9398" placeholder="..." />
-                <marker date="1459877064931" expanded="true" signature="8397:8488" placeholder="&quot;&quot;&quot;Name:   LoginForm...&quot;&quot;&quot;" />
-                <marker date="1459877064931" expanded="true" signature="8640:9398" placeholder="..." />
-                <marker date="1459877064931" expanded="true" signature="9446:9669" placeholder="..." />
-                <marker date="1459877064931" expanded="true" signature="9451:9555" placeholder="&quot;&quot;&quot;Name:   HospitalRegisterForm...&quot;&quot;&quot;" />
-                <marker date="1459877064931" expanded="true" signature="9572:9669" placeholder="..." />
-                <marker date="1459877064931" expanded="true" signature="9722:11765" placeholder="..." />
-                <marker date="1459877064931" expanded="true" signature="9727:9851" placeholder="&quot;&quot;&quot;Name:   AppointmentSchedulingForm...&quot;&quot;&quot;" />
-                <marker date="1459877064931" expanded="true" signature="9950:11661" placeholder="..." />
-                <marker date="1459877064931" expanded="true" signature="11678:11765" placeholder="..." />
-                <marker date="1459877064931" expanded="true" signature="11812:13412" placeholder="..." />
-                <marker date="1459877064931" expanded="true" signature="11817:11941" placeholder="&quot;&quot;&quot;Name:   AppointmentSchedulingForm...&quot;&quot;&quot;" />
-                <marker date="1459877064931" expanded="true" signature="12040:13329" placeholder="..." />
-                <marker date="1459877064931" expanded="true" signature="13346:13412" placeholder="..." />
-                <marker date="1459877064931" expanded="true" signature="13453:13592" placeholder="..." />
-                <marker date="1459877064931" expanded="true" signature="13458:13527" placeholder="&quot;&quot;&quot;Name: DeleteAppForm...&quot;&quot;&quot;" />
-                <marker date="1459877064931" expanded="true" signature="13544:13592" placeholder="..." />
-                <marker date="1459877064931" expanded="true" signature="13634:13768" placeholder="..." />
-                <marker date="1459877064931" expanded="true" signature="13639:13702" placeholder="&quot;&quot;&quot;Name: DeletePresForm...&quot;&quot;&quot;" />
-                <marker date="1459877064931" expanded="true" signature="13719:13768" placeholder="..." />
-                <marker date="1459877064931" expanded="true" signature="13816:15921" placeholder="..." />
-                <marker date="1459877064931" expanded="true" signature="13821:13993" placeholder="&quot;&quot;&quot;Name: PrescriptionCreation...&quot;&quot;&quot;" />
-                <marker date="1459877064931" expanded="true" signature="14135:15781" placeholder="..." />
-                <marker date="1459877064931" expanded="true" signature="15798:15921" placeholder="..." />
-                <marker date="1459877064931" expanded="true" signature="15969:16060" placeholder="&quot;&quot;&quot;Name: MessageCreation...&quot;&quot;&quot;" />
-                <marker date="1459877064931" expanded="true" signature="16123:17233" placeholder="..." />
-              </folding>
+              <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -237,8 +257,9 @@
         <option value="$PROJECT_DIR$/template/registry/data/appt_delete.html" />
         <option value="$PROJECT_DIR$/template/registry/data/rx_delete.html" />
         <option value="$PROJECT_DIR$/registry/forms.py" />
-        <option value="$PROJECT_DIR$/registry/views.py" />
         <option value="$PROJECT_DIR$/registry/admin.py" />
+        <option value="$PROJECT_DIR$/template/registry/users/user_doctor.html" />
+        <option value="$PROJECT_DIR$/registry/views.py" />
       </list>
     </option>
   </component>
@@ -480,7 +501,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="js-jscs-nodeInterpreter" value="C:\Program Files\nodejs\node.exe" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="last_opened_file_path" value="C:/Ruby22-x64/lib/ruby/gems/2.2.0/gems/scss_lint-0.47.1/bin/scss-lint" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
@@ -511,7 +532,16 @@
           <option name="mySupportsDeletion" value="false" />
           <option name="myCanBeAbsent" value="false" />
           <option name="myId" value="UPDATED" />
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/registry/utility/options.py</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/registry/forms.py</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/registry/urls.py</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/registry/views.py</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/static/registry/css/base_auth.scss</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/static/registry/css/base_user.scss</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/static/registry/js/base_user.js</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/template/registry/base/base.html</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/template/registry/base/base_user.html</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/template/registry/data/appt_edit.html</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/template/registry/users/user_doctor.html</PATH>
         </FILE-GROUP>
         <FILE-GROUP>
           <option name="myUpdateName" value="Created" />
@@ -519,7 +549,7 @@
           <option name="mySupportsDeletion" value="false" />
           <option name="myCanBeAbsent" value="false" />
           <option name="myId" value="CREATED" />
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/registry/migrations/0001_initial.py</PATH>
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/template/registry/users/patient_viewing.html</PATH>
         </FILE-GROUP>
         <FILE-GROUP>
           <option name="myUpdateName" value="Deleted" />
@@ -527,6 +557,7 @@
           <option name="mySupportsDeletion" value="false" />
           <option name="myCanBeAbsent" value="true" />
           <option name="myId" value="REMOVED_FROM_REPOSITORY" />
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/template/registry/data/appt_calendar.html</PATH>
         </FILE-GROUP>
         <FILE-GROUP>
           <option name="myUpdateName" value="Restored" />
@@ -1051,7 +1082,13 @@
       <option name="project" value="LOCAL" />
       <updated>1459877690518</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="We really need to stop committing migrations and workspace xmls if we can...">
+      <created>1459877961292</created>
+      <option name="number" value="00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1459877961292</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1067,16 +1104,16 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15204236" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32980332" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3289689" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30730897" sideWeight="0.52098763" order="11" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32569557" sideWeight="0.5151286" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32928678" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32954547" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28641573" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32569557" sideWeight="0.48786038" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.28641573" sideWeight="0.48638427" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32569557" sideWeight="0.48487142" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20458265" sideWeight="0.47901234" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20458265" sideWeight="0.47901234" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39937106" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -1143,12 +1180,13 @@
     <MESSAGE value="Enforce new url namings" />
     <MESSAGE value="Fix imports that pycharm broke in cleanup" />
     <MESSAGE value="Fix broken template references in views" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix broken template references in views" />
+    <MESSAGE value="We really need to stop committing migrations and workspace xmls if we can..." />
+    <option name="LAST_COMMIT_MESSAGE" value="We really need to stop committing migrations and workspace xmls if we can..." />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="5" />
+      <option name="time" value="6" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1368,13 +1406,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/data/appt_calendar.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-2.0">
-          <caret line="102" column="104" selection-start-line="102" selection-start-column="104" selection-end-line="102" selection-end-column="104" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/template/registry/data/appt_delete.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-3.5272727">
@@ -1455,43 +1486,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/registry/forms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-            <marker date="1459877064931" expanded="true" signature="5498:8362" placeholder="..." />
-            <marker date="1459877064931" expanded="true" signature="8392:9398" placeholder="..." />
-            <marker date="1459877064931" expanded="true" signature="8397:8488" placeholder="&quot;&quot;&quot;Name:   LoginForm...&quot;&quot;&quot;" />
-            <marker date="1459877064931" expanded="true" signature="8640:9398" placeholder="..." />
-            <marker date="1459877064931" expanded="true" signature="9446:9669" placeholder="..." />
-            <marker date="1459877064931" expanded="true" signature="9451:9555" placeholder="&quot;&quot;&quot;Name:   HospitalRegisterForm...&quot;&quot;&quot;" />
-            <marker date="1459877064931" expanded="true" signature="9572:9669" placeholder="..." />
-            <marker date="1459877064931" expanded="true" signature="9722:11765" placeholder="..." />
-            <marker date="1459877064931" expanded="true" signature="9727:9851" placeholder="&quot;&quot;&quot;Name:   AppointmentSchedulingForm...&quot;&quot;&quot;" />
-            <marker date="1459877064931" expanded="true" signature="9950:11661" placeholder="..." />
-            <marker date="1459877064931" expanded="true" signature="11678:11765" placeholder="..." />
-            <marker date="1459877064931" expanded="true" signature="11812:13412" placeholder="..." />
-            <marker date="1459877064931" expanded="true" signature="11817:11941" placeholder="&quot;&quot;&quot;Name:   AppointmentSchedulingForm...&quot;&quot;&quot;" />
-            <marker date="1459877064931" expanded="true" signature="12040:13329" placeholder="..." />
-            <marker date="1459877064931" expanded="true" signature="13346:13412" placeholder="..." />
-            <marker date="1459877064931" expanded="true" signature="13453:13592" placeholder="..." />
-            <marker date="1459877064931" expanded="true" signature="13458:13527" placeholder="&quot;&quot;&quot;Name: DeleteAppForm...&quot;&quot;&quot;" />
-            <marker date="1459877064931" expanded="true" signature="13544:13592" placeholder="..." />
-            <marker date="1459877064931" expanded="true" signature="13634:13768" placeholder="..." />
-            <marker date="1459877064931" expanded="true" signature="13639:13702" placeholder="&quot;&quot;&quot;Name: DeletePresForm...&quot;&quot;&quot;" />
-            <marker date="1459877064931" expanded="true" signature="13719:13768" placeholder="..." />
-            <marker date="1459877064931" expanded="true" signature="13816:15921" placeholder="..." />
-            <marker date="1459877064931" expanded="true" signature="13821:13993" placeholder="&quot;&quot;&quot;Name: PrescriptionCreation...&quot;&quot;&quot;" />
-            <marker date="1459877064931" expanded="true" signature="14135:15781" placeholder="..." />
-            <marker date="1459877064931" expanded="true" signature="15798:15921" placeholder="..." />
-            <marker date="1459877064931" expanded="true" signature="15969:16060" placeholder="&quot;&quot;&quot;Name: MessageCreation...&quot;&quot;&quot;" />
-            <marker date="1459877064931" expanded="true" signature="16123:17233" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/registry/rules.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1510,54 +1504,110 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/registry/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="286" column="28" selection-start-line="286" selection-start-column="28" selection-end-line="286" selection-end-column="28" />
-          <folding>
-            <marker date="1459877403269" expanded="false" signature="0:697" placeholder="import ..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/static/registry/css/base_user.scss">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1460234525126" expanded="true" signature="27:45" placeholder="{...}" />
+            <marker date="1460234525126" expanded="true" signature="52:125" placeholder="{...}" />
+            <marker date="1460234525126" expanded="true" signature="132:149" placeholder="{...}" />
+            <marker date="1460234525126" expanded="true" signature="166:295" placeholder="{...}" />
+            <marker date="1460234525126" expanded="true" signature="229:293" placeholder="{...}" />
+            <marker date="1460234525126" expanded="true" signature="298:315" placeholder="{...}" />
+            <marker date="1460234525126" expanded="true" signature="329:354" placeholder="{...}" />
+            <marker date="1460234525126" expanded="true" signature="367:405" placeholder="{...}" />
+            <marker date="1460234525126" expanded="true" signature="421:440" placeholder="{...}" />
+            <marker date="1460234525126" expanded="true" signature="513:686" placeholder="{...}" />
+            <marker date="1460234525126" expanded="true" signature="701:739" placeholder="{...}" />
+            <marker date="1460234525126" expanded="true" signature="753:832" placeholder="{...}" />
+            <marker date="1460234525126" expanded="true" signature="848:955" placeholder="{...}" />
+            <marker date="1460234525126" expanded="true" signature="5690:5728" placeholder="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/registry/admin.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/template/registry/users/user_doctor.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-47.73077">
+          <caret line="193" column="25" selection-start-line="193" selection-start-column="25" selection-end-line="193" selection-end-column="25" />
+          <folding>
+            <marker date="1460234527039" expanded="true" signature="149:193" placeholder="{% block set-active ... %}" />
+            <marker date="1460234527039" expanded="true" signature="195:432" placeholder="{% block calendar_cssimport ... %}" />
+            <marker date="1460234527039" expanded="true" signature="725:3141" placeholder="..." />
+            <marker date="1460234527039" expanded="true" signature="729:761" placeholder="/*...*/" />
+            <marker date="1460234527039" expanded="true" signature="796:3128" placeholder="{...}" />
+            <marker date="1460234527039" expanded="true" signature="801:913" placeholder="/*...*/" />
+            <marker date="1460234527039" expanded="true" signature="944:1125" placeholder="/*...*/" />
+            <marker date="1460234527039" expanded="true" signature="1177:3121" placeholder="{&quot;defaultView&quot;: 'agendaWeek'...}" />
+            <marker date="1460234527039" expanded="true" signature="1183:1427" placeholder="/*...*/" />
+            <marker date="1460234527039" expanded="true" signature="1444:1544" placeholder="{&quot;left&quot;: 'prev,next today'...}" />
+            <marker date="1460234527039" expanded="true" signature="1550:1671" placeholder="/*...*/" />
+            <marker date="1460234527039" expanded="true" signature="1707:1829" placeholder="/*...*/" />
+            <marker date="1460234527039" expanded="true" signature="1977:2231" placeholder="/*...*/" />
+            <marker date="1460234527039" expanded="true" signature="2237:2293" placeholder="/*...*/" />
+            <marker date="1460234527039" expanded="true" signature="2319:2435" placeholder="/*...*/" />
+            <marker date="1460234527039" expanded="true" signature="2448:2910" placeholder="[...]" />
+            <marker date="1460234527039" expanded="true" signature="2470:2904" placeholder="{% for appt in appointments ... %}" />
+            <marker date="1460234527039" expanded="true" signature="2525:2834" placeholder="{&quot;title&quot;: &quot;{{ appt.patient|stringify }} &amp; Dr. {{ appt.doctor|stringify }}&quot;...}" />
+            <marker date="1460234527039" expanded="true" signature="2834:2871" placeholder="{% if not forloop.last ... %}" />
+            <marker date="1460234527039" expanded="true" signature="2970:3116" placeholder="{...}" />
+            <marker date="1460234527039" expanded="true" signature="3159:3336" placeholder="{% block userLinks ... %}" />
+            <marker date="1460234527039" expanded="true" signature="3337:7880" placeholder="{% block userContent ... %}" />
+            <marker date="1460234527039" expanded="true" signature="3392:4087" placeholder="..." />
+            <marker date="1460234527039" expanded="true" signature="3421:4087" placeholder="..." />
+            <marker date="1460234527039" expanded="true" signature="3449:4033" placeholder="..." />
+            <marker date="1460234527039" expanded="true" signature="3478:4004" placeholder="..." />
+            <marker date="1460234527039" expanded="true" signature="3524:3974" placeholder="..." />
+            <marker date="1460234527039" expanded="true" signature="3582:3940" placeholder="..." />
+            <marker date="1460234527039" expanded="true" signature="3651:3688" placeholder="..." />
+            <marker date="1460234527039" expanded="true" signature="3732:3901" placeholder="..." />
+            <marker date="1460234527039" expanded="true" signature="4061:4087" placeholder="..." />
+            <marker date="1460234527039" expanded="true" signature="7854:7864" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/template/registry/users/user_admin.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-5.230769">
+          <caret line="8" column="32" selection-start-line="8" selection-start-column="32" selection-end-line="8" selection-end-column="32" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/template/registry/data/appt_create.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.9615384">
-          <caret line="21" column="59" selection-start-line="21" selection-start-column="51" selection-end-line="21" selection-end-column="59" />
+        <state vertical-scroll-proportion="-9.153846">
+          <caret line="14" column="14" selection-start-line="14" selection-start-column="14" selection-end-line="14" selection-end-column="14" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/users/user_doctor.html">
+    <entry file="file://$PROJECT_DIR$/registry/forms.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.3076923">
-          <caret line="94" column="51" selection-start-line="94" selection-start-column="42" selection-end-line="94" selection-end-column="51" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/users/user_admin.html">
+    <entry file="file://$PROJECT_DIR$/registry/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-6.1923075">
-          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/registry/admin.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.63109046">
-          <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.11135371">
+          <caret line="266" column="77" selection-start-line="266" selection-start-column="77" selection-end-line="266" selection-end-column="77" />
           <folding>
-            <element signature="e#0#32#0" expanded="true" />
+            <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>

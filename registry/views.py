@@ -127,6 +127,7 @@ def register(request):
                     contact_secondary=form.cleaned_data['contact_secondary'],
                     contact_email=form.cleaned_data['contact_email']
             )
+
             try:
                 user = User.objects.get(auth_user__email=form.cleaned_data['contact_email'])
             except User.DoesNotExist:
@@ -254,7 +255,6 @@ def login(request):
 def home(request):
     hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     form = MessageCreation(request.POST)
-    patients = Patient.objects.filter(provider=hn_user)
 
     if rules.test_rule('is_patient', hn_user):
         return render(request,
@@ -264,7 +264,8 @@ def home(request):
                        'appointments': hn_user.appointment_set.all()
                        })
 
-    elif rules.test_rule('is_doctor', hn_user or 'is_nurse', hn_user):
+    elif rules.test_rule('is_doctor', hn_user) or rules.test_rule('is_nurse', hn_user):
+        patients = Patient.objects.filter(provider=hn_user)
         return render(request,
                       'registry/users/user_doctor.html',
                       {'form': form,
