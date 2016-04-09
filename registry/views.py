@@ -25,6 +25,7 @@ def rx_create(request):
     q = request.user.hn_user
     p = User.objects.get_subclass(pk=q.pk)
     # next_location is where it goes if you cancel
+    # EXCUSE ME
     next_location = None
     if rules.test_rule('is_doctor', p):
         if request.method == "POST":
