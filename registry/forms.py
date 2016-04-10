@@ -373,7 +373,6 @@ class PrescriptionCreation(models.ModelForm):
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form prescription'
         self.helper.form_method = 'POST'
-        # self.helper.form_action = reverse_lazy('registry:pres_create')
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
 
@@ -419,6 +418,49 @@ class PrescriptionCreation(models.ModelForm):
         model = Prescription
         fields = 'drug', 'patient', 'count', 'amount', 'refills'
         exclude = ['doctor']
+
+
+class PatientAdmitForm(models.ModelForm):
+    """
+    Name: PatientAdmitForm
+
+    AdmitPatient is the form for admitting a patient to a hospital.
+    This form will only allow the user to chose the hospital and
+    the reason why the patient is in the hospital.
+    All other fields will be set in the view.
+
+    """
+    model = AdmissionInfo
+
+    def __init__(self, *args, **kwargs):
+        super(PatientAdmitForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal hn-form admittance'
+        self.helper.form_method = 'POST'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+        self.helper.layout = Layout(
+                Fieldset('Admittance',
+                         'patient',
+                         'hospital',
+                         'reason'
+                         ),
+                FormActions(
+                        Submit('submit', 'Submit'),
+                        HTML(
+                                '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
+                                '{% url "registry:patient_admit" %}{% endif %}>Cancel</a>'
+                        )
+                )
+        )
+
+
+
+    class Meta:
+        model = AdmissionInfo
+        fields = 'patient',
+        exclude = ['admitted_by', 'admission_time']
+
 
 
 class MessageCreation(models.ModelForm):
