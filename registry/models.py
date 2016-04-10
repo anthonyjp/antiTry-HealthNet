@@ -107,6 +107,7 @@ class User(models.Model):
 class Doctor(User):
     hospitals = models.ManyToManyField(Hospital, related_name='provider_to')
 
+
 class Nurse(User):
     hospital = models.ForeignKey(Hospital)
 
@@ -123,6 +124,18 @@ class AdmissionInfo(models.Model):
                (self.patient, self.admitted_by, self.hospital, self.admission_time.start_time)
 
 
+class TransferInfo(models.Model):
+    patient = models.TextField()
+    admitted_by = models.TextField()
+    doctor = models.ForeignKey(Doctor)
+    hospital = models.ForeignKey(Hospital)
+    reason = models.SmallIntegerField(choices=AdmitOptions.choices(), default=AdmitOptions.EMERGENCY)
+
+    def __str__(self):
+        return "%s is being request to transfer to %s by %s" % \
+               (self.patient, self.hospital, self.admitted_by)
+
+
 class Patient(User):
     height = models.PositiveIntegerField()
     weight = models.PositiveIntegerField()
@@ -132,16 +145,16 @@ class Patient(User):
                                             null=True)
     pref_hospital = models.ForeignKey(to=Hospital, related_name='%(app_label)s_%(class)s_pref_hospital',
                                       on_delete=models.SET_NULL, null=True)
-
+    transfer_status = models.OneToOneField(to=TransferInfo, related_name='patient_transfer_status',
+                                           on_delete=models.SET_NULL, null=True)
     blood_type = models.SmallIntegerField(choices=BloodType.choices(), default=BloodType.UNKNOWN)
     insurance = models.CharField(max_length=40, choices=INSURANCE_CHOICES, default=INSURANCE_CHOICES[0][0])
-    transfer_request = models.BooleanField(default=False)
 
     def is_admitted(self):
         return self.admission_status is not None
 
     def transfer_requested(self):
-        return self.transfer_request
+        return self.transfer_status
 
 
 class Administrator(User):

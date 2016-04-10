@@ -471,6 +471,75 @@ class DeleteAdmitForm(models.ModelForm):
         fields = []
 
 
+class PatientTransferForm(models.ModelForm):
+    """
+    Name: PatientTransferForm
+
+    TransferPatient is the form for requesting a patient to transfer to another hospital.
+    This form will only allow the user to chose the hospital and
+    the reason why the patient is in the hospital.
+    All other fields will be set in the view.
+
+    """
+    model = TransferInfo
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super(PatientTransferForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal hn-form admittance'
+        self.helper.form_method = 'POST'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+        self.helper.layout = Layout(
+            Fieldset('Patient Transfer Form',
+                     'doctor',
+                     'hospital',
+                     'reason'
+                     ),
+            FormActions(
+                Submit('submit', 'Submit'),
+                HTML(
+                    '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
+                    '{% url "registry:home" %}{% endif %}>Cancel</a>'
+                )
+            )
+        )
+        if rules.test_rule('is_doctor', user):
+            self.fields['doctor'].queryset = Doctor.objects.filter(uuid=user.uuid)
+            # self.fields['hospital'].queryset = Hospital.objects.filter(provider_to=user)
+
+    class Meta:
+        model = TransferInfo
+        fields = 'doctor', 'hospital', 'reason'
+        exclude = ['patient', 'admitted_by']
+
+
+class ApproveTransferForm(models.ModelForm):
+    """
+    Name: ApproveTransferForm
+
+    Approval of Transfer Info form
+    """
+
+    class Meta:
+        model = TransferInfo
+        fields = []
+
+
+class DeleteTransferForm(models.ModelForm):
+    """
+    Name: DeleteTransferForm
+
+    Deletion of Transfer Info form
+    """
+
+    class Meta:
+        model = TransferInfo
+        fields = []
+
+
+
 class MessageCreation(models.ModelForm):
     """
     Name: MessageCreation

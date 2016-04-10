@@ -36,8 +36,7 @@ def rx_create(request, patient_uuid):
                         start_time=form.cleaned_data['start_time'],
                         end_time=form.cleaned_data['end_time']
                 )
-                if (timerange.start_time > datetime.now() and timerange.start_time < timerange.end_time) \
-                        and (timerange.end_time > datetime.now()):
+                if datetime.now() < timerange.start_time < timerange.end_time:
                     timerange.save()
                     rx.time_range = timerange
                     rx.doctor = p
@@ -54,6 +53,35 @@ def rx_create(request, patient_uuid):
                                                                 'error': error})
     return HttpResponseNotFound(
             '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+
+
+@login_required(login_url=reverse_lazy('registry:login'))
+def rx_delete(request, pk):
+    q = request.user.hn_user
+    p = User.objects.get_subclass(pk=q.pk)
+    if rules.test_rule('is_nurse', p):
+        return HttpResponseNotFound(
+            '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    delete = get_object_or_404(Prescription, id=pk)
+    if rules.test_rule('is_patient', p):
+        return HttpResponseNotFound(
+            '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    if rules.test_rule('is_doctor', p):
+        if delete.doctor.uuid != p.uuid:
+            return HttpResponseNotFound(
+                '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    if request.method == 'POST':
+        form = DeletePresForm(request.POST, instance=delete)
+        if form.is_valid():
+            delete.delete()
+            return redirect('registry:home')
+
+    else:
+        form = DeletePresForm(instance=delete)
+
+    template_vars = {'form': form}
+    return render(request, 'registry/data/rx_delete.html', template_vars)
+
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def patient_admit(request, patient_uuid):
@@ -91,60 +119,91 @@ def patient_admit(request, patient_uuid):
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
-def appt_delete(request, pk):
-    q = request.user.hn_user
-    p = User.objects.get_subclass(pk=q.pk)
-    if rules.test_rule('is_nurse', p):
-        return HttpResponseNotFound(
-                '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
-    delete = get_object_or_404(Appointment, id=pk)
-    if rules.test_rule('is_patient', p):
-        if delete.patient.pk != p.pk:
-            return HttpResponseNotFound(
-                    '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
-    if rules.test_rule('is_doctor', p):
-        if delete.doctor.pk != p.pk:
-            return HttpResponseNotFound(
-                    '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
-    if request.method == 'POST':
-        form = DeleteAppForm(request.POST, instance=delete)
-        if form.is_valid():
-            delete.delete()
-            return redirect('registry:home')
+def patient_transfer_request(request, patient_uuid):
+    user = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    patient = get_object_or_404(Patient, uuid=patient_uuid)
+    # next_location is where it goes if you cancel
+    next_location = None
+    if rules.test_rule('is_doctor', user) or rules.test_rule('is_administer', user):
+        if request.method == "POST":
+            form = PatientTransferForm(request.POST, user=user)
+            if form.is_valid():
+                transfer_request = form.save(commit=False)
+                transfer_request.admitted_by = user.__str__()
+                transfer_request.save()
+                patient.transfer_status = transfer_request
+                patient.save()
+                return redirect('registry:home')
+        else:
+            form = PatientTransferForm(user=user)
 
-    else:
-        form = DeleteAppForm(instance=delete)
-
-    template_vars = {'form': form}
-    return render(request, 'registry/data/appt_delete.html', template_vars)
+            if 'next' in request.GET:
+                next_location = request.GET['next']
+        return render(request, 'registry/data/patient_transfer_request.html', {'form': form, 'next_url': next_location,
+                                                                               'patient': patient})
+    return HttpResponseNotFound(
+        '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
-def rx_delete(request, pk):
-    q = request.user.hn_user
-    p = User.objects.get_subclass(pk=q.pk)
-    if rules.test_rule('is_nurse', p):
+def patient_transfer_approve(request, patient_uuid):
+    user = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    patient = get_object_or_404(Patient, uuid=patient_uuid)
+    # next_location is where it goes if you cancel
+    next_location = None
+    if rules.test_rule('is_doctor', user) or rules.test_rule('is_administer', user):
+        if request.method == "POST":
+            form = ApproveTransferForm(request.POST, instance=patient.transfer_status)
+            if form.is_valid():
+                transfer_request = patient.transfer_status
+                old_admit = patient.admission_status
+                old_admit.admission_time.end_time = datetime.now()
+                old_admit.save()
+                new_time = TimeRange(start_time=datetime.now())
+                new_time.save()
+                new_admit = AdmissionInfo(patient=patient.__str__(), admitted_by=transfer_request.admitted_by,
+                                          hospital=transfer_request.hospital, reason=transfer_request.reason,
+                                          admission_time=new_time)
+                new_admit.save()
+                patient.transfer_status = None
+                patient.admission_status = None
+                patient.admission_status = new_admit
+                patient.save()
+                return redirect('registry:home')
+        else:
+            form = ApproveTransferForm(instance=patient.transfer_status)
+
+            if 'next' in request.GET:
+                next_location = request.GET['next']
+        return render(request, 'registry/data/patient_transfer_approve.html', {'form': form, 'next_url': next_location,
+                                                                               'patient': patient})
+    return HttpResponseNotFound(
+        '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+
+
+@login_required(login_url=reverse_lazy('registry:login'))
+def patient_transfer_delete(request, patient_uuid):
+    p = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    if rules.test_rule('is_nurse', p) or rules.test_rule('is_patient', p):
         return HttpResponseNotFound(
-                '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
-    delete = get_object_or_404(Prescription, id=pk)
-    if rules.test_rule('is_patient', p):
-        return HttpResponseNotFound(
-                '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+            '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    patient = get_object_or_404(Patient, uuid=patient_uuid)
     if rules.test_rule('is_doctor', p):
-        if delete.doctor.uuid != p.uuid:
+        if patient.provider.uuid != p.uuid:
             return HttpResponseNotFound(
-                    '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+                '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     if request.method == 'POST':
-        form = DeletePresForm(request.POST, instance=delete)
+        form = DeleteTransferForm(request.POST, instance=patient.transfer_status)
         if form.is_valid():
-            delete.delete()
+            patient.transfer_status = None
+            patient.save()
             return redirect('registry:home')
 
     else:
-        form = DeletePresForm(instance=delete)
+        form = DeleteTransferForm(instance=patient.transfer_status)
 
     template_vars = {'form': form}
-    return render(request, 'registry/data/rx_delete.html', template_vars)
+    return render(request, 'registry/data/patient_transfer_delete.html', template_vars)
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -165,7 +224,7 @@ def patient_discharge(request, patient_uuid):
             admit_info.admission_time.end_time = datetime.now()
             admit_info.save()
             patient.admission_status = None
-            patient.transfer_request = False
+            patient.transfer_status = None
             patient.save()
             return redirect('registry:home')
 
@@ -173,7 +232,7 @@ def patient_discharge(request, patient_uuid):
         form = DeleteAdmitForm(instance=patient.admission_status)
 
     template_vars = {'form': form}
-    return render(request, 'registry/data/rx_delete.html', template_vars)
+    return render(request, 'registry/data/patient_discharge.html', template_vars)
 
 
 def register(request):
@@ -295,6 +354,35 @@ def appt_edit(request, pk):
     return render(request, 'registry/data/appt_edit.html', {'form': form, 'appt': initial_appointment, 'error': error})
 
 
+@login_required(login_url=reverse_lazy('registry:login'))
+def appt_delete(request, pk):
+    q = request.user.hn_user
+    p = User.objects.get_subclass(pk=q.pk)
+    if rules.test_rule('is_nurse', p):
+        return HttpResponseNotFound(
+            '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    delete = get_object_or_404(Appointment, id=pk)
+    if rules.test_rule('is_patient', p):
+        if delete.patient.pk != p.pk:
+            return HttpResponseNotFound(
+                '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    if rules.test_rule('is_doctor', p):
+        if delete.doctor.pk != p.pk:
+            return HttpResponseNotFound(
+                '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    if request.method == 'POST':
+        form = DeleteAppForm(request.POST, instance=delete)
+        if form.is_valid():
+            delete.delete()
+            return redirect('registry:home')
+
+    else:
+        form = DeleteAppForm(instance=delete)
+
+    template_vars = {'form': form}
+    return render(request, 'registry/data/appt_delete.html', template_vars)
+
+
 def index(request):
     if request.user.is_authenticated():
         activity_log.info('[%s] %s', request.get_full_path(),
@@ -336,12 +424,14 @@ def home(request):
 
     elif rules.test_rule('is_doctor', hn_user) or rules.test_rule('is_nurse', hn_user):
         patients = Patient.objects.filter(provider=hn_user)
+        not_patients = Patient.objects.exclude(provider=hn_user)
         return render(request,
                       'registry/users/user_doctor.html',
                       {'form': form,
                        'hn_user': hn_user,
                        'appointments': hn_user.appointment_set.all(),
-                       'patients': patients
+                       'not_patients': not_patients,
+                       'patients': patients,
                        })
     else:
         return render(request,
@@ -357,7 +447,6 @@ def patient_viewing(request, patient_uuid):
     patient = get_object_or_404(Patient, uuid=patient_uuid)
     # rx_form = PrescriptionCreation(request.POST, user=hn_user)
     rxs = Prescription.objects.filter(doctor=hn_user, patient=patient)
-
     return render(request,
                   'registry/users/patient_viewing.html',
                   {'hn_user': hn_user,

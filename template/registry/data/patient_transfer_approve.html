@@ -3,10 +3,9 @@
 {% load sass_tags %}
 {% load crispy_forms_tags %}
 
-{% block inner-title %}Do you want to discharge this person?{% endblock %}
+{% block inner-title %}Do you want to approve this transfer?{% endblock %}
 {% block content %}
-
-    Do you want to discharge this person?
+    <p>Do you want to approve this transfer?</p>
     <form method="POST" class="post-form">{% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Confirm</button>
