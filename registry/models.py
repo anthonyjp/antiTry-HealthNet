@@ -105,14 +105,26 @@ class User(models.Model):
 
 
 class Doctor(User):
+    """
+    A doctor account that extends User consisting of a set of Hospitals
+    """
     hospitals = models.ManyToManyField(Hospital, related_name='provider_to')
 
 
 class Nurse(User):
+    """
+    A nurse account that extends User consisting of one Hospital
+    """
     hospital = models.ForeignKey(Hospital)
 
 
 class AdmissionInfo(models.Model):
+    """
+    Admission info is an object that consists of the patient as a text field, admitted by which is the string
+    of the user who is submitting the admit, the hospital that the patient will stay at, the reason which is an
+    option from the preset enum, and the admission time which start time will be set in the view and the end
+    date will be set when patient is transferred or discharged
+    """
     patient = models.TextField()
     admitted_by = models.TextField()
     hospital = models.ForeignKey(Hospital)
@@ -125,6 +137,12 @@ class AdmissionInfo(models.Model):
 
 
 class TransferInfo(models.Model):
+    """
+    Transfer info is an object that consists of the patient as a text field, admitted by which is the string
+    of the user who is submitting the transfer, the hospital that the patient will stay at, and the reason which is an
+    option from the preset enum
+    Similar to the Admission Info except missing the admission_time
+    """
     patient = models.TextField()
     admitted_by = models.TextField()
     doctor = models.ForeignKey(Doctor)
@@ -137,6 +155,10 @@ class TransferInfo(models.Model):
 
 
 class Patient(User):
+    """
+    A patient account that extends User and has multiple fields for the medical infomation and personal information
+    of a patient.
+    """
     height = models.PositiveIntegerField()
     weight = models.PositiveIntegerField()
 
@@ -158,10 +180,21 @@ class Patient(User):
 
 
 class Administrator(User):
+    """
+    An administer account that extends User consisting of a boolean field of whether or not the administer is
+    a system admin and the hospital they belong to
+    """
     is_sysadmin = models.BooleanField(default=False)
+    hospital = models.ForeignKey(to=Hospital, related_name='admin_to')
 
 
 class Prescription(models.Model):
+    """
+    A  prescription model that consists of the drug, which is a drop down choice from the created drug
+    objects that a sysadmin will create and add onto, the patient who is being prescribed, the doctor issuing
+    the prescription, the count which is the pill count, amount which is the milligram amount of the one pill,
+    the number of refills, and the time range of the prescription
+    """
     drug = models.ForeignKey(to=Drug, on_delete=models.PROTECT)
 
     patient = models.ForeignKey(to=Patient, on_delete=models.SET_NULL, null=True)
@@ -194,6 +227,11 @@ class Prescription(models.Model):
 ### Patient Data Models
 
 class Appointment(models.Model):
+    """
+    An appointment in which there is a time of which the appointment occurs, the doctor that the appointment is with,
+    the patient that the appointment is with, the nurse which the appointment is with (but this is rarely used),
+    and the location of the appointment
+    """
     time = models.DateTimeField()
 
     doctor = models.ForeignKey(to=Doctor, on_delete=models.CASCADE)
@@ -208,6 +246,10 @@ class Appointment(models.Model):
 
 
 class MedicalData(models.Model):
+    """
+    The medical data object which belongs to one patient, it contains the patient, patient name, the doctor
+    who is entering the medical data, the sign off, and the notes.
+    """
     patient = models.ForeignKey(to=Patient, related_name='medical_info', on_delete=models.SET_NULL, null=True)
 
     patient_name = models.TextField()
@@ -219,6 +261,11 @@ class MedicalData(models.Model):
 
 
 class MedicalTest(MedicalData):
+    """
+    The medical test object which will include the timestamp of when the medical test is uploaded,
+    the results as a Note object, the images if there are image files, and the sign off user which is
+    the doctor that uploads the test
+    """
     timestamp = models.DateTimeField()
     results = models.OneToOneField(to=Note, related_name='test_note', on_delete=models.SET_NULL, null=True)
     images = SeparatedValuesField()
@@ -226,10 +273,16 @@ class MedicalTest(MedicalData):
 
 
 class MedicalHistory(MedicalData):
+    """
+    Medical History consists of the admission detail of a patient
+    """
     admission_details = models.OneToOneField(to=AdmissionInfo, on_delete=models.CASCADE)
 
 
 class Contact(models.Model):
+    """
+    A contact object which contains the user, name, primary phone number, and email
+    """
     contact_user = models.ForeignKey(to=User, on_delete=models.SET_NULL, null=True)
     contact_name = models.TextField()
     contact_primary = PhoneNumberField()
@@ -243,6 +296,9 @@ class Contact(models.Model):
 
 
 class PatientContact(Contact):
+    """
+    The emergency contact of a patient which extends Contact
+    """
     patient = models.ForeignKey(to=Patient, on_delete=models.CASCADE)
     relationship = models.IntegerField(choices=Relationship.choices(), default=Relationship.OTHER)
     contact_secondary = PhoneNumberField(blank=True)
