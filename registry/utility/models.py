@@ -29,6 +29,7 @@ class TimeRange(models.Model):
     def __str__(self):
         return str(self.end_time)
 
+
 class Dictionary(models.Model):
     """
     A specialized Dictionary datastore that is backed by KeyValue models. These can ONLY store Key-Value string pairs

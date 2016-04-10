@@ -111,20 +111,6 @@ class User(models.Model):
             return "%s %s" % (self.first_name, self.last_name)
 
 
-class Doctor(User):
-    """
-    A doctor account that extends User consisting of a set of Hospitals
-    """
-    hospitals = models.ManyToManyField(Hospital, related_name='provider_to')
-
-
-class Nurse(User):
-    """
-    A nurse account that extends User consisting of one Hospital
-    """
-    hospital = models.ForeignKey(Hospital)
-
-
 class AdmissionInfo(models.Model):
     """
     Admission info is an object that consists of the patient as a text field, admitted by which is the string
@@ -159,6 +145,20 @@ class TransferInfo(models.Model):
     def __str__(self):
         return "%s is being request to transfer to %s by %s" % \
                (self.patient, self.hospital, self.admitted_by)
+
+
+class Doctor(User):
+    """
+    A doctor account that extends User consisting of a set of Hospitals
+    """
+    hospitals = models.ManyToManyField(Hospital, related_name='provider_to')
+
+
+class Nurse(User):
+    """
+    A nurse account that extends User consisting of one Hospital
+    """
+    hospital = models.ForeignKey(Hospital)
 
 
 class Patient(User):

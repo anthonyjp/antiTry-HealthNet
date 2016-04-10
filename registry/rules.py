@@ -4,6 +4,7 @@ from rules.predicates import predicate
 from registry.models import Patient, Doctor, Nurse, Administrator, User
 
 
+# Define All Predicates
 def is_user(user_type):
     @predicate
     def validate(user):
@@ -11,26 +12,12 @@ def is_user(user_type):
 
     return validate
 
-
 is_generic_user = is_user(User)
 is_patient = is_user(Patient)
 is_doctor = is_user(Doctor)
 is_nurse = is_user(Nurse)
 is_administrator = is_user(Administrator)
 
-rules.add_perm('registry.create_appointment', is_patient | is_doctor | is_nurse)
-rules.add_perm('registry.update_appointment', is_patient | is_doctor | is_nurse)
-rules.add_perm('registry.cancel_appointment', is_patient | is_doctor)
-
-rules.add_perm('registry.patientinfo', is_patient)
-rules.add_perm('registry.medinfo', is_doctor | is_nurse)
-
-rules.add_perm('registry.prescriptions', is_doctor)
-
-rules.add_perm('registry.admit_patient', is_doctor | is_nurse)
-rules.add_perm('registry.release_patient', is_doctor)
-
-rules.add_perm('registry.view_patient', is_patient | is_doctor | is_nurse)
 
 @predicate
 def is_doctor_of(doctor, patient):
@@ -46,6 +33,7 @@ def has_appointment(user, patient):
 def is_self(user_one, user_two):
     return user_one == user_two
 
+
 @predicate
 def time_gt(time1, time2):
     return time1 > time2
@@ -53,6 +41,26 @@ def time_gt(time1, time2):
 
 has_appointment_check = (is_doctor | is_nurse) & has_appointment
 is_doctor_check = is_doctor & is_doctor_of
+
+# Define Permissions
+
+rules.add_perm('registry.create_appointment', is_patient | is_doctor | is_nurse)
+rules.add_perm('registry.update_appointment', is_patient | is_doctor | is_nurse)
+rules.add_perm('registry.cancel_appointment', is_patient | is_doctor)
+
+rules.add_perm('registry.rx', is_doctor_check)
+
+rules.add_perm('registry.patientinfo', is_patient)
+rules.add_perm('registry.medinfo', is_doctor | is_nurse)
+
+rules.add_perm('registry.prescriptions', is_doctor)
+
+rules.add_perm('registry.admit_patient', is_doctor | is_nurse)
+rules.add_perm('registry.release_patient', is_doctor)
+
+rules.add_perm('registry.view_patient', is_patient | is_doctor | is_nurse)
+
+# Define Rules
 
 rules.add_rule('is_patient', is_patient)
 rules.add_rule('is_doctor', is_doctor)
