@@ -25,6 +25,11 @@
         <li><div id="imgPic"><img id="avatar" src="../static/registry/img/logo/Logo_Small.png" /></div></li>
         <li><p id="leftName">{{ patient.first_name }} {{patient.middle_initial}} {{patient.last_name }}</p></li>
         <li><p id="leftDOB">{{ patient.date_of_birth }}</p></li>
+        <li><p>Admission Status: {{ patient.is_admitted }}</p></li>
+        <li>{% if  patient.is_admitted %}Current Hospital: {{ patient.cur_hospital }}{% endif %}</li>
+        <li>{% if not patient.is_admitted %}<a href="{% url 'registry:patient_admit' patient.uuid %}">
+            <button>Admit</button>
+        </a>{% endif %}</li>
     </ul>
 </div>
 

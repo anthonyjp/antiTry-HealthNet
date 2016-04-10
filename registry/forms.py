@@ -355,6 +355,18 @@ class DeletePresForm(models.ModelForm):
         fields = []
 
 
+class DeleteAdmitForm(models.ModelForm):
+    """
+    Name: DeleteAdmitForm
+
+    Deletion of Admit Info form
+    """
+
+    class Meta:
+        model = AdmissionInfo
+        fields = []
+
+
 class PrescriptionCreation(models.ModelForm):
     """
     Name: PrescriptionCreation
@@ -441,15 +453,14 @@ class PatientAdmitForm(models.ModelForm):
         self.helper.field_class = 'col-lg-8'
         self.helper.layout = Layout(
             Fieldset('Patient Admit Form',
-                         'patient',
                          'hospital',
                          'reason'
                      ),
                 FormActions(
                         Submit('submit', 'Submit'),
                         HTML(
-                                '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
-                                '{% url "registry:patient_admit" %}{% endif %}>Cancel</a>'
+                            '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
+                            '{% url "registry:home" %}{% endif %}>Cancel</a>'
                         )
                 )
         )
@@ -458,8 +469,8 @@ class PatientAdmitForm(models.ModelForm):
 
     class Meta:
         model = AdmissionInfo
-        fields = 'patient', 'hospital', 'reason'
-        exclude = ['admitted_by', 'admission_time']
+        fields = 'hospital', 'reason'
+        exclude = ['patient', 'admitted_by', 'admission_time']
 
 
 

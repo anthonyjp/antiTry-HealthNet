@@ -9,7 +9,7 @@ from localflavor.us.us_states import STATE_CHOICES
 from registry.utility.options import Relationship
 from model_utils.managers import InheritanceManager
 
-from registry.utility.options import BloodType, Gender, INSURANCE_CHOICES
+from registry.utility.options import BloodType, Gender, INSURANCE_CHOICES, AdmitOptions
 from registry.utility.options import SecurityQuestion as SecQ
 from registry.utility.models import TimeRange, Dictionary, SeparatedValuesField
 
@@ -107,19 +107,20 @@ class User(models.Model):
 class Doctor(User):
     hospitals = models.ManyToManyField(Hospital, related_name='provider_to')
 
+class Nurse(User):
+    hospital = models.ForeignKey(Hospital)
+
 
 class AdmissionInfo(models.Model):
     patient = models.TextField()
     admitted_by = models.TextField()
-
-    doctors = models.ManyToManyField(Doctor)
-
-    admission_time = models.OneToOneField(to=TimeRange, on_delete=models.SET_NULL, null=True)
-    prescriptions = models.OneToOneField(to=Dictionary, on_delete=models.PROTECT)
-
-
-class Nurse(User):
     hospital = models.ForeignKey(Hospital)
+    reason = models.SmallIntegerField(choices=AdmitOptions.choices(), default=AdmitOptions.EMERGENCY)
+    admission_time = models.OneToOneField(to=TimeRange, on_delete=models.SET_NULL, null=True)
+
+    def __str__(self):
+        return "%s was admitted by %s to %s on %s" % \
+               (self.patient, self.admitted_by, self.hospital, self.admission_time.start_time)
 
 
 class Patient(User):
@@ -134,6 +135,13 @@ class Patient(User):
 
     blood_type = models.SmallIntegerField(choices=BloodType.choices(), default=BloodType.UNKNOWN)
     insurance = models.CharField(max_length=40, choices=INSURANCE_CHOICES, default=INSURANCE_CHOICES[0][0])
+    transfer_request = models.BooleanField(default=False)
+
+    def is_admitted(self):
+        return self.admission_status is not None
+
+    def transfer_requested(self):
+        return self.transfer_request
 
 
 class Administrator(User):

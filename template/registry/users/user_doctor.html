@@ -184,27 +184,32 @@
             </thead>
             <tbody>
                 {% for p in patients %}
-                    <tr>
-                        <td class="patientBody">
-                            <div>
-                                <div id="patientPic"><img id="patientAvatar" src="../static/registry/img/logo/Logo_Small.png" /></div>
-                                <ul>
-                                    <li>
-                                        <a href="{% url 'registry:patient_viewing' p.uuid %}">
-                                            <p id="patientName">{{ p.first_name }} {{p.middle_initial}} {{p.last_name }}</p>
-                                        </a>
-                                    </li>
-                                    <li><p id="patientDOB">Admission Status: {{ p.admission_status }}</p></li>
-                                </ul>
-                            </div>
-                        </td>
-                        <td class="patientBody">
-
-                        </td>
-                        <td class="patientBody">
-                            <button>Discharge</button>
-                        </td>
-                    </tr>
+                    {% if  p.is_admitted %}
+                        <tr>
+                            <td class="patientBody">
+                                <div>
+                                    <div id="patientPic"><img id="patientAvatar"
+                                                              src="../static/registry/img/logo/Logo_Small.png"/></div>
+                                    <ul>
+                                        <li>
+                                            <a href="{% url 'registry:patient_viewing' p.uuid %}">
+                                                <p id="patientName">{{ p.first_name }} {{ p.middle_initial }} {{ p.last_name }}</p>
+                                            </a>
+                                        </li>
+                                        <li><p id="patientDOB">Admission Status: {{ p.admission_status }}</p></li>
+                                    </ul>
+                                </div>
+                            </td>
+                            <td class="patientBody">
+                                {{ p.transfer_requested }}
+                            </td>
+                            <td class="patientBody">
+                                <a href="{% url 'registry:patient_discharge' p.uuid %}">
+                                    <button>Discharge</button>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endif %}
                 {% endfor %}
             </tbody>
         </table>
@@ -216,7 +221,8 @@
                 <tr>
                     <th id="theader" colspan="3">
                         <div class="patientHead">
-                            <p id="patientTitle">Patient Transfer<p>
+                            <p id="patientTitle">View Patient Transfer Requests
+                            <p>
                             <div id="patientSearch" class="patientHead">Search:
                                 <input id="patientTransferSearchBar" type="text" placeholder="Search for Patient..">
                             </div>
@@ -243,28 +249,31 @@
             </thead>
             <tbody>
                 {% for p in patients %}
-                    <tr>
-                        <td class="patientBody">
-                            <div>
-                                <div id="patientPic"><img id="patientAvatar" src="../static/registry/img/logo/Logo_Small.png" /></div>
-                                <ul>
-                                    <li>
-                                        <a href="{% url 'registry:patient_viewing' p.uuid %}">
-                                            <p id="patientName">{{ p.first_name }} {{p.middle_initial}} {{p.last_name }}</p>
-                                        </a>
-                                    </li>
-                                    <li><p id="patientDOB">Admission Status: {{ p.admission_status }}</p></li>
-                                </ul>
-                            </div>
-                        </td>
-                        <td class="patientBody">
+                    {% if  p.transfer_requested %}
+                        <tr>
+                            <td class="patientBody">
+                                <div>
+                                    <div id="patientPic"><img id="patientAvatar"
+                                                              src="../static/registry/img/logo/Logo_Small.png"/></div>
+                                    <ul>
+                                        <li>
+                                            <a href="{% url 'registry:patient_viewing' p.uuid %}">
+                                                <p id="patientName">{{ p.first_name }} {{ p.middle_initial }} {{ p.last_name }}</p>
+                                            </a>
+                                        </li>
+                                        <li><p id="patientDOB">Admission Status: {{ p.admission_status }}</p></li>
+                                    </ul>
+                                </div>
+                            </td>
+                            <td class="patientBody">
 
-                        </td>
-                        <td class="patientBody">
-                            <button>Authorize</button>
-                            <button>Not Authorize</button>
-                        </td>
-                    </tr>
+                            </td>
+                            <td class="patientBody">
+                                <button>Authorize</button>
+                                <button>Not Authorize</button>
+                            </td>
+                        </tr>
+                    {% endif %}
                 {% endfor %}
             </tbody>
         </table>

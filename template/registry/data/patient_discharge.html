@@ -1,0 +1,15 @@
+{% extends 'registry/base/base.html' %}
+{% load staticfiles %}
+{% load sass_tags %}
+{% load crispy_forms_tags %}
+
+{% block inner-title %}Do you want to discharge this person?{% endblock %}
+{% block content %}
+
+    Do you want to discharge this person?
+    <form method="POST" class="post-form">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Yes</button>
+        <a href="{% url 'registry:home' %}">No</a>
+    </form>
+{% endblock %}
