@@ -21,46 +21,48 @@ security_log = logging.getLogger('hn.security')
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
-def rx_create(request):
-    q = request.user.hn_user
-    p = User.objects.get_subclass(pk=q.pk)
+def rx_create(request, patient_uuid):
+    error = ""
+    p = User.objects.get_subclass(pk=request.user.hn_user.pk)
     # next_location is where it goes if you cancel
     # EXCUSE ME
     next_location = None
     if rules.test_rule('is_doctor', p):
         if request.method == "POST":
-            form = PrescriptionCreation(request.POST, user=p)
+            form = PrescriptionCreation(request.POST, uuid=patient_uuid)
             if form.is_valid():
                 rx = form.save(commit=False)
                 timerange = TimeRange(
                         start_time=form.cleaned_data['start_time'],
                         end_time=form.cleaned_data['end_time']
                 )
-                if (timerange.start_time < timerange.end_time) and (timerange.end_time > datetime.now()):
+                if (timerange.start_time > datetime.now() and timerange.start_time < timerange.end_time) \
+                        and (timerange.end_time > datetime.now()):
                     timerange.save()
                     rx.time_range = timerange
                     rx.doctor = p
                     rx.save()
-                    return redirect('registry:home')
+                    return redirect('registry:patient_viewing', patient_uuid=patient_uuid)
+                else:
+                    error = "Time Range is invalid"
         else:
-            form = PrescriptionCreation(user=p)
+            form = PrescriptionCreation(uuid=patient_uuid)
 
             if 'next' in request.GET:
                 next_location = request.GET['next']
-        return render(request, 'registry/data/rx_create.html', {'form': form, 'next_url': next_location})
+        return render(request, 'registry/data/rx_create.html', {'form': form, 'next_url': next_location,
+                                                                'error': error})
     return HttpResponseNotFound(
             '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def patient_admit(request):
-    #patient = get_object_or_404(Patient, uuid=uuid)
-    user = request.user.hn_user
-    subuser = User.objects.get_subclass(pk=user.pk)
+    user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     # next_location is where it goes if you cancel
     next_location = None
-    if rules.test_rule('is_doctor', subuser) or rules.test_rule('is_nurse', subuser):
+    if rules.test_rule('is_doctor', user) or rules.test_rule('is_nurse', user):
         if request.method == "POST":
-            form = PatientAdmitForm(request.POST, user)
+            form = PatientAdmitForm(request.POST)
             if form.is_valid():
                 admit_request = form.save(commit=False)
                 timerange = TimeRange(
@@ -69,14 +71,11 @@ def patient_admit(request):
                 )
                 timerange.save()
                 admit_request.admission_time = timerange
-                admit_request.admitted_by = user
-                admit_request.prescriptions = Dictionary.empty()
-                patient = admit_request.patient
-                patient.admission_status = admit_request
+                admit_request.admitted_by = user.__str__()
                 admit_request.save()
                 return redirect('registry:home')
         else:
-            form = PatientAdmitForm(user)
+            form = PatientAdmitForm()
 
             if 'next' in request.GET:
                 next_location = request.GET['next']
@@ -321,14 +320,14 @@ def home(request):
 def patient_viewing(request, patient_uuid):
     hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     patient = get_object_or_404(Patient, uuid=patient_uuid)
-    rx_form = PrescriptionCreation(request.POST, user=hn_user)
+    # rx_form = PrescriptionCreation(request.POST, user=hn_user)
     rxs = Prescription.objects.filter(doctor=hn_user, patient=patient)
 
     return render(request,
                   'registry/users/patient_viewing.html',
                   {'hn_user': hn_user,
                    'patient': patient,
-                   'rx_form': rx_form,
+                   #'rx_form': rx_form,
                    'rxs': rxs})
 
 

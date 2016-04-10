@@ -25,7 +25,7 @@
 {% endblock %}
 
 {% block inner-content %}
-    {{  error  }}<br>
+    <p id="error">{{ error }}</p><br>
     {% crispy form form.helper %}
 {% endblock %}
 

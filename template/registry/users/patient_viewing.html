@@ -60,6 +60,9 @@
                             <th><div class="presHead">Amount</div></th>
                             <th><div class="presHead">Refills</div></th>
                             <th><div class="presHead">End Date</div></th>
+                            <th>
+                                <div class="presHead">Delete</div>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -80,17 +83,20 @@
                                 <td>
                                     <div>{{ rx.time_range.end_time }}</div>
                                 </td>
+                                <td>
+                                    <div><a href="{% url 'registry:rx_delete' rx.pk %}">
+                                        <button>Delete</button>
+                                    </a></div>
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
                 <div id="presbuttons">
-                    <a href="#tab4"><button>Add Prescription</button></a>
+                    <a href="{% url 'registry:rx_create' patient.uuid %}">
+                        <button>Add Prescription</button>
+                    </a>
                 </div>
-            </div>
-
-            <div id="tab4" class="tab">
-                {% crispy rx_form rx_form.helper %}
             </div>
 
             {% block userContent %}{% endblock %}

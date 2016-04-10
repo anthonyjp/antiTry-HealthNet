@@ -368,7 +368,7 @@ class PrescriptionCreation(models.ModelForm):
     end_time = DateTimeMultiField()
 
     def __init__(self, *args, **kwargs):
-        doctor = kwargs.pop('user')
+        patient = kwargs.pop('uuid')
         super(PrescriptionCreation, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form prescription'
@@ -410,7 +410,7 @@ class PrescriptionCreation(models.ModelForm):
                 )
         )
 
-        self.fields['patient'].queryset = Patient.objects.filter(provider=doctor)
+        self.fields['patient'].queryset = Patient.objects.filter(uuid=patient)
         self.fields['start_time'].widget.attrs['timepicker'] = True
         self.fields['end_time'].widget.attrs['timepicker'] = True
 
@@ -440,11 +440,11 @@ class PatientAdmitForm(models.ModelForm):
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
         self.helper.layout = Layout(
-                Fieldset('Admittance',
+            Fieldset('Patient Admit Form',
                          'patient',
                          'hospital',
                          'reason'
-                         ),
+                     ),
                 FormActions(
                         Submit('submit', 'Submit'),
                         HTML(
@@ -458,7 +458,7 @@ class PatientAdmitForm(models.ModelForm):
 
     class Meta:
         model = AdmissionInfo
-        fields = 'patient',
+        fields = 'patient', 'hospital', 'reason'
         exclude = ['admitted_by', 'admission_time']
 
 
