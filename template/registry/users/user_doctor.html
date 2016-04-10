@@ -108,109 +108,171 @@
 
 {% block userLinks %}
     <li><a href="#tab2" rel="tab2" class="hn-tab">Patients</a></li>
-    <li><a href="#tab3" rel="tab3" class="hn-tab">Appointments</a></li>
+    <li><a href="#tab3" rel="tab3" class="hn-tab">Discharges</a></li>
+    <li><a href="#tab4" rel="tab3" class="hn-tab">Transfers</a></li>
+    <li><a href="#tab5" rel="tab3" class="hn-tab">Appointments</a></li>
 
 {% endblock %}
 {% block userContent %}
 
     <div id="tab2" class="tab">
         <table id="patient">
-                    <thead>
-                        <tr>
-                            <th id="theader">
-                                <div class="patientHead">
-                                    <p id="patientTitle">Patients<p>
-                                    <div id="patientSearch" class="patientHead">Search:
-                                        <input id="patientSearchBar" type="text" placeholder="Search for Patient ...">
-                                    </div>
-                                </div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for p in patients %}
-                        <tr>
-
-                            <td class="patientBody">
-                                <div>
-                                    <div id="patientPic"><img id="patientAvatar" src="../static/registry/img/logo/Logo_Small.png" /></div>
-                                    <ul>
-                                        <li><a href="{% url 'registry:patient_viewing' p.uuid %}">
-                                            <p id="patientName">{{ p.first_name }} {{p.middle_initial}} {{p.last_name }}</p></a></li>
-                                        <li><p id="patientDOB">{{ p.date_of_birth }}</p></li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-    </div>
-
-    <div id="tab4" class="tab">
-
-    <table>
-        <tr>
-            <td id="leftTD">
-                <div id="patientLeft">
-                    <ul>
-                        <li><div id="imgPic"><img id="avatar" src="../static/registry/img/logo/Logo_Small.png" /></div></li>
-                        <li><p id="leftName">{{ hn_user.first_name }} {{hn_user.middle_initial}} {{hn_user.last_name }}</p></li>
-                        <li><p id="leftDOB">{{ hn_user.date_of_birth }}</p></li>
-                    </ul>
-                    <div id="patientButtons">
-                            <a href="#tab8"><button>Transfer</button></a>
-                            <a href="#tab6"><button>Discharge</button></a>
+            <thead>
+                <tr>
+                    <th id="theader">
+                        <div class="patientHead">
+                            <p id="patientTitle">Patients<p>
+                            <div id="patientSearch" class="patientHead">Search:
+                                <input id="patientSearchBar" type="text" placeholder="Search for Patient..">
+                            </div>
                         </div>
-                </div>
-            </td>
-            <td id="rightTD">
-                <div id="patientRight">
-                    <ul id="innertab-links">
-                        <li><a href ="#tab9" rel="tab9" class="hn-tab">Medical Information</a></li>
-                        <li><a href ="#tab10" rel="tab10" class="hn-tab">Medical Test</a></li>
-                        <li><a href ="#tab11" rel="tab11" class="hn-tab">Prescriptions</a></li>
-                    </ul>
-                    <div id="tab9" class="innertab" style="display: block;">
-                        Medical info goes here!
-                    </div>
-                    <div id="tab10" class="innertab">
-                        Medical test info goes here!
-                    </div>
-                    <div id="tab11" class="innertab">
-
-                        <table id="prestable">
-                            <thead>
-                                <th id="check"><div class="presHead"><input type="checkbox" id="checkAll"/></div></th>
-                                <th><div class="presHead">Prescription Drug</div></th>
-                                <th><div class="presHead">Count</div></th>
-                                <th><div class="presHead">Amount</div></th>
-                                <th><div class="presHead">Refills</div></th>
-                                <th><div class="presHead">End Date</div></th>
-                            </thead>
-                            <tbody>
-
-                            </tbody>
-                        </table>
-                        <div id="presbuttons">
-                            <a href="#tab5"><button>Delete Prescription(s)</button></a>
-                            <a href="#tab5"><button>Add Prescription</button></a>
-                        </div>
-                    </div>
-                </div>
-            </td>
-        </tr>
-    </table>
-
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in patients %}
+                    <tr>
+                        <td class="patientBody">
+                            <div>
+                                <div id="patientPic"><img id="patientAvatar" src="../static/registry/img/logo/Logo_Small.png" /></div>
+                                <ul>
+                                    <li>
+                                        <a href="{% url 'registry:patient_viewing' p.uuid %}">
+                                            <p id="patientName">{{ p.first_name }} {{p.middle_initial}} {{p.last_name }}</p>
+                                        </a>
+                                    </li>
+                                    <li><p id="patientDOB">{{ p.date_of_birth }}</p></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
     <div id="tab3" class="tab">
-        <div class="container calendar">
-            <div id="calendar"></div>
-        </div>
+        <table id="patient">
+            <thead>
+                <tr>
+                    <th id="theader" colspan="3">
+                        <div class="patientHead">
+                            <p id="patientTitle">Patient Discharge<p>
+                            <div id="patientSearch" class="patientHead">Search:
+                                <input id="patientDischargeSearchBar" type="text" placeholder="Search for Patient..">
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+                <tr>
+                    <th id="theader">
+                        <div class="patientHead">
+                            Patient
+                        </div>
+                    </th>
+                    <th id="theader">
+                        <div class="patientHead">
+                            Transfer Request
+                        </div>
+                    </th>
+                    <th id="theader">
+                        <div class="patientHead">
+                            Discharge
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in patients %}
+                    <tr>
+                        <td class="patientBody">
+                            <div>
+                                <div id="patientPic"><img id="patientAvatar" src="../static/registry/img/logo/Logo_Small.png" /></div>
+                                <ul>
+                                    <li>
+                                        <a href="{% url 'registry:patient_viewing' p.uuid %}">
+                                            <p id="patientName">{{ p.first_name }} {{p.middle_initial}} {{p.last_name }}</p>
+                                        </a>
+                                    </li>
+                                    <li><p id="patientDOB">Admission Status: {{ p.admission_status }}</p></li>
+                                </ul>
+                            </div>
+                        </td>
+                        <td class="patientBody">
+
+                        </td>
+                        <td class="patientBody">
+                            <button>Discharge</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div id="tab4" class="tab">
+        <table id="patient">
+            <thead>
+                <tr>
+                    <th id="theader" colspan="3">
+                        <div class="patientHead">
+                            <p id="patientTitle">Patient Transfer<p>
+                            <div id="patientSearch" class="patientHead">Search:
+                                <input id="patientTransferSearchBar" type="text" placeholder="Search for Patient..">
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+                <tr>
+                    <th id="theader">
+                        <div class="patientHead">
+                            Patient
+                        </div>
+                    </th>
+                    <th id="theader">
+                        <div class="patientHead">
+                            Transfer Request
+                        </div>
+                    </th>
+                    <th id="theader">
+                        <div class="patientHead">
+                            Transfer Response
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in patients %}
+                    <tr>
+                        <td class="patientBody">
+                            <div>
+                                <div id="patientPic"><img id="patientAvatar" src="../static/registry/img/logo/Logo_Small.png" /></div>
+                                <ul>
+                                    <li>
+                                        <a href="{% url 'registry:patient_viewing' p.uuid %}">
+                                            <p id="patientName">{{ p.first_name }} {{p.middle_initial}} {{p.last_name }}</p>
+                                        </a>
+                                    </li>
+                                    <li><p id="patientDOB">Admission Status: {{ p.admission_status }}</p></li>
+                                </ul>
+                            </div>
+                        </td>
+                        <td class="patientBody">
+
+                        </td>
+                        <td class="patientBody">
+                            <button>Authorize</button>
+                            <button>Not Authorize</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
     <div id="tab5" class="tab">
-{#       {% crispy pres_form pres_form.helper %}#}
+        <div class="container calendar">
+            <div id="calendar"></div>
+        </div>
     </div>
 {% endblock %}

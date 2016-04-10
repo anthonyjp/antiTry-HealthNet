@@ -51,10 +51,15 @@
                 <table id="inbox">
                     <thead>
                         <tr>
-                            <th id="check"><div class="inboxHead"><input type="checkbox" id="checkAll"/></div></th>
-                            <th><div class="inboxHead">From</div></th>
-                            <th><div class="inboxHead">Title</div></th>
-                            <th><div class="inboxHead">Date</div></th>
+                            <th id="check"><div class="patientHead"><input type="checkbox" id="checkAll"/></div></th>
+                            <th colspan="4">
+                                <div class="patientHead">
+                                    <p id="patientTitle">{{hn_user.first_name}}&#8217;s Inbox<p>
+                                    <div id="patientSearch" class="patientHead">Search:
+                                        <input id="InboxSearchBar" type="text" placeholder="Search Inbox..">
+                                    </div>
+                                </div>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>

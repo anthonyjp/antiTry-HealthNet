@@ -145,6 +145,7 @@ def register(request):
         form = PatientRegisterForm()
     return render(request, 'registry/register.html', {'form': form})
 
+
 @login_required(login_url=reverse_lazy('registry:login'))
 def appt_schedule(request):
     q = request.user.hn_user
@@ -282,9 +283,9 @@ def home(request):
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
-def patient_viewing(request, uuid):
+def patient_viewing(request, patient_uuid):
     hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
-    patient = Patient.objects.filter(uuid=uuid)
+    patient = get_object_or_404(Patient, uuid=patient_uuid)
     rx_form = PrescriptionCreation(request.POST, user=hn_user)
     rxs = Prescription.objects.filter(doctor=hn_user, patient=patient)
 

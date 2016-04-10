@@ -54,7 +54,6 @@ p{
   font-family: $healthnet-standard-font;
   font-size: 17px;
   padding-top: .2%;
-  padding-bottom: .2%;
 }
 
 #patientTitle{
@@ -65,7 +64,7 @@ p{
 .patientBody{
   background-color: #e3eee7;
   border: 1px solid white;
-  //color: #f3fef7;
+  text-align: center;
 }
 
 #patientSearch{
