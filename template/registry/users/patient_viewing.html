@@ -55,7 +55,6 @@
                 <table id="prestable">
                     <thead>
                         <tr>
-                            <th id="check"><div class="presHead"><input type="checkbox" id="checkAll"/></div></th>
                             <th><div class="presHead">Prescription</div></th>
                             <th><div class="presHead">Count</div></th>
                             <th><div class="presHead">Amount</div></th>
@@ -66,11 +65,21 @@
                     <tbody>
                         {% for rx in rxs %}
                             <tr>
-                                <td><div>rx.drug</div></td>
-                                <td><div>rx.count</div></td>
-                                <td><div>rx.amount</div></td>
-                                <td><div>rx.refills</div></td>
-                                <td><div>rx.time_range.end_time</div></td>
+                                <td>
+                                    <div>{{ rx.drug }}</div>
+                                </td>
+                                <td>
+                                    <div>{{ rx.count }}</div>
+                                </td>
+                                <td>
+                                    <div>{{ rx.amount }}</div>
+                                </td>
+                                <td>
+                                    <div>{{ rx.refills }}</div>
+                                </td>
+                                <td>
+                                    <div>{{ rx.time_range.end_time }}</div>
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
