@@ -184,7 +184,7 @@ class StaffRegistrationForm(forms.Form):
                         Div('address_zipcode', css_class='col-lg-5'),
                         css_class='row',
                      )
-                    ),
+                     ),
             FormActions(
                 Submit('submit', 'Submit'),
                 HTML('<a class="btn btn-default" href={% url "registry:home" %}>Cancel</a>')
@@ -343,30 +343,6 @@ class DeleteAppForm(models.ModelForm):
         fields = []
 
 
-class DeletePresForm(models.ModelForm):
-    """
-    Name: DeletePresForm
-
-    Deletion of Pres form
-    """
-
-    class Meta:
-        model = Prescription
-        fields = []
-
-
-class DeleteAdmitForm(models.ModelForm):
-    """
-    Name: DeleteAdmitForm
-
-    Deletion of Admit Info form
-    """
-
-    class Meta:
-        model = AdmissionInfo
-        fields = []
-
-
 class PrescriptionCreation(models.ModelForm):
     """
     Name: PrescriptionCreation
@@ -432,6 +408,18 @@ class PrescriptionCreation(models.ModelForm):
         exclude = ['doctor']
 
 
+class DeletePresForm(models.ModelForm):
+    """
+    Name: DeletePresForm
+
+    Deletion of Pres form
+    """
+
+    class Meta:
+        model = Prescription
+        fields = []
+
+
 class PatientAdmitForm(models.ModelForm):
     """
     Name: PatientAdmitForm
@@ -453,25 +441,34 @@ class PatientAdmitForm(models.ModelForm):
         self.helper.field_class = 'col-lg-8'
         self.helper.layout = Layout(
             Fieldset('Patient Admit Form',
-                         'hospital',
-                         'reason'
+                     'hospital',
+                     'reason'
                      ),
-                FormActions(
-                        Submit('submit', 'Submit'),
-                        HTML(
-                            '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
-                            '{% url "registry:home" %}{% endif %}>Cancel</a>'
-                        )
+            FormActions(
+                Submit('submit', 'Submit'),
+                HTML(
+                    '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
+                    '{% url "registry:home" %}{% endif %}>Cancel</a>'
                 )
+            )
         )
-
-
 
     class Meta:
         model = AdmissionInfo
         fields = 'hospital', 'reason'
         exclude = ['patient', 'admitted_by', 'admission_time']
 
+
+class DeleteAdmitForm(models.ModelForm):
+    """
+    Name: DeleteAdmitForm
+
+    Deletion of Admit Info form
+    """
+
+    class Meta:
+        model = AdmissionInfo
+        fields = []
 
 
 class MessageCreation(models.ModelForm):
@@ -506,7 +503,8 @@ class MessageCreation(models.ModelForm):
                 FormActions(
                         Submit('submit', 'Submit'),
                         HTML(
-                                '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}{% url "registry:home" %}{% endif %}>Cancel</a>')
+                            '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
+                            '{% url "registry:home" %}{% endif %}>Cancel</a>')
                 )
         )
 
