@@ -70,8 +70,9 @@ def patient_admit(request):
                 timerange.save()
                 admit_request.admission_time = timerange
                 admit_request.admitted_by = user
+                admit_request.prescriptions = Dictionary.empty()
                 patient = admit_request.patient
-                patient.admission_status = True
+                patient.admission_status = admit_request
                 admit_request.save()
                 return redirect('registry:home')
         else:

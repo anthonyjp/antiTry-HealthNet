@@ -430,7 +430,7 @@ class PatientAdmitForm(models.ModelForm):
     All other fields will be set in the view.
 
     """
-    model = Admittance
+    model = AdmissionInfo
 
     def __init__(self, *args, **kwargs):
         super(PatientAdmitForm, self).__init__(*args, **kwargs)
@@ -457,8 +457,8 @@ class PatientAdmitForm(models.ModelForm):
 
 
     class Meta:
-        model = Admittance
-        fields = 'patient', 'hospital', 'reason'
+        model = AdmissionInfo
+        fields = 'patient',
         exclude = ['admitted_by', 'admission_time']
 
 
