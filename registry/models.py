@@ -192,7 +192,8 @@ class Administrator(User):
     a system admin and the hospital they belong to
     """
     is_sysadmin = models.BooleanField(default=False)
-    hospital = models.ForeignKey(to=Hospital, related_name='admin_to')
+    hospital = models.ForeignKey(to=Hospital, related_name='admin_to', null=True)
+    # null is true just because we have existing admins before the hospital field was added
 
 
 class Prescription(models.Model):
