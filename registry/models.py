@@ -56,6 +56,9 @@ class Hospital(models.Model):
 
 
 class Drug(models.Model):
+    """
+    A drug model consisting of a name, the providers which are the company name, the side effects, and the msds link
+    """
     name = models.CharField(max_length=255)
     # The company name, can have multiple
     providers = SeparatedValuesField()
@@ -68,6 +71,10 @@ class Drug(models.Model):
 
 
 class Note(models.Model):
+    """
+    A note object which consists of the author, timestamp of when it was created, the content as a text field,
+    and images allowed in
+    """
     author = models.TextField()
     timestamp = models.DateTimeField()
     content = models.TextField()
