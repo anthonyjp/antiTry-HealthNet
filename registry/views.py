@@ -399,9 +399,9 @@ def appt_schedule(request):
                 error = "Appointment Error: That date and time has already happen."
     else:
         if 'start' in request.GET:
-            form = AppointmentSchedulingForm(user=p, initial={'time': dateutil.parser.parse(request.GET['start'])})
+            form = AppointmentSchedulingForm(user=user, initial={'time': dateutil.parser.parse(request.GET['start'])})
         else:
-            form = AppointmentSchedulingForm(user=p)
+            form = AppointmentSchedulingForm(user=user)
 
         if 'next' in request.GET:
             next_location = request.GET['next']
