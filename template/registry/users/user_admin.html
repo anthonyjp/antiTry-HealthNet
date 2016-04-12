@@ -7,7 +7,24 @@
 {% endblock %}
 {% block userContent %}
      <div id="tab2" class="tab">
-         <p>Logs will go here!</p>
+         <table>
+             <tr>
+                 <td>Date Time</td>
+                 <td>User who did Action</td>
+                 <td>Action</td>
+                 <td>Patient Affected</td>
+                 <td>Staff Member Affected</td>
+             </tr>
+             {% for log in loglist %}
+                 <tr>
+                     <td>{{ log.date }}</td>
+                     <td>{{ log.user_action }}</td>
+                     <td>{{ log.action_string }}</td>
+                     <td>{% if log.patient_exists %}{{ log.user_patient }} {% else %}None{% endif %}</td>
+                     <td>{% if log.staff_exists %}{{ log.user_staff_affected }}{% else %}None {% endif %}</td>
+                 </tr>
+             {% endfor %}
+         </table>
      </div>
     <div id="tab3" class="tab">
          <p>Logs will go here!</p>

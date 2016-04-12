@@ -22,10 +22,16 @@ security_log = logging.getLogger('hn.security')
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def rx_create(request, patient_uuid):
+    """
+    The view for the prescription creation form
+    Only doctors can view this
+    :param request:
+    :param patient_uuid: the patient uuid to limit the drop down patient menu
+    :return: the page view
+    """
     error = ""
     p = User.objects.get_subclass(pk=request.user.hn_user.pk)
     # next_location is where it goes if you cancel
-    # EXCUSE ME
     next_location = None
     if rules.test_rule('is_doctor', p):
         if request.method == "POST":
@@ -41,6 +47,19 @@ def rx_create(request, patient_uuid):
                     rx.time_range = timerange
                     rx.doctor = p
                     rx.save()
+                    # This will log the fact that at each hospital the doctor worked at that this doctor
+                    # had created a prescription
+                    for hospital in rx.doctor.hospitals.all():
+                        new_log_item = LogItem(
+                            date=datetime.now(),
+                            action=LogAction.PRES_CREATE,
+                            user_action=p.uuid,
+                            user_patient=rx.patient.uuid,
+                            user_staff_affected=rx.doctor.uuid,
+                            location=hospital
+                        )
+                        new_log_item.save()
+
                     return redirect('registry:patient_viewing', patient_uuid=patient_uuid)
                 else:
                     error = "Time Range is invalid"
@@ -59,20 +78,29 @@ def rx_create(request, patient_uuid):
 def rx_delete(request, pk):
     q = request.user.hn_user
     p = User.objects.get_subclass(pk=q.pk)
-    if rules.test_rule('is_nurse', p):
+    if rules.test_rule('is_nurse', p) or rules.test_rule('is_patient', p):
         return HttpResponseNotFound(
             '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    # If the doctor viewing is not the writer of the prescription
     delete = get_object_or_404(Prescription, id=pk)
-    if rules.test_rule('is_patient', p):
-        return HttpResponseNotFound(
-            '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     if rules.test_rule('is_doctor', p):
         if delete.doctor.uuid != p.uuid:
             return HttpResponseNotFound(
-                '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+                '<h1>You did not write this prescription.</h1><a href="/"> Return to home</a>')
+    # Delete the prescription!
     if request.method == 'POST':
         form = DeletePresForm(request.POST, instance=delete)
         if form.is_valid():
+            for hospital in delete.doctor.hospitals.all():
+                new_log_item = LogItem(
+                    date=datetime.now(),
+                    action=LogAction.PRES_DELETE,
+                    user_action=p.uuid,
+                    user_patient=delete.patient.uuid,
+                    user_staff_affected=delete.doctor.uuid,
+                    location=hospital
+                )
+            new_log_item.save()
             delete.delete()
             return redirect('registry:home')
 
@@ -106,6 +134,15 @@ def patient_admit(request, patient_uuid):
                 patient.cur_hospital = admit_request.hospital
                 patient.admission_status = admit_request
                 patient.save()
+                new_log_item = LogItem(
+                    date=datetime.now(),
+                    action=LogAction.PA_ADMIT,
+                    user_action=user.uuid,
+                    user_patient=patient.uuid,
+                    user_staff_affected=None,
+                    location=admit_request.hospital
+                )
+                new_log_item.save()
                 return redirect('registry:home')
         else:
             form = PatientAdmitForm()
@@ -133,6 +170,15 @@ def patient_transfer_request(request, patient_uuid):
                 transfer_request.save()
                 patient.transfer_status = transfer_request
                 patient.save()
+                new_log_item = LogItem(
+                    date=datetime.now(),
+                    action=LogAction.PA_TRANSFER_REQUEST,
+                    user_action=user.uuid,
+                    user_patient=patient.uuid,
+                    user_staff_affected=None,
+                    location=transfer_request.hospital
+                )
+                new_log_item.save()
                 return redirect('registry:home')
         else:
             form = PatientTransferForm(user=user)
@@ -169,6 +215,24 @@ def patient_transfer_approve(request, patient_uuid):
                 patient.admission_status = None
                 patient.admission_status = new_admit
                 patient.save()
+                new_log_item = LogItem(
+                    date=datetime.now(),
+                    action=LogAction.PA_TRANSFER_ACCEPTED,
+                    user_action=user.uuid,
+                    user_patient=patient.uuid,
+                    user_staff_affected=None,
+                    location=old_admit.hospital
+                )
+                new_log_item.save()
+                second_log_item = LogItem(
+                    date=datetime.now(),
+                    action=LogAction.PA_TRANSFERRED,
+                    user_action=user.uuid,
+                    user_patient=patient.uuid,
+                    user_staff_affected=None,
+                    location=new_admit.hospital
+                )
+                second_log_item.save()
                 return redirect('registry:home')
         else:
             form = ApproveTransferForm(instance=patient.transfer_status)
@@ -183,13 +247,13 @@ def patient_transfer_approve(request, patient_uuid):
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def patient_transfer_delete(request, patient_uuid):
-    p = User.objects.get_subclass(pk=request.user.hn_user.pk)
-    if rules.test_rule('is_nurse', p) or rules.test_rule('is_patient', p):
+    user = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    if rules.test_rule('is_nurse', user) or rules.test_rule('is_patient', user):
         return HttpResponseNotFound(
             '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     patient = get_object_or_404(Patient, uuid=patient_uuid)
-    if rules.test_rule('is_doctor', p):
-        if patient.provider.uuid != p.uuid:
+    if rules.test_rule('is_doctor', user):
+        if patient.provider.uuid != user.uuid:
             return HttpResponseNotFound(
                 '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     if request.method == 'POST':
@@ -197,6 +261,15 @@ def patient_transfer_delete(request, patient_uuid):
         if form.is_valid():
             patient.transfer_status = None
             patient.save()
+            new_log_item = LogItem(
+                date=datetime.now(),
+                action=LogAction.PA_TRANSFER_DENIED,
+                user_action=user.uuid,
+                user_patient=patient.uuid,
+                user_staff_affected=None,
+                location=patient.cur_hospital
+            )
+            new_log_item.save()
             return redirect('registry:home')
 
     else:
@@ -208,13 +281,13 @@ def patient_transfer_delete(request, patient_uuid):
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def patient_discharge(request, patient_uuid):
-    p = User.objects.get_subclass(pk=request.user.hn_user.pk)
-    if rules.test_rule('is_nurse', p) or rules.test_rule('is_patient', p):
+    user = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    if rules.test_rule('is_nurse', user) or rules.test_rule('is_patient', user):
         return HttpResponseNotFound(
             '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     patient = get_object_or_404(Patient, uuid=patient_uuid)
-    if rules.test_rule('is_doctor', p):
-        if patient.provider.uuid != p.uuid:
+    if rules.test_rule('is_doctor', user):
+        if patient.provider.uuid != user.uuid:
             return HttpResponseNotFound(
                 '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     if request.method == 'POST':
@@ -223,6 +296,15 @@ def patient_discharge(request, patient_uuid):
             admit_info = patient.admission_status
             admit_info.admission_time.end_time = datetime.now()
             admit_info.save()
+            new_log_item = LogItem(
+                date=datetime.now(),
+                action=LogAction.PA_DISCHARGE,
+                user_action=user.uuid,
+                user_patient=patient.uuid,
+                user_staff_affected=None,
+                location=patient.cur_hospital
+            )
+            new_log_item.save()
             patient.admission_status = None
             patient.transfer_status = None
             patient.save()
@@ -276,14 +358,12 @@ def register(request):
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def appt_schedule(request):
-    q = request.user.hn_user
-    p = User.objects.get_subclass(pk=q.pk)
-
+    user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     next_location = None
     error = ""
     location_found = False
     if request.method == "POST":
-        form = AppointmentSchedulingForm(request.POST, user=p)
+        form = AppointmentSchedulingForm(request.POST, user=user)
         if form.is_valid():
             appointment = form.save(commit=False)
             if rules.test_rule('time_gt', appointment.time, datetime.now()):
@@ -301,6 +381,15 @@ def appt_schedule(request):
                         time__day=appointment.time.day)
                     if not (dlist.exists() or patientlist.exists()):
                         appointment.save()
+                        new_log_item = LogItem(
+                            date=datetime.now(),
+                            action=LogAction.APPT_CREATE,
+                            user_action=user.uuid,
+                            user_patient=appointment.patient.uuid,
+                            user_staff_affected=appointment.doctor.uuid,
+                            location=appointment.location
+                        )
+                        new_log_item.save()
                         return redirect('registry:home')
                     else:
                         error = "Appointment Error: DateTime conflict"
@@ -434,10 +523,12 @@ def home(request):
                        'patients': patients,
                        })
     else:
+        loglist = hn_user.cur_hospital.logItem.all()
         return render(request,
                       'registry/users/user_admin.html',
                       {'hn_user': hn_user,
                        'form': form,
+                       'loglist': loglist
                        })
 
 
@@ -447,6 +538,16 @@ def patient_viewing(request, patient_uuid):
     patient = get_object_or_404(Patient, uuid=patient_uuid)
     # rx_form = PrescriptionCreation(request.POST, user=hn_user)
     rxs = Prescription.objects.filter(doctor=hn_user, patient=patient)
+    for hospital in hn_user.hospitals.all():
+        new_log_item = LogItem(
+            date=datetime.now(),
+            action=LogAction.PROFILE_VIEW,
+            user_action=hn_user.uuid,
+            user_patient=patient.uuid,
+            user_staff_affected=None,
+            location=hospital
+        )
+        new_log_item.save()
     return render(request,
                   'registry/users/patient_viewing.html',
                   {'hn_user': hn_user,
