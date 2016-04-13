@@ -66,6 +66,9 @@
                             <th><div class="presHead">Refills</div></th>
                             <th><div class="presHead">End Date</div></th>
                             <th>
+                                <div class="presHead">Doctor</div>
+                            </th>
+                            <th>
                                 <div class="presHead">Delete</div>
                             </th>
                         </tr>
@@ -87,6 +90,9 @@
                                 </td>
                                 <td>
                                     <div>{{ rx.time_range.end_time }}</div>
+                                </td>
+                                <td>
+                                    <div>{{ rx.doctor }}</div>
                                 </td>
                                 <td>
                                     <div><a href="{% url 'registry:rx_delete' rx.pk %}">

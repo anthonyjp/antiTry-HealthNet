@@ -13,9 +13,13 @@ class LogAction(enum.Enum):
     PROFILE_VIEW = 7
     PA_ADMIT = 8
     PA_DISCHARGE = 9
-    PA_TRANSFER = 10
-    MSG_SEND = 11
-    ST_CREATE = 12
+    PA_TRANSFER_REQUEST = 10
+    PA_TRANSFER_DENIED = 11
+    PA_TRANSFER_ACCEPTED = 12
+    PA_TRANSFERRED = 13
+    MSG_SEND = 14
+    ST_CREATE = 15  # Staff Create
+    UNKNOWN = 16
 
 
 class AdmitOptions(enum.Enum):

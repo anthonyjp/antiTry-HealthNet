@@ -9,7 +9,7 @@ from localflavor.us.us_states import STATE_CHOICES
 from registry.utility.options import Relationship
 from model_utils.managers import InheritanceManager
 
-from registry.utility.options import BloodType, Gender, INSURANCE_CHOICES, AdmitOptions
+from registry.utility.options import BloodType, Gender, INSURANCE_CHOICES, AdmitOptions, LogAction
 from registry.utility.options import SecurityQuestion as SecQ
 from registry.utility.models import TimeRange, Dictionary, SeparatedValuesField
 
@@ -31,6 +31,7 @@ class Hospital(models.Model):
     state = models.CharField(max_length=2, choices=STATE_CHOICES, blank=False, null=False)
     zipcode = models.CharField(max_length=10, blank=False, null=False)
     identifiers = models.ForeignKey(default=Dictionary.empty, to=Dictionary, on_delete=models.SET(Dictionary.empty))
+
 
     def get_location(self):
         """
@@ -81,6 +82,49 @@ class Note(models.Model):
     images = SeparatedValuesField()
 
 
+class LogItem(models.Model):
+    """
+    Represents a log item
+    """
+
+    date = models.DateTimeField()
+    action = models.SmallIntegerField(choices=LogAction.choices(), default=LogAction.UNKNOWN)
+    user_action = models.CharField(max_length=200)  # a UUID
+    user_patient = models.CharField(max_length=200, null=True)  # a UUID
+    user_staff_affected = models.CharField(max_length=200, null=True)  # a UUID
+    location = models.ForeignKey(to=Hospital, related_name="logItem", null=True, on_delete=models.CASCADE)
+
+    def patient_exists(self):
+        return self.user_patient is not None
+
+    def staff_exists(self):
+        return self.user_staff_affected is not None
+
+    def action_string(self):
+        switcher = {
+            0: "APPT CREATE",
+            1: "APPT DELETE",
+            2: "APPT EDIT",
+            3: "RX CREATE",
+            4: "RX DELETE",
+            5: "TEST UPLOAD",
+            6: "TEST RELEASE",
+            7: "PROFILE VIEW",
+            8: "PA ADMIT",
+            9: "PA DISCHARGE",
+            10: "PA TRANSFER REQUESTED",
+            11: "PA TRANSFER REQUEST DENIED",
+            12: "PA TRANSFER REQUEST ACCEPTED",
+            13: "PA TRANSFERRED",
+            14: "MSG SEND",
+            15: "STAFF CREATION",
+            16: "UNKNOWN"
+        }
+        return switcher.get(self.action, "UNKNOWN")
+
+    def __str__(self):
+        return "%s: User %s did %s to %s and %s" % (self.date, self.user_action, self.action, self.user_patient,
+                                                    self.user_staff_affected)
 ### User Models
 
 
