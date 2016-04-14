@@ -3,15 +3,36 @@
  */
 
 var registry = {};
-registry['base'] = (function () {
+registry = (function () {
     const NONE_CHOICE = '__NONE__';
     var curActive = null;
 
-    function has(key) {
-        var layers = _.split(key, '.')
+    function register(key) {
+        if (has(key))
+            return;
+
+        var layers = _.split(key, '.');
         var obj = registry;
         var i = 0;
-        while(i++ < layers.length-1) {
+
+        while (i++ < layers.length) {
+            var next = layers[i - 1];
+
+            if (!(next in obj))
+                obj[next] = {};
+
+            obj = obj[next]
+        }
+
+        return registry
+    }
+
+    function has(key) {
+        var layers = _.split(key, '.');
+        var obj = registry;
+        var i = 0;
+
+        while (i++ < layers.length) {
             var next = layers[i-1];
 
             if(!(next in obj))
@@ -82,16 +103,79 @@ registry['base'] = (function () {
         }
     }
 
+    function initUserSearch() {
+        var renderName = function (data, escape) {
+            console.log('called');
+
+            // Requires an image url, a url to the user profile, a user name, and a user type
+            const html =
+                "<div class=\"search-result\">" +
+                "<div class=\"small-avatar-box\">" +
+                "<img id=\"avatar\" class=\"center small-avatar\" src=\"%s\" />" +
+                "</div>" +
+                "<div class=\"small-content-box\">" +
+                "<h3><a href=\"%s\">%s</a></h3>" +
+                "<h5>%s</h5>" +
+                "</div>" +
+                "</div>";
+
+            return sprintf(html, escape(data.img), escape(data.profileUrl), escape(data.name), escape(data.type));
+        };
+
+        $.ajax({
+            url: '/user',
+            type: 'GET',
+            data: {'list': true},
+            cache: false,
+            dataTypE: 'json',
+            headers: {'X-CSRFToken': $('[name="csrfmiddlewaretoken"]').val()},
+            success: function (resp) {
+                console.dir(resp);
+
+                $('#user-search').selectize({
+                    options: resp,
+                    maxOptions: 100,
+                    closeAfterSelect: true,
+                    valueField: 'profileUrl',
+                    labelField: 'name',
+                    onChange: function (value) {
+                        console.log(value);
+                        window.location.href = value;
+                    },
+                    searchField: ['name'],
+                    render: {option: renderName}
+                });
+
+                console.log('Search Utility Initialized');
+            },
+            failure: function (resp) {
+                console.error('Failed to initialize search utility! Could not retrieve users...');
+                console.dir(resp);
+            }
+        })
+    }
+
     return {
         'NO_MENUITEM': NONE_CHOICE,
         'has': has,
+        'module': register,
         'inArray': inArray,
-        'setActiveMenuItem': setActiveMenuitem
+        'setActiveMenuItem': setActiveMenuitem,
+        'initUserSearch': initUserSearch
     }
 })();
 
-registry['utility'] = {};
-registry['forms'] = {};
-registry['auth'] = {};
+registry.module('utility');
+registry.module('forms');
+registry.module('forms');
+registry.module('auth');
 
 Object.preventExtensions(registry);
+
+Object.size = function (obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};

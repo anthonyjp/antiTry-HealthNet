@@ -135,6 +135,10 @@ li{
   margin: 0 auto;
 }
 
+.container.calendar {
+  width: 100%;
+}
+
 #calendar{
   margin-left: auto;
   margin-right: auto;
@@ -152,19 +156,28 @@ li{
   font-size: 12px;
 }
 
-#imgPic{
-  margin-left: 10%;
+ul.profile {
+  margin: 0;
+  padding: 0;
 }
 
 #avatar{
-  height: 100px;
+  max-width: 80%;
+  min-width: 50px;
+  height: auto;
   box-shadow: 0 0 5px 2px #B3B3B3;
-  margin-bottom: 2%;
+}
+
+.center {
+  display: block;
+  margin: 0 auto;
 }
 
 #leftName{
   font-weight: bold;
   font-size: 120%;
+  text-align: center;
+  padding-top: 1.5rem;
 }
 
 #leftDOB{
@@ -235,7 +248,7 @@ li{
 
 #left{
   float: left;
-  width:15%;
+  width: 20%;
   margin-left: 1.5%;
   margin-right: 1.5%;
 
@@ -252,7 +265,7 @@ li{
 
 #right{
   float: left;
-  width:80%;
+  width: 70%;
   margin-top: 0.5%;
 }
 

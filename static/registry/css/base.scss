@@ -73,3 +73,21 @@ nav.navbar {
   font-weight: 50px;
   margin-top: -9.5%;
 }
+
+select#user-search.loading {
+
+}
+
+div.search-result {
+  & > div.small-avatar-box {
+    float: left;
+
+    & > .small-avatar {
+
+    }
+  }
+
+  & > .small-content-box {
+    float: left
+  }
+}

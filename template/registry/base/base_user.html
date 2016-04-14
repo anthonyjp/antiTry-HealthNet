@@ -6,6 +6,7 @@
 {% load registry_tags %}
 {% load crispy_forms_tags %}
 
+{% has_perm 'registry.inbox' hn_user hn_visitor as has_inbox %}
 {% block title %}HealthNet | Home{% endblock %}
 
 {% block cssimport %}
@@ -21,9 +22,12 @@
 {% block content %}
 
 <div id="left">
-    <ul>
-        <li><div id="imgPic"><img id="avatar" src="../static/registry/img/logo/Logo_Small.png" /></div></li>
-        <li><p id="leftName">{{ hn_user.first_name }} {{hn_user.middle_initial}} {{hn_user.last_name }}</p></li>
+    <ul class="profile">
+        <li>
+            <div><img id="avatar" class="center" src="{% static "registry/img/logo.png" %}"/></div>
+        </li>
+        <li><p id="leftName"
+               class="center">{{ hn_user.first_name }} {{ hn_user.middle_initial }} {{ hn_user.last_name }}</p></li>
         <li><p id="leftDOB">{{ hn_user.date_of_birth }}</p></li>
     </ul>
 </div>
@@ -33,20 +37,23 @@
         <ul id="tab-links">
             <li><a href ="#tab1" rel="tab1" class="hn-tab">Personal</a></li>
             {% block userLinks %}{% endblock %}
+            {% if has_inbox %}
             <li><a href ="#tab6" rel="tab6" class="hn-tab">Inbox</a></li>
+            {% endif %}
         </ul>
 
         <div id="tab-content">
             <div id="tab1" class="tab" style="display: block;">
                 <form id="form">
-                    <label>First Name:</label><input data-field="first_name" class="editable" type="text" value="{{ hn_user.first_name }}" /><br>
+                    <label>First Name:</label><input data-parsley-required data-field="first_name" class="editable"
+                                                     type="text" value="{{ hn_user.first_name }}"/><br>
                     <label>Middle Initial:</label><input data-field="middle_initial" class="editable" type="text" value="{{ hn_user.middle_initial }}"/><br>
                     <label>Last Name:</label><input data-field="last_name" class="editable" type="text" value="{{ hn_user.last_name }}"/><br>
                     <label>Date of Birth:</label><input data-field="date_of_birth" class="editable" type="text" value="{{ hn_user.date_of_birth }}"/><br>
                     <label>Gender:</label><input data-field="gender" class="editable" type="text" value="{{ hn_user.gender }}"/><br>
                 </form>
             </div>
-
+            {% if has_inbox %}
             <div id="tab6" class="tab">
                 <table id="inbox">
                     <thead>
@@ -115,7 +122,7 @@
             <div id="tab8" class="tab">
                 {% crispy form form.helper %}
             </div>
-
+            {% endif %}
             {% block userContent %}{% endblock %}
         </div>
 </div>
@@ -123,6 +130,7 @@
 
 {% block customjs %}
     <script type="text/javascript">
-        registry.forms.user.hook(true, "{{ hn_user.pk }}");
+        registry.forms.user.hook();
     </script>
+    {% block user_customjs %}{% endblock %}
 {% endblock %}

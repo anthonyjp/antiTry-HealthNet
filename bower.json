@@ -33,6 +33,7 @@
     "sprintf": "^1.0.3",
     "chance": "^1.0.0",
     "vex": "^2.3.3",
-    "selectize": "^0.12.1"
+    "selectize": "^0.12.1",
+    "parsleyjs": "^2.3.7"
   }
 }

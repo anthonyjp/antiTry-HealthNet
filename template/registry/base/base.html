@@ -14,6 +14,10 @@
     {#  All universally shared CSS stylesheets should go above the cssimport block  #}
     <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap-theme.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'vex/css/vex.css' %}"/>
+    <link rel="stylesheet" href="{% static 'vex/css/vex-theme-os.css' %}"/>
+    <link rel="stylesheet" href="{% static 'selectize/dist/css/selectize.css' %}"/>
+    <link rel="stylesheet" href="{% static 'selectize/dist/css/selectize.bootstrap3.css' %}"/>
     <link href='https://fonts.googleapis.com/css?family=Noto+Serif:400,400italic,700' rel='stylesheet' type='text/css'/>
     <link href='https://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'/>
     <link rel="stylesheet" href="{% sass_src 'registry/css/base.scss' %}"/>
@@ -46,6 +50,7 @@
                     <li class="hn-menuitem"><a href="#">About</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
+                    <li class="hn-menuitem"><select id="user-search" title="search"></select></li>
                     {% if user.is_authenticated %}
                         <li class="hn-menuitem" id="user"><a href="{% url 'registry:home' %}">{{ user.hn_user }}</a></li>
                         <li class="hn-menuitem"><a href="{% url 'registry:logout' %}">Sign Out</a></li>
@@ -61,17 +66,26 @@
     </div>
 
     {#  All universally shared JavaScript imports should go above the jsimport block  #}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-shim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.7/es5-sham.min.js"></script>
     <script type="text/javascript" src="{% static 'jquery/dist/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'lodash/dist/lodash.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'parsleyjs/dist/parsley.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vex/js/vex.combined.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'selectize/dist/js/standalone/selectize.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'sprintf/dist/sprintf.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'registry/js/base.js' %}"></script>
+
+    <script type="text/javascript">vex.defaultOptions.className = 'vex-theme-os';</script>
     {% block _base_jsimport %}{% endblock %}
     {% block jsimport %}{% endblock %}
 
     {# Place all universally shared custom JavaScript above customjs #}
     <script type="text/javascript">
         {# TODO Find a better solution than this appearing on every page... Sectioning maybe? #}
-        registry.base.setActiveMenuItem("{% block set-active %}Home|Log In|Profile|User{% if user %}|{{ user.first_name }}{% endif %}{{ user.first_name }}{% endblock %}");
+        registry.setActiveMenuItem("{% block set-active %}Home|Log In|Profile|User{% if user %}|{{ user.first_name }}{% endif %}{{ user.first_name }}{% endblock %}");
+        registry.initUserSearch();
     </script>
     {% block customjs %}{% endblock %}
 </body>

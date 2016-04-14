@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+
+from .utility.logging import HNLogEntry
 from .models import *
 
 # Register your models here.
@@ -21,7 +23,7 @@ admin.site.register(Hospital)
 admin.site.register(Drug)
 admin.site.register(Prescription)
 admin.site.register(Inbox)
-admin.site.register(LogItem)
+admin.site.register(HNLogEntry)
 
 admin.site.unregister(DjangoUser)
 

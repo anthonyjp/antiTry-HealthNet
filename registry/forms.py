@@ -455,7 +455,7 @@ class PatientAdmitForm(models.ModelForm):
 
     class Meta:
         model = AdmissionInfo
-        fields = 'hospital', 'reason'
+        fields = 'reason',
         exclude = ['patient', 'admitted_by', 'admission_time']
 
 

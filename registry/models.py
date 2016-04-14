@@ -1,4 +1,5 @@
 import uuid
+import rules
 
 from annoying import fields
 from django.contrib.auth.models import User as DjangoUser
@@ -82,49 +83,6 @@ class Note(models.Model):
     images = SeparatedValuesField()
 
 
-class LogItem(models.Model):
-    """
-    Represents a log item
-    """
-
-    date = models.DateTimeField()
-    action = models.SmallIntegerField(choices=LogAction.choices(), default=LogAction.UNKNOWN)
-    user_action = models.CharField(max_length=200)  # a UUID
-    user_patient = models.CharField(max_length=200, null=True)  # a UUID
-    user_staff_affected = models.CharField(max_length=200, null=True)  # a UUID
-    location = models.ForeignKey(to=Hospital, related_name="logItem", null=True, on_delete=models.CASCADE)
-
-    def patient_exists(self):
-        return self.user_patient is not None
-
-    def staff_exists(self):
-        return self.user_staff_affected is not None
-
-    def action_string(self):
-        switcher = {
-            0: "APPT CREATE",
-            1: "APPT DELETE",
-            2: "APPT EDIT",
-            3: "RX CREATE",
-            4: "RX DELETE",
-            5: "TEST UPLOAD",
-            6: "TEST RELEASE",
-            7: "PROFILE VIEW",
-            8: "PA ADMIT",
-            9: "PA DISCHARGE",
-            10: "PA TRANSFER REQUESTED",
-            11: "PA TRANSFER REQUEST DENIED",
-            12: "PA TRANSFER REQUEST ACCEPTED",
-            13: "PA TRANSFERRED",
-            14: "MSG SEND",
-            15: "STAFF CREATION",
-            16: "UNKNOWN"
-        }
-        return switcher.get(self.action, "UNKNOWN")
-
-    def __str__(self):
-        return "%s: User %s did %s to %s and %s" % (self.date, self.user_action, self.action, self.user_patient,
-                                                    self.user_staff_affected)
 ### User Models
 
 
@@ -148,11 +106,20 @@ class User(models.Model):
 
     objects = InheritanceManager()
 
+    def has_perm(self, perm, *args, **kwargs):
+        return rules.has_perm(perm, self, *args, **kwargs)
+
+    def has_module_perms(self, app_label):
+        return rules.has_perm(app_label, self)
+
     def __str__(self):
         if self.middle_initial:
             return "%s %s. %s" % (self.first_name, self.middle_initial, self.last_name)
         else:
             return "%s %s" % (self.first_name, self.last_name)
+
+    def __repr__(self):
+        return "%s [%s]" % (str(self), str(self.uuid))
 
 
 class AdmissionInfo(models.Model):
@@ -164,7 +131,6 @@ class AdmissionInfo(models.Model):
     """
     patient = models.TextField()
     admitted_by = models.TextField()
-    hospital = models.ForeignKey(Hospital)
     reason = models.SmallIntegerField(choices=AdmitOptions.choices(), default=AdmitOptions.EMERGENCY)
     admission_time = models.OneToOneField(to=TimeRange, on_delete=models.SET_NULL, null=True)
 
@@ -182,7 +148,7 @@ class TransferInfo(models.Model):
     """
     patient = models.TextField()
     admitted_by = models.TextField()
-    doctor = models.ForeignKey(Doctor)
+    doctor = models.ForeignKey('Doctor')
     hospital = models.ForeignKey(Hospital)
     reason = models.SmallIntegerField(choices=AdmitOptions.choices(), default=AdmitOptions.EMERGENCY)
 
@@ -320,7 +286,6 @@ class MedicalTest(MedicalData):
     """
     timestamp = models.DateTimeField()
     results = models.OneToOneField(to=Note, related_name='test_note', on_delete=models.SET_NULL, null=True)
-    images = SeparatedValuesField()
     sign_off_user = models.ForeignKey(to=Doctor, on_delete=models.SET_NULL, null=True)
 
 

@@ -23,7 +23,6 @@ is_administrator = is_user(Administrator)
 def is_doctor_of(doctor, patient):
     return doctor.patient_set.filter(pk=patient.uuid).exists()
 
-
 @predicate
 def has_appointment(user, patient):
     return user.appointment_set.filter(patient__uuid__exact=patient.uuid).exists()
@@ -55,10 +54,15 @@ rules.add_perm('registry.medinfo', is_doctor | is_nurse)
 
 rules.add_perm('registry.prescriptions', is_doctor)
 
-rules.add_perm('registry.admit_patient', is_doctor | is_nurse)
-rules.add_perm('registry.release_patient', is_doctor)
+rules.add_perm('registry.admit', is_doctor | is_nurse)
+rules.add_perm('registry.discharge', is_doctor)
+
+rules.add_perm('registry.transfer_request', is_doctor | is_administrator)
 
 rules.add_perm('registry.view_patient', is_patient | is_doctor | is_nurse)
+rules.add_perm('registry.edit_patient', (is_patient & is_self) | is_nurse | is_doctor)
+
+rules.add_perm('registry.inbox', is_self)
 
 # Define Rules
 

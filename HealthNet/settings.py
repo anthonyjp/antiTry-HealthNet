@@ -63,6 +63,11 @@ MIDDLEWARE_CLASSES = [
     'axes.middleware.FailedLoginMiddleware',
 ]
 
+AUTHENTICATION_BACKENDS = (
+    'rules.permissions.ObjectPermissionBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
 ROOT_URLCONF = 'HealthNet.urls'
 
 TEMPLATES = [

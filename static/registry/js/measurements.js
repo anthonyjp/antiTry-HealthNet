@@ -2,8 +2,8 @@
  * Created by Matthew on 2/28/2016.
  */
 
-if(!registry.base.has('forms'))
-    registry.base['forms'] = {};
+if (!registry.has('forms'))
+    registry.module('forms');
 
 // TODO Generalize and Document
 

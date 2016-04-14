@@ -1,5 +1,5 @@
-if(!registry.base.has('forms'))
-    registry.base['forms'] = {};
+if (!registry.has('forms.user'))
+    registry.module('forms.user');
 
 registry.forms['user'] = (function(){
 
@@ -10,43 +10,42 @@ registry.forms['user'] = (function(){
         do such things. Seriously. <3 AJAX.
      */
     var hooked = false;
-    var userUuid = null;
+    var csrf = $('[name="csrfmiddlewaretoken"]').val();
+
     var originals = {};
     var changed = {};
 
-    function getUrl() {
-        return '/user/' + userUuid + '/update/';
+    const editables = $('input.editable');
+    var userUuid = null;
+
+    function getVerifyUrl(userUuid) {
+        return '/verify/' + userUuid;
     }
 
-    function hookEditability(canEdit, userId) {
-        if(hooked)
-            throw new Error('Attempt to reassign editability!');
+    function getUpdateUrl(userUuid) {
+        return '/user/' + userUuid;
+    }
 
-        hooked = true;
-
-        var editables = $('input.editable');
-        editables.prop('readonly', true);
-
+    function initEditables(canEdit) {
+        // Add click listener to make fields readable
         if(canEdit) {
-            userUuid = userId;
-            // Add click listener to make fields readable
             editables.on('click', function () {
                 $(this).prop('readonly', false);
             });
 
             // Add "blur" listeners such that when focus is lost they are made readonly again
-            editables.on('blur', function() {
+            editables.on('blur', function () {
                 $(this).prop('readonly', true);
             });
 
             // When a value has changed mark it for transition.
-            editables.on('change', function() {
+            editables.on('change', function () {
                 var type = $(this).data('field');
                 var value = $(this).val();
 
                 // Reset to original if desired
-                if(value === originals[type]) {
-                    if(type in changed)
+                if (value === originals[type]) {
+                    if (type in changed)
                         delete changed[type];
 
                     return;
@@ -56,36 +55,47 @@ registry.forms['user'] = (function(){
             });
 
             // Fill in original values
-            editables.each(function() {
-               originals[$(this).data('field')] = $(this).val();
+            editables.each(function () {
+                originals[$(this).data('field')] = $(this).val();
             });
 
+            editables.parsley();
+
             $('a.hn-tab').on('click', updateUser);
+            console.log("User can edit");
         } else {
             editables.addClass('no-input');
+            console.log("User cannot edit");
         }
     }
 
-    function updateUser() {
-        if(userUuid === null)
-            return;
+    function hookEditability(userId) {
+        if (hooked)
+            throw new Error('Attempt to reassign editability!');
 
-        var csrf = $('[name="csrfmiddlewaretoken"]').val();
+        hooked = true;
+
+        editables.prop('readonly', true);
+
         $.ajax({
-            url: getUrl(),
-            type: "POST",
-            data: changed,
+            url: getVerifyUrl(userId),
+            type: "GET",
+            data: {},
             cache: false,
             dataType: "json",
             headers: {'X-CSRFToken': csrf},
             success: function(resp) {
-                console.log("resp: " + resp.toString());
+                initEditables(resp['can_edit']);
+                userUuid = res['user_id'];
             },
             failure: function(resp) {
                 console.log('failure');
+                console.dir(resp);
             }
         });
+    }
 
+    function clearChanged() {
         for (var prop in changed) {
             if(!changed.hasOwnProperty(prop))
                 continue;
@@ -95,6 +105,55 @@ registry.forms['user'] = (function(){
         }
 
         changed = {};
+    }
+
+    function revertChanged() {
+        for (var prop in originals) {
+            if (!originals.hasOwnProperty(prop))
+                continue;
+
+            if (prop in changed) {
+                editables.filter(function () {
+                    return $(this).data('field') === prop;
+                }).each(function () {
+                    $(this).val(originals[prop]);
+                });
+            }
+        }
+
+        changed = {};
+    }
+
+    function updateUser() {
+        if (!hooked || userUuid == null || Object.size(changed) <= 0)
+            return;
+
+        vex.dialog.confirm({
+            message: "Do you want to submit the current changes to the user profile?",
+            callback: function (value) {
+                if (value) {
+                    $.ajax({
+                        url: getUpdateUrl(userUuid),
+                        type: "PATCH",
+                        data: changed,
+                        cache: false,
+                        dataType: "json",
+                        headers: {'X-CSRFToken': csrf},
+                        success: function (resp) {
+                            console.log("resp: ");
+                            console.dir(resp);
+                        },
+                        failure: function (resp) {
+                            console.log('failure');
+                        }
+                    });
+                    clearChanged();
+                } else {
+                    revertChanged();
+                    clearChanged();
+                }
+            }
+        });
     }
 
     return {
@@ -214,8 +273,8 @@ function searchTable(inputVal)
             else{
                 $(row).hide();
                 //$('#patient').append(notfound);
-            };
-		}
+            }
+        }
 	});
 }
 

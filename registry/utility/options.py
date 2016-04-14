@@ -1,13 +1,29 @@
 from django_enumfield import enum
 
 
+class LogLevel(enum.Enum):
+    VERBOSE = 0
+    DEBUG = 1
+    INFO = 2
+    WARN = 3
+    ERROR = 4
+
+    labels = {
+        VERBOSE: 'VERBOSE',
+        DEBUG: 'DEBUG',
+        INFO: 'INFO',
+        WARN: 'WARNING',
+        ERROR: 'ERROR'
+    }
+
+
 class LogAction(enum.Enum):
     # Log Action Types
     APPT_CREATE = 0
     APPT_DELETE = 1
     APPT_EDIT = 2
-    PRES_CREATE = 3
-    PRES_DELETE = 4
+    RX_CREATE = 3
+    RX_DELETE = 4
     TEST_UPLOAD = 5
     TEST_RELEASE = 6
     PROFILE_VIEW = 7
@@ -19,7 +35,35 @@ class LogAction(enum.Enum):
     PA_TRANSFERRED = 13
     MSG_SEND = 14
     ST_CREATE = 15  # Staff Create
-    UNKNOWN = 16
+    PAGE_ACCESS = 16
+    UNKNOWN = 17
+    GENERIC = 18
+    USER_REGISTER = 19
+    USER_LOGIN = 20
+
+    labels = {
+        APPT_CREATE: "APPT NEW",
+        APPT_DELETE: "APPT DEL.",
+        APPT_EDIT: "APPT EDIT",
+        RX_CREATE: "RX NEW",
+        RX_DELETE: "RX DEL.",
+        TEST_UPLOAD: "TEST UP.",
+        TEST_RELEASE: "TEST REL.",
+        PROFILE_VIEW: "PROF. VIEW",
+        PA_ADMIT: "PA ADMIT",
+        PA_DISCHARGE: "PA DISCH.",
+        PA_TRANSFER_REQUEST: "PA -> REQ",
+        PA_TRANSFER_DENIED: "PA -> DENY",
+        PA_TRANSFER_ACCEPTED: "PA -> ACPT",
+        PA_TRANSFERRED: "PA -> DONE",
+        MSG_SEND: "MAIL",
+        ST_CREATE: "STAFF NEW",
+        UNKNOWN: "N/A",
+        GENERIC: '---',
+        USER_REGISTER: 'REGISTER',
+        USER_LOGIN: 'LOGIN',
+        PAGE_ACCESS: 'ACCESS'
+    }
 
 
 class AdmitOptions(enum.Enum):

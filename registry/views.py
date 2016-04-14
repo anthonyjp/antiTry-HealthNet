@@ -1,39 +1,57 @@
-import logging
 import dateutil.parser
 import django.utils.timezone as tz
 
 from annoying.decorators import render_to, ajax_request
-from django.contrib.admin.models import LogEntry
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as django_login
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseNotFound, Http404
+from django.http import HttpResponseNotFound, Http404, QueryDict
 from django.shortcuts import redirect, get_object_or_404, render
 
 from .forms import *
 from .models import *
 from .utility.models import *
+from .utility.logging import *
 
-activity_log = logging.getLogger('hn.activity')
-request_log = logging.getLogger('hn.request')
-security_log = logging.getLogger('hn.security')
+logger = HNLogger()
+
+
+def ajax_success(**kwargs):
+    return kwargs.update({'success': True})
+
+
+def ajax_failure(**kwargs):
+    return kwargs.update({'success': False})
+
+
+def get_user_or_404(uuid):
+    return User.objects.get_subclass(pk=get_object_or_404(User, pk=uuid).pk)
 
 
 def is_safe_request(method):
     return method == 'GET' or method == 'HEAD'
 
 
+def read_request_body_to_post(request):
+    request.POST = QueryDict(request.body)
+
+
+def read_request_body_to(request, method='POST'):
+    setattr(request, method, QueryDict(request.body))
+
+
 @render_to('registry/landing.html')
 def index(request):
+    logger.info(request, repr(request.user.hn_user) if request.user.is_authenticated() else 'Anonymous',
+                action=LogAction.PAGE_ACCESS)
+
     if request.user.is_authenticated():
-        activity_log.info('[%s] %s', request.get_full_path(),
-                          str(request.user) if request.user.is_authenticated() else 'Anonymous')
         return redirect('registry:home')
     else:
-        activity_log.info('[%s] %s', request.get_full_path(),
-                          str(request.user) if request.user.is_authenticated() else 'Anonymous')
         return {}
 
 
@@ -45,10 +63,9 @@ def login(request):
         if user is not None:
             if user.is_active:
                 django_login(request, user)
+                logger.action(request, LogAction.USER_LOGIN, '{name} has logged in!', name=str(user.hn_user))
                 return redirect(to=reverse('registry:home'))
     else:
-        activity_log.info('[%s] %s', request.get_full_path(),
-                          str(request.user) if request.user.is_authenticated() else 'Anonymous')
         form = LoginForm()
     return {'form': form}
 
@@ -119,6 +136,8 @@ def register(request):
             patient.contact_set.add(contact)
             patient.save()
 
+            logger.action(request, LogAction.USER_REGISTER, 'Registered new user: {0!r}', patient)
+
             return redirect('registry:index')
     else:
         form = PatientRegisterForm()
@@ -143,21 +162,15 @@ def patient_admit(request, patient_uuid):
                 )
                 timerange.save()
                 admit_request.admission_time = timerange
-                admit_request.patient = patient.__str__()
-                admit_request.admitted_by = user.__str__()
+                admit_request.patient = str(patient)
+                admit_request.admitted_by = str(user)
                 admit_request.save()
                 patient.cur_hospital = admit_request.hospital
                 patient.admission_status = admit_request
                 patient.save()
-                new_log_item = LogItem(
-                    date=datetime.now(),
-                    action=LogAction.PA_ADMIT,
-                    user_action=user.uuid,
-                    user_patient=patient.uuid,
-                    user_staff_affected=None,
-                    location=admit_request.hospital
-                )
-                new_log_item.save()
+
+                logger.action(request, LogAction.PA_ADMIT, '{0!r} admitted by {1!r} to {2!s}', patient, user,
+                              admit_request.hospital)
                 return redirect('registry:home')
         else:
             form = PatientAdmitForm()
@@ -186,15 +199,9 @@ def patient_transfer_request(request, patient_uuid):
                 transfer_request.save()
                 patient.transfer_status = transfer_request
                 patient.save()
-                new_log_item = LogItem(
-                    date=datetime.now(),
-                    action=LogAction.PA_TRANSFER_REQUEST,
-                    user_action=user.uuid,
-                    user_patient=patient.uuid,
-                    user_staff_affected=None,
-                    location=transfer_request.hospital
-                )
-                new_log_item.save()
+
+                logger.action(request, LogAction.PA_TRANSFER_REQUEST,
+                              'Transfer {0!r} to {1!s} by {2!r}', patient, transfer_request.hospital, user)
                 return redirect('registry:home')
         else:
             form = PatientTransferForm(user=user)
@@ -231,24 +238,11 @@ def patient_transfer_approve(request, patient_uuid):
                 patient.admission_status = None
                 patient.admission_status = new_admit
                 patient.save()
-                new_log_item = LogItem(
-                    date=datetime.now(),
-                    action=LogAction.PA_TRANSFER_ACCEPTED,
-                    user_action=user.uuid,
-                    user_patient=patient.uuid,
-                    user_staff_affected=None,
-                    location=old_admit.hospital
-                )
-                new_log_item.save()
-                second_log_item = LogItem(
-                    date=datetime.now(),
-                    action=LogAction.PA_TRANSFERRED,
-                    user_action=user.uuid,
-                    user_patient=patient.uuid,
-                    user_staff_affected=None,
-                    location=new_admit.hospital
-                )
-                second_log_item.save()
+
+                logger.action(request, LogAction.PA_TRANSFER_ACCEPTED, '{0!r} to {1!s} accepted by {2!r}', patient,
+                              old_admit.hospital, user)
+                logger.action(request, LogAction.PA_TRANSFERRED, '{0!r} to {1!s}', patient, new_admit.hospital)
+
                 return redirect('registry:home')
         else:
             form = ApproveTransferForm(instance=patient.transfer_status)
@@ -277,15 +271,10 @@ def patient_transfer_delete(request, patient_uuid):
         if form.is_valid():
             patient.transfer_status = None
             patient.save()
-            new_log_item = LogItem(
-                date=datetime.now(),
-                action=LogAction.PA_TRANSFER_DENIED,
-                user_action=user.uuid,
-                user_patient=patient.uuid,
-                user_staff_affected=None,
-                location=patient.cur_hospital
-            )
-            new_log_item.save()
+
+            logger.action(request, LogAction.PA_TRANSFER_DENIED, '{0!r} to {1!s} denied by {2!r}', patient,
+                          patient.cur_hospital, user)
+
             return redirect('registry:home')
 
     else:
@@ -313,15 +302,9 @@ def patient_discharge(request, patient_uuid):
             admit_info = patient.admission_status
             admit_info.admission_time.end_time = tz.now()
             admit_info.save()
-            new_log_item = LogItem(
-                date=datetime.now(),
-                action=LogAction.PA_DISCHARGE,
-                user_action=user.uuid,
-                user_patient=patient.uuid,
-                user_staff_affected=None,
-                location=patient.cur_hospital
-            )
-            new_log_item.save()
+
+            logger.action(request, LogAction.PA_DISCHARGE, '{0!r} discharged by {1!r}', patient, user)
+
             patient.admission_status = None
             patient.transfer_status = None
             patient.save()
@@ -360,15 +343,10 @@ def appt_schedule(request):
                         time__day=appointment.time.day)
                     if not (dlist.exists() or patientlist.exists()):
                         appointment.save()
-                        new_log_item = LogItem(
-                            date=datetime.now(),
-                            action=LogAction.APPT_CREATE,
-                            user_action=user.uuid,
-                            user_patient=appointment.patient.uuid,
-                            user_staff_affected=appointment.doctor.uuid,
-                            location=appointment.location
-                        )
-                        new_log_item.save()
+
+                        logger.action(request, LogAction.APPT_CREATE, 'Created for {0!r} to meet with {1!r} by {2!r}',
+                                      appointment.patient, appointment.doctor, user)
+
                         return redirect('registry:home')
                     else:
                         error = "Appointment Error: DateTime conflict"
@@ -454,26 +432,6 @@ def appt_delete(request, pk):
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
-@render_to('registry/users/patient_viewing.html')
-def patient_viewing(request, patient_uuid):
-    hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
-    patient = get_object_or_404(Patient, uuid=patient_uuid)
-
-    rxs = Prescription.objects.filter(doctor=hn_user, patient=patient)
-    for hospital in hn_user.hospitals.all():
-        new_log_item = LogItem(
-            date=datetime.now(),
-            action=LogAction.PROFILE_VIEW,
-            user_action=hn_user.uuid,
-            user_patient=patient.uuid,
-            user_staff_affected=None,
-            location=hospital
-        )
-        new_log_item.save()
-    return {'hn_user': hn_user, 'patient': patient, 'rxs': rxs}
-
-
-@login_required(login_url=reverse_lazy('registry:login'))
 def sign_out(request):
     if request.user:
         logout(request)
@@ -488,7 +446,7 @@ def sign_out(request):
 
 
 def get_log_data():
-    logs = LogEntry.objects.all()
+    logs = HNLogEntry.objects.all()
     action_list = []
     for l in logs:
         time = str(l.action_time)
@@ -509,6 +467,7 @@ def get_log_data():
     return action_list
 
 
+@require_http_methods(['GET'])
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/log.html')
 def log_actions(request):
@@ -523,10 +482,35 @@ def log_actions(request):
     return {"action_list": get_log_data(), 'from': fro, 'to': to}
 
 
+@require_http_methods(['GET'])
+@login_required(login_url=reverse_lazy('registry:login'))
+@ajax_request
+def list_user(request):
+    users = User.objects.all()
+
+    user_list = []
+    for user in users:
+        if request.user.hn_user.pk != user.pk:
+            hn_user = User.objects.get_subclass(pk=user.pk)
+            user_list.append({
+                'img': static('registry/img/logo.png'),
+                'profileUrl': reverse('registry:user', args=(hn_user.uuid,)),
+                'name': str(hn_user),
+                'type': str(type(hn_user))
+            })
+
+    return user_list
+
+
+@require_http_methods(['GET', 'HEAD', 'PATCH'])
 @login_required(login_url=reverse_lazy('registry:login'))
 def user(request, uuid):
-    if request.method == 'POST':
-        return update_user(request, uuid)
+    if request.method == 'PATCH':
+        read_request_body_to(request, request.method)
+        if 'admit' in request.PATCH:
+            admit_user(request, uuid)
+        else:
+            return update_user(request, uuid)
     elif is_safe_request(request.method):
         return view_user(request, uuid)
 
@@ -536,8 +520,38 @@ def view_user(request, uuid):
     owner = User.objects.get_subclass(pk=uuid)
     visitor = User.objects.get_subclass(pk=request.user.hn_user.pk)
 
-    return {"hn_user": owner, "hn_visitor": visitor}
+    rxs = None
+    if rules.test_rule('is_doctor', visitor) and visitor.has_perm('registry.view_patient'):
+        rxs = owner.prescription_set.filter(doctor=visitor)
+    elif rules.test_rule('is_self', owner, visitor):
+        rxs = owner.prescription_set
 
+    return {"hn_user": owner, "hn_visitor": visitor, 'rxs': rxs}
+
+
+@ajax_request
+def admit_user(request, uuid):
+    admitter = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    admittee = User.objects.get_subclass(pk=get_object_or_404(User, uuid=uuid).pk)
+
+    if admitter.has_perm('registry.admit'):
+        form = PatientAdmitForm(request.PATCH)
+        if form.is_valid():
+            admission = form.save(commit=False)
+            admission.admission_time = TimeRange.objects.create()
+            admission.patient = str(admittee)
+            admission.admitted_by = str(admitter)
+            admission.save()
+
+            admittee.cur_hospital = admission.hospital
+            admittee.admission_status = admission
+            admittee.save()
+
+            logger.action(request, LogAction.PA_ADMIT, '{0!r} admitted by {1!r} to {2!s}', admittee, admitter,
+                          admission.hospital)
+            return {'success': True}
+
+    return {'success': False}
 
 @ajax_request
 def update_user(request, uuid):
@@ -548,7 +562,7 @@ def update_user(request, uuid):
 
     successes = []
     failures = []
-    for key, value in request.POST.items():
+    for key, value in request.PATCH.items():
         if hasattr(user, key):
             setattr(user, key, value)
             successes.append(key)
@@ -559,6 +573,19 @@ def update_user(request, uuid):
     return {'successes': successes, 'failures': failures}
 
 
+@require_http_methods(['GET'])
+@ajax_request
+def verify_user(request, uuid):
+    hn_visitor = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    hn_owner = User.objects.get_subclass(pk=uuid)
+
+    resp = {'can_edit': hn_visitor.has_perm('registry.edit_patient', hn_owner) if rules.test_rule('is_patient',
+                                                                                                  hn_owner) else hn_visitor.uuid == hn_owner.uuid}
+    if resp['can_edit']:
+        resp['user_id'] = uuid
+
+
+@require_http_methods(['GET', 'PATCH', 'DELETE'])
 @login_required(login_url=reverse_lazy('registry:login'))
 def rx_op(request, pk):
     if request.method == 'GET':
@@ -568,9 +595,8 @@ def rx_op(request, pk):
     elif request.method == 'DELETE':
         return rx_delete(request, pk)
 
-    return Http404('Not a Possible Action')
 
-
+@require_http_methods(['GET'])
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/rx_create.html')
 def rx_create(request, patient_uuid):
@@ -595,20 +621,9 @@ def rx_create(request, patient_uuid):
                     rx.time_range = timerange
                     rx.doctor = p
                     rx.save()
-                    # This will log the fact that at each hospital the doctor worked at that this doctor
-                    # had created a prescription
-                    for hospital in rx.doctor.hospitals.all():
-                        new_log_item = LogItem(
-                            date=datetime.now(),
-                            action=LogAction.PRES_CREATE,
-                            user_action=p.uuid,
-                            user_patient=rx.patient.uuid,
-                            user_staff_affected=rx.doctor.uuid,
-                            location=hospital
-                        )
-                        new_log_item.save()
 
-                    return redirect('registry:patient_viewing', patient_uuid=patient_uuid)
+                    logger.action(request, LogAction.RX_CREATE, 'Prescribed by {0!r} to {1!r}', rx.doctor, rx.patient)
+                    return redirect('registry:user', uuid=patient_uuid)
                 else:
                     error = "Time Range is invalid"
         else:
@@ -648,15 +663,34 @@ def rx_delete(request, pk):
 
     rx.delete()
 
-    for hospital in delete.doctor.hospitals.all():
-            new_log_item = LogItem(
-                date=tz.now(),
-                action=LogAction.PRES_DELETE,
-                user_action=hn_user.uuid,
-                user_patient=rx.patient.uuid,
-                user_staff_affected=rx.doctor.uuid,
-                location=hospital
-            )
-            new_log_item.save()
-
     return {}
+
+
+@require_http_methods(['POST'])
+@login_required(login_url=reverse_lazy('registry:login'))
+def transfers(request, pk):
+    if request.method == 'POST':
+        return {}
+
+
+@require_http_methods(['POST'])
+@login_required(login_url=reverse_lazy('registry:login'))
+def create_transfer(request):
+    transferer = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    transferee = get_user_or_404(request.POST['whom'])
+
+    if transferer.has_perm('registry.transfer_request'):
+        form = PatientTransferForm(request.POST, user=transferer)
+        if form.is_valid():
+            transfer = form.save(commit=False)
+            transfer.admitted_by = str(transferer)
+            transfer.save()
+
+            transferee.transfer_status = transfer
+            transferee.save()
+
+            logger.action(request, LogAction.PA_TRANSFER_REQUEST,
+                          'Transfer {0!r} to {1!s} by {2!r}', transferee, transfer.hospital, transferee)
+            return ajax_success()
+
+    return ajax_failure()

@@ -2,6 +2,9 @@
  * Created by Matthew on 2/28/2016.
  */
 
+if (!registry.has('utility'))
+    registry.module('utility');
+
 registry.utility = (function() {
     function datepickerHook() {
         $('.dateinput').filter(function() {

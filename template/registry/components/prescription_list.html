@@ -1,0 +1,63 @@
+{% if rxs %}
+    <div id="tab8" class="tab">
+        Medical Tests will go here!!
+    </div>
+
+    <div id="tab9" class="tab">
+        <table id="prestable">
+            <thead>
+            <tr>
+                <th>
+                    <div class="presHead">Prescription</div>
+                </th>
+                <th>
+                    <div class="presHead">Count</div>
+                </th>
+                <th>
+                    <div class="presHead">Amount</div>
+                </th>
+                <th>
+                    <div class="presHead">Refills</div>
+                </th>
+                <th>
+                    <div class="presHead">End Date</div>
+                </th>
+                <th>
+                    <div class="presHead">Delete</div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for rx in rxs %}
+                <tr>
+                    <td>
+                        <div>{{ rx.drug }}</div>
+                    </td>
+                    <td>
+                        <div>{{ rx.count }}</div>
+                    </td>
+                    <td>
+                        <div>{{ rx.amount }}</div>
+                    </td>
+                    <td>
+                        <div>{{ rx.refills }}</div>
+                    </td>
+                    <td>
+                        <div>{{ rx.time_range.end_time }}</div>
+                    </td>
+                    <td>
+                        <div><a href="{% url 'registry:rx_delete' rx.pk %}">
+                            <button>Delete</button>
+                        </a></div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div id="presbuttons">
+            <a href="{% url 'registry:rx_create' patient.uuid %}">
+                <button>Add Prescription</button>
+            </a>
+        </div>
+    </div>
+{% endif %}

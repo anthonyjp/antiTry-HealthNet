@@ -26,9 +26,12 @@ urlpatterns = [
     url(r'^appt$', views.appt_schedule, name='appt_create'),
     url(r'^appt/(?P<pk>[0-9]+)$', views.appt_edit, name='appt_edit'),
     url(r'^appt/(?P<pk>[0-9]+)/delete$', views.appt_delete, name='appt_delete'),
-    url(r'^patient_viewing/(?P<patient_uuid>.*)$', views.patient_viewing, name='patient_viewing'),
+    url(r'^user$', views.list_user, name='list_user'),
     url(uuid_url(r'^user/(?P<uuid>{uuid})$'), views.user, name='user'),
     url(uuid_url(r'^user/(?P<patient_uuid>{uuid})/rx$'), views.rx_create, name='rx_create'),
     url(uuid_url(r'^user/(?P<patient_uuid>{uuid})/rx/(?P<pk>[0-9]+)'), views.rx_delete, name='rx_delete'),
+    url(uuid_url(r'^verify/(?P<uuid>{uuid})$'), views.verify_user, name='verify'),
+    url(r'^transfer$', views.create_transfer, name='transfer_create'),
+    url(r'^transfer/(?P<pk>[0-9]+)$', views.transfers, name='transfers'),
     url(r'^rx/(?P<pk>[0-9]+)$', views.rx_op, name='rx')
 ]
