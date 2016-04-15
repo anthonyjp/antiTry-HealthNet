@@ -130,7 +130,6 @@ registry = (function () {
             dataTypE: 'json',
             headers: {'X-CSRFToken': $('[name="csrfmiddlewaretoken"]').val()},
             success: function (resp) {
-                console.dir(resp);
 
                 $('#user-search').selectize({
                     options: resp,

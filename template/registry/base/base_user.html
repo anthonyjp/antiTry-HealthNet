@@ -6,7 +6,7 @@
 {% load registry_tags %}
 {% load crispy_forms_tags %}
 
-{% has_perm 'registry.inbox' hn_user hn_visitor as has_inbox %}
+{% has_perm 'registry.inbox' hn_owner hn_visitor as has_inbox %}
 {% block title %}HealthNet | Home{% endblock %}
 
 {% block cssimport %}
@@ -27,8 +27,8 @@
             <div><img id="avatar" class="center" src="{% static "registry/img/logo.png" %}"/></div>
         </li>
         <li><p id="leftName"
-               class="center">{{ hn_user.first_name }} {{ hn_user.middle_initial }} {{ hn_user.last_name }}</p></li>
-        <li><p id="leftDOB">{{ hn_user.date_of_birth }}</p></li>
+               class="center">{{ hn_owner.first_name }} {{ hn_owner.middle_initial }} {{ hn_owner.last_name }}</p></li>
+        <li><p id="leftDOB">{{ hn_owner.date_of_birth }}</p></li>
     </ul>
 </div>
 
@@ -46,11 +46,15 @@
             <div id="tab1" class="tab" style="display: block;">
                 <form id="form">
                     <label>First Name:</label><input data-parsley-required data-field="first_name" class="editable"
-                                                     type="text" value="{{ hn_user.first_name }}"/><br>
-                    <label>Middle Initial:</label><input data-field="middle_initial" class="editable" type="text" value="{{ hn_user.middle_initial }}"/><br>
-                    <label>Last Name:</label><input data-field="last_name" class="editable" type="text" value="{{ hn_user.last_name }}"/><br>
-                    <label>Date of Birth:</label><input data-field="date_of_birth" class="editable" type="text" value="{{ hn_user.date_of_birth }}"/><br>
-                    <label>Gender:</label><input data-field="gender" class="editable" type="text" value="{{ hn_user.gender }}"/><br>
+                                                     type="text" value="{{ hn_owner.first_name }}"/><br>
+                    <label>Middle Initial:</label><input data-field="middle_initial" class="editable" type="text"
+                                                         value="{{ hn_owner.middle_initial }}"/><br>
+                    <label>Last Name:</label><input data-field="last_name" class="editable" type="text"
+                                                    value="{{ hn_owner.last_name }}"/><br>
+                    <label>Date of Birth:</label><input data-field="date_of_birth" class="editable" type="text"
+                                                        value="{{ hn_owner.date_of_birth }}"/><br>
+                    <label>Gender:</label><input data-field="gender" class="editable" type="text"
+                                                 value="{{ hn_owner.gender }}"/><br>
                 </form>
             </div>
             {% if has_inbox %}
@@ -61,7 +65,8 @@
                             <th id="check"><div class="patientHead"><input type="checkbox" id="checkAll"/></div></th>
                             <th colspan="4">
                                 <div class="patientHead">
-                                    <p id="patientTitle">{{hn_user.first_name}}&#8217;s Inbox<p>
+                                    <p id="patientTitle">{{ hn_owner.first_name }}&#8217;s Inbox
+                                    <p>
                                     <div id="patientSearch" class="patientHead">Search:
                                         <input id="InboxSearchBar" type="text" placeholder="Search Inbox..">
                                     </div>
@@ -130,7 +135,7 @@
 
 {% block customjs %}
     <script type="text/javascript">
-        registry.forms.user.hook();
+        registry.forms.user.hook("{{ request.user.hn_user.uuid }}");
     </script>
     {% block user_customjs %}{% endblock %}
 {% endblock %}

@@ -4,6 +4,8 @@ import rules
 from annoying import fields
 from django.contrib.auth.models import User as DjangoUser
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from localflavor.us.models import PhoneNumberField
 from localflavor.us.us_states import STATE_CHOICES
@@ -21,7 +23,6 @@ DjangoUser._meta.get_field('email')._unique = True
 
 
 ### General Data Models
-
 class Hospital(models.Model):
     """
     Represents a hospital with a location
@@ -32,7 +33,6 @@ class Hospital(models.Model):
     state = models.CharField(max_length=2, choices=STATE_CHOICES, blank=False, null=False)
     zipcode = models.CharField(max_length=10, blank=False, null=False)
     identifiers = models.ForeignKey(default=Dictionary.empty, to=Dictionary, on_delete=models.SET(Dictionary.empty))
-
 
     def get_location(self):
         """
@@ -84,8 +84,6 @@ class Note(models.Model):
 
 
 ### User Models
-
-
 class User(models.Model):
     """
     A Generic User account that extends Django's Auth User account (for authentication use) also consisting of a
@@ -345,3 +343,14 @@ class Inbox(models.Model):
 
     def __str__(self):
         return "%s's Inbox" % str(User.objects.get_subclass(pk=self.user.pk))
+
+
+@receiver(post_save)
+def init_user_inbox(sender, **kwargs):
+    inst = kwargs.get('instance')
+
+    if not issubclass(sender, User) or (hasattr(inst, 'inbox') and getattr(inst, 'inbox', None) is not None):
+        return
+
+    print('Creating inbox for', inst)
+    Inbox.objects.create(user=inst)

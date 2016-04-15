@@ -13,9 +13,11 @@ registered_enums = {
 
 register = template.Library()
 
+
 @register.filter(name="stringify")
 def stringify(obj):
     return mark_safe(str(obj))
+
 
 @register.simple_tag
 def labelify(value, enum):

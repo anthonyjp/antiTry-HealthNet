@@ -21,11 +21,13 @@ logger = HNLogger()
 
 
 def ajax_success(**kwargs):
-    return kwargs.update({'success': True})
+    kwargs.update({'success': True})
+    return kwargs
 
 
 def ajax_failure(**kwargs):
-    return kwargs.update({'success': False})
+    kwargs.update({'success': False})
+    return kwargs
 
 
 def get_user_or_404(uuid):
@@ -79,17 +81,20 @@ def home(request):
         return render(request,
                       'registry/users/user_patient.html',
                       {'form': form,
-                       'hn_user': hn_user,
+                       'hn_owner': hn_user,
+                       'hn_visitor': hn_user,
                        'appointments': hn_user.appointment_set.all()
                        }, context_instance=RequestContext(request))
 
     elif rules.test_rule('is_doctor', hn_user) or rules.test_rule('is_nurse', hn_user):
         patients = Patient.objects.filter(provider=hn_user)
         not_patients = Patient.objects.exclude(provider=hn_user)
+
         return render(request,
                       'registry/users/user_doctor.html',
                       {'form': form,
-                       'hn_user': hn_user,
+                       'hn_owner': hn_user,
+                       'hn_visitor': hn_user,
                        'appointments': hn_user.appointment_set.all(),
                        'not_patients': not_patients,
                        'patients': patients,
@@ -97,7 +102,8 @@ def home(request):
     else:
         return render(request,
                       'registry/users/user_admin.html',
-                      {'hn_user': hn_user,
+                      {'hn_owner': hn_user,
+                       'hn_visitor': hn_user,
                        'form': form,
                        }, context_instance=RequestContext(request))
 
@@ -526,7 +532,7 @@ def view_user(request, uuid):
     elif rules.test_rule('is_self', owner, visitor):
         rxs = owner.prescription_set
 
-    return {"hn_user": owner, "hn_visitor": visitor, 'rxs': rxs}
+    return {"hn_owner": owner, "hn_visitor": visitor, 'rxs': rxs}
 
 
 @ajax_request
@@ -577,12 +583,14 @@ def update_user(request, uuid):
 @ajax_request
 def verify_user(request, uuid):
     hn_visitor = User.objects.get_subclass(pk=request.user.hn_user.pk)
-    hn_owner = User.objects.get_subclass(pk=uuid)
+    hn_owner = get_user_or_404(uuid)
 
     resp = {'can_edit': hn_visitor.has_perm('registry.edit_patient', hn_owner) if rules.test_rule('is_patient',
                                                                                                   hn_owner) else hn_visitor.uuid == hn_owner.uuid}
     if resp['can_edit']:
         resp['user_id'] = uuid
+
+    return ajax_success(**resp)
 
 
 @require_http_methods(['GET', 'PATCH', 'DELETE'])
@@ -695,16 +703,3 @@ def create_transfer(request):
 
     return ajax_failure()
 
-
-@login_required(login_url=reverse_lazy('registry:login'))
-def patient_viewing(request, patient_uuid):
-    hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
-    patient = get_object_or_404(Patient, uuid=patient_uuid)
-    # rx_form = PrescriptionCreation(request.POST, user=hn_user)
-    rxs = Prescription.objects.filter(doctor=hn_user, patient=patient)
-    return render(request,
-                  'registry/users/patient_viewing.html',
-                  {'hn_user': hn_user,
-                   'patient': patient,
-                   # 'rx_form': rx_form,
-                   'rxs': rxs})

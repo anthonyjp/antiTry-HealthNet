@@ -23,6 +23,7 @@ is_administrator = is_user(Administrator)
 def is_doctor_of(doctor, patient):
     return doctor.patient_set.filter(pk=patient.uuid).exists()
 
+
 @predicate
 def has_appointment(user, patient):
     return user.appointment_set.filter(patient__uuid__exact=patient.uuid).exists()
@@ -30,6 +31,15 @@ def has_appointment(user, patient):
 
 @predicate
 def is_self(user_one, user_two):
+    if not is_generic_user(user_one) or not is_generic_user(user_two):
+        return False
+
+    if not issubclass(type(user_one), User):
+        user_one = User.objects.get_subclass(pk=user_one.pk)
+
+    if not issubclass(type(user_two), User):
+        user_two = User.objects.get_subclass(pk=user_two.pk)
+
     return user_one == user_two
 
 

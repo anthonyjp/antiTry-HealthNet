@@ -86,7 +86,7 @@ registry.forms['user'] = (function(){
             headers: {'X-CSRFToken': csrf},
             success: function(resp) {
                 initEditables(resp['can_edit']);
-                userUuid = res['user_id'];
+                userUuid = resp['user_id'];
             },
             failure: function(resp) {
                 console.log('failure');

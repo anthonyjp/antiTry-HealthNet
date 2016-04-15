@@ -8,8 +8,7 @@
 
     <title>{% block title %}HealthNet{% endblock %}</title>
 
-    <link rel="shortcut icon" href="../static/registry/img/favicon/favicon.ico">
-
+    <link rel="shortcut icon" href="{% static 'registry/img/favicon/favicon.ico' %}">
 
     {#  All universally shared CSS stylesheets should go above the cssimport block  #}
     <link rel="stylesheet" href="{% static 'bootstrap/dist/css/bootstrap.min.css' %}"/>
@@ -88,5 +87,6 @@
         registry.initUserSearch();
     </script>
     {% block customjs %}{% endblock %}
+
 </body>
 </html>
