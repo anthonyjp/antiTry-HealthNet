@@ -49,7 +49,7 @@
                     <li class="hn-menuitem"><a href="#">About</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="hn-menuitem"><select id="user-search" title="search"></select></li>
+                    <li class="hn-menuitem"><select hidden id="user-search" title="search"></select></li>
                     {% if user.is_authenticated %}
                         <li class="hn-menuitem" id="user"><a href="{% url 'registry:home' %}">{{ user.hn_user }}</a></li>
                         <li class="hn-menuitem"><a href="{% url 'registry:logout' %}">Sign Out</a></li>

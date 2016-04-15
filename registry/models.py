@@ -107,6 +107,9 @@ class User(models.Model):
     def has_module_perms(self, app_label):
         return rules.has_perm(app_label, self)
 
+    def get_user_type(self):
+        return 'Generic User'
+
     def __str__(self):
         if self.middle_initial:
             return "%s %s. %s" % (self.first_name, self.middle_initial, self.last_name)
@@ -159,12 +162,23 @@ class Doctor(User):
     """
     hospitals = models.ManyToManyField(Hospital, related_name='provider_to')
 
+    def get_user_type(self):
+        return 'Doctor'
+
+    def __str__(self):
+        return "Dr. %s" % (super(Doctor, self).__str__())
 
 class Nurse(User):
     """
     A nurse account that extends User consisting of one Hospital
     """
     hospital = models.ForeignKey(Hospital)
+
+    def get_user_type(self):
+        return 'Nurse'
+
+    def __str__(self):
+        return "%s RN" % (super(Nurse, self).__str__())
 
 
 class Patient(User):
@@ -185,6 +199,9 @@ class Patient(User):
     blood_type = models.SmallIntegerField(choices=BloodType.choices(), default=BloodType.UNKNOWN)
     insurance = models.CharField(max_length=40, choices=INSURANCE_CHOICES, default=INSURANCE_CHOICES[0][0])
 
+    def get_user_type(self):
+        return 'Patient'
+
     def is_admitted(self):
         return self.admission_status is not None
 
@@ -200,6 +217,9 @@ class Administrator(User):
     is_sysadmin = models.BooleanField(default=False)
     hospital = models.ForeignKey(to=Hospital, related_name='admin_to', null=True)
     # null is true just because we have existing admins before the hospital field was added
+
+    def get_user_type(self):
+        return 'Administrator'
 
 
 class Prescription(models.Model):

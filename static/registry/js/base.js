@@ -114,8 +114,8 @@ registry = (function () {
                 "<img id=\"avatar\" class=\"center small-avatar\" src=\"%s\" />" +
                 "</div>" +
                 "<div class=\"small-content-box\">" +
-                "<h3><a href=\"%s\">%s</a></h3>" +
-                "<h5>%s</h5>" +
+                "<h5 id=\"search-result-name\"><a href=\"%s\">%s</a></h5>" +
+                "<h6 id=\"search-result-name\">%s</h6>" +
                 "</div>" +
                 "</div>";
 
@@ -127,12 +127,11 @@ registry = (function () {
             type: 'GET',
             data: {'list': true},
             cache: false,
-            dataTypE: 'json',
+            dataType: 'json',
             headers: {'X-CSRFToken': $('[name="csrfmiddlewaretoken"]').val()},
             success: function (resp) {
-
                 $('#user-search').selectize({
-                    options: resp,
+                    options: resp.users,
                     maxOptions: 100,
                     closeAfterSelect: true,
                     valueField: 'profileUrl',

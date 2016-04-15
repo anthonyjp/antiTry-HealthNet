@@ -35,7 +35,9 @@ def get_user_or_404(uuid):
 
 
 def is_safe_request(method):
-    return method == 'GET' or method == 'HEAD'
+    while hasattr(method, 'method'):
+        method = method.method
+    return method in ('GET', 'HEAD')
 
 
 def read_request_body_to_post(request):
@@ -489,23 +491,16 @@ def log_actions(request):
 
 
 @require_http_methods(['GET'])
-@login_required(login_url=reverse_lazy('registry:login'))
 @ajax_request
 def list_user(request):
     users = User.objects.all()
 
-    user_list = []
-    for user in users:
-        if request.user.hn_user.pk != user.pk:
-            hn_user = User.objects.get_subclass(pk=user.pk)
-            user_list.append({
-                'img': static('registry/img/logo.png'),
-                'profileUrl': reverse('registry:user', args=(hn_user.uuid,)),
-                'name': str(hn_user),
-                'type': str(type(hn_user))
-            })
+    res = [{'img': static('registry/img/logo.png'),
+            'profileUrl': reverse('registry:user', args=(hn_user.uuid,)),
+            'name': str(hn_user),
+            'type': hn_user.get_user_type()} for hn_user in [User.objects.get_subclass(pk=user.pk) for user in users]]
 
-    return user_list
+    return ajax_success(users=res)
 
 
 @require_http_methods(['GET', 'HEAD', 'PATCH'])
@@ -558,6 +553,7 @@ def admit_user(request, uuid):
             return {'success': True}
 
     return {'success': False}
+
 
 @ajax_request
 def update_user(request, uuid):

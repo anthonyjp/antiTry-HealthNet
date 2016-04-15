@@ -33,15 +33,19 @@
 {% block userContent %}
             <div id="tab2" class="tab">
                 <form id="form">
-                    <label>Height:</label><input data-field="height" class="editable" type="text" value="{{ hn_user.height }}"/><br>
-                    <label>Weight:</label><input data-field="weight" class="editable" type="text" value="{{ hn_user.weight }}"/><br>
-                    <label>Blood Type:</label><input data-field="blood_type" class="editable" type="text" value="{% labelify hn_user.blood_type 'blood' %}"/><br>
+                    <label>Height:</label><input data-field="height" class="editable" type="text"
+                                                 value="{{ hn_owner.height }}"/><br>
+                    <label>Weight:</label><input data-field="weight" class="editable" type="text"
+                                                 value="{{ hn_owner.weight }}"/><br>
+                    <label>Blood Type:</label><input data-field="blood_type" class="editable" type="text"
+                                                     value="{% labelify hn_owner.blood_type 'blood' %}"/><br>
                 </form>
             </div>
 
             <div id="tab3" class="tab">
                 <form id="form">
-                    <label>Insurance:</label><input data-field="insurance" class="editable" type="text" value="{{ hn_user.insurance }}"/><br>
+                    <label>Insurance:</label><input data-field="insurance" class="editable" type="text"
+                                                    value="{{ hn_owner.insurance }}"/><br>
                 </form>
             </div>
 
