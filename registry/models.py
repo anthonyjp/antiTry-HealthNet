@@ -97,9 +97,6 @@ class User(models.Model):
     middle_initial = models.CharField(max_length=1, blank=True, default='')
     last_name = models.CharField(max_length=255, default='Doe')
     date_of_birth = models.DateField()
-    cur_hospital = models.ForeignKey(to=Hospital, related_name='%(app_label)s_%(class)s_cur_hospital',
-                                     on_delete=models.SET_NULL, null=True)
-
     gender = models.SmallIntegerField(choices=Gender.choices(), default=Gender.MALE)
     security_question = models.SmallIntegerField(choices=SecQ.choices(), default=SecQ.Q1)
     security_answer = models.CharField(max_length=50, null=False, blank=False)
