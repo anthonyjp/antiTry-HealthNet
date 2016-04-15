@@ -130,6 +130,7 @@ class AdmissionInfo(models.Model):
     admitted_by = models.TextField()
     reason = models.SmallIntegerField(choices=AdmitOptions.choices(), default=AdmitOptions.EMERGENCY)
     admission_time = models.OneToOneField(to=TimeRange, on_delete=models.SET_NULL, null=True)
+    hospital = models.ForeignKey(to=Hospital, null=True)
 
     def __str__(self):
         return "%s was admitted by %s to %s on %s" % \

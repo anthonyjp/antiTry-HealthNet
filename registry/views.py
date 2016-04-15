@@ -694,3 +694,17 @@ def create_transfer(request):
             return ajax_success()
 
     return ajax_failure()
+
+
+@login_required(login_url=reverse_lazy('registry:login'))
+def patient_viewing(request, patient_uuid):
+    hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    patient = get_object_or_404(Patient, uuid=patient_uuid)
+    # rx_form = PrescriptionCreation(request.POST, user=hn_user)
+    rxs = Prescription.objects.filter(doctor=hn_user, patient=patient)
+    return render(request,
+                  'registry/users/patient_viewing.html',
+                  {'hn_user': hn_user,
+                   'patient': patient,
+                   # 'rx_form': rx_form,
+                   'rxs': rxs})
