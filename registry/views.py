@@ -98,13 +98,17 @@ def home(request):
     inbox = hn_user.inbox.messages.filter(receiver=hn_user)
 
     if rules.test_rule('is_patient', hn_user):
+        medical_conditions = MedicalCondition.objects.filter(patient=hn_user)
+        medical_history = AdmissionInfo.objects.filter(patient=hn_user.uuid)
         return render(request,
                       'registry/users/user_patient.html',
                       {'form': form,
                        'hn_owner': hn_user,
                        'hn_visitor': hn_user,
                        'inbox': inbox,
-                       'appointments': hn_user.appointment_set.all()
+                       'appointments': hn_user.appointment_set.all(),
+                       'medical_conditions': medical_conditions,
+                       'medical_history': medical_history,
                        }, context_instance=RequestContext(request))
 
     elif rules.test_rule('is_doctor', hn_user):

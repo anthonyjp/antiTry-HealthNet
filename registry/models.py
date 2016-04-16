@@ -73,17 +73,6 @@ class Drug(models.Model):
         return self.name
 
 
-class Note(models.Model):
-    """
-    A note object which consists of the author, timestamp of when it was created, the content as a text field,
-    and images allowed in
-    """
-    author = models.TextField()
-    timestamp = models.DateTimeField()
-    content = models.TextField()
-    images = SeparatedValuesField()
-
-
 ### User Models
 class User(models.Model):
     """
@@ -231,6 +220,13 @@ class Administrator(User):
         return 'Administrator'
 
 
+class MedicalCondition(models.Model):
+    condition = models.CharField(max_length=200)
+    patient = models.ForeignKey(Patient)
+
+    def __str__(self):
+        return self.condition
+
 class Prescription(models.Model):
     """
     A  prescription model that consists of the drug, which is a drop down choice from the created drug
@@ -286,6 +282,17 @@ class Appointment(models.Model):
     def __str__(self):
         time_str = self.time.strftime("%a %x at %X")
         return "%s with Dr. %s, %s, at %s" % (str(self.patient), str(self.doctor), str(self.location), time_str)
+
+
+class Note(models.Model):
+    """
+    A note object which consists of the author, timestamp of when it was created, the content as a text field,
+    and images allowed in
+    """
+    author = models.TextField()
+    timestamp = models.DateTimeField()
+    content = models.TextField()
+    images = SeparatedValuesField()
 
 
 class MedicalData(models.Model):

@@ -40,6 +40,34 @@
                     <label>Blood Type:</label><input data-field="blood_type" class="editable" type="text"
                                                      value="{% labelify hn_owner.blood_type 'blood' %}"/><br>
                 </form>
+                <table>
+                    <tr>
+                        <th id="theader" colspan="3">
+                            <div>
+                                <p id="patientTitle">Medical Conditions</p>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        {% for mc in medical_conditions %}
+                            <td>{{ mc }}</td>
+                        {% endfor %}
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <th id="theader" colspan="3">
+                            <div>
+                                <p id="patientTitle">Medical History</p>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr>
+                        {% for mh in medical_history %}
+                            <td>{{ mh }}</td>
+                        {% endfor %}
+                    </tr>
+                </table>
             </div>
 
             <div id="tab3" class="tab">
