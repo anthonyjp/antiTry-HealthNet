@@ -1,0 +1,13 @@
+{% extends 'registry/base/base_auth.html' %}
+{% load static %}
+{% load sass_tags %}
+{% load crispy_forms_tags %}
+
+{% block title %}HealthNet | Message Creation{% endblock %}
+{% block inner-title %}New Message{% endblock %}
+{% block set-active %}__NONE__{% endblock %}
+
+{% block inner-content %}
+    <p id="error">{{ error }}</p><br>
+    {% crispy form form.helper %}
+{% endblock %}

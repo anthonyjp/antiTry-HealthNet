@@ -236,20 +236,80 @@ $(document).ready(function(){
 		searchTable($(this).val());
 	});
 
+    $("#newMessage").click(function () {
+        vex.dialog.open({
+            message: "Create New Message",
+            input: "<form>{% crispy form form.helper %}</form>",
+            buttons: [
+                $.extend({}, vex.dialog.buttons.YES, {
+                    text: 'Send'
+                }), $.extend({}, vex.dialog.buttons.NO, {
+                    text: 'Cancel'
+                })
+            ],
+            callback: function (value) {
+                if (value) {
+                    $.ajax({
+                        url: getUpdateUrl(userUuid),
+                        type: "PATCH",
+                        data: changed,
+                        cache: false,
+                        dataType: "json",
+                        headers: {'X-CSRFToken': csrf},
+                        success: function (resp) {
+                            console.log("resp: ");
+                            console.dir(resp);
+                        },
+                        failure: function (resp) {
+                            console.log('failure');
+                        }
+                    });
+                    clearChanged();
+                } else {
+                    revertChanged();
+                    clearChanged();
+                }
+            }
+        });
+    });
+
+    $("#inbox tr").not(':first').click(function () {
+        //  Hide all tab content
+
+        var selected_tab = $(this).attr("href");
+        var uuid = $(this).data('message-id');
+
+        $.ajax({
+            url: 'msg/' + uuid,
+            type: 'GET',
+            data: {},
+            success: function (response) {
+
+                var data = response;
+
+                var sender = document.createTextNode(data.sender["name"]);
+                var date = document.createTextNode(data["date"]);
+                var title = document.createTextNode(data["title"]);
+                var content = document.createTextNode(data["content"]);
+
+                $("#message_sender").append(sender);
+                $("#message_date").append(date);
+                $("#message_title").append(title);
+                $("#message_content").append(content);
+
+                $(".tab").hide();
+                //  Show the selected tab content
+                $(selected_tab).fadeIn();
+            }
+        });
+
+        return true;
+    });
+
 });
 
 function searchTable(inputVal)
 {
-
-    var notfound = document.createElement('tr');
-            var nottd = document.createElement('td');
-            var notdiv = document.createElement('div');
-            var nottext = document.createTextNode('No patient has been found.');
-            notdiv.appendChild(nottext);
-            nottd.id = 'nottd';
-            nottd.className = 'patientBody';
-            nottd.appendChild(notdiv);
-            notfound.appendChild(nottd);
 
 	var table = $('#patient');
 	table.find('tr').each(function(index, row)
@@ -258,7 +318,6 @@ function searchTable(inputVal)
 		if(allCells.length > 0)
 		{
 			var found = false;
-            $('#nottd').hide();
 
 			allCells.each(function(index, td)
 			{
@@ -279,23 +338,6 @@ function searchTable(inputVal)
 }
 
 $(window).bind('beforeunload', registry.forms.user.updateUser);
-
-$("#inbox tr").not(':first').click(function() {
-        //  Hide all tab content
-
-        //var obj = $(this).textContent();
-
-        $(".tab").hide();
-
-        //  Here we get the href value of the selected tab
-        var selected_tab = $(this).attr("href");
-
-        //  Show the selected tab content
-        $(selected_tab).fadeIn();
-
-        //  At the end, we add return false so that the click on the link is not executed
-        return true;
-});
 
 $("#buttons").click(function() {
         //  Hide all tab content

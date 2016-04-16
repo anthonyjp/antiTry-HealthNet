@@ -37,69 +37,84 @@
         <ul id="tab-links">
             <li><a href ="#tab1" rel="tab1" class="hn-tab">Personal</a></li>
             {% block userLinks %}{% endblock %}
-            {% if has_inbox %}
+
             <li><a href ="#tab6" rel="tab6" class="hn-tab">Inbox</a></li>
-            {% endif %}
         </ul>
 
         <div id="tab-content">
             <div id="tab1" class="tab" style="display: block;">
                 <form id="form">
-                    <label>First Name:</label><input data-parsley-required data-field="first_name" class="editable"
-                                                     type="text" value="{{ hn_owner.first_name }}"/><br>
-                    <label>Middle Initial:</label><input data-field="middle_initial" class="editable" type="text"
-                                                         value="{{ hn_owner.middle_initial }}"/><br>
-                    <label>Last Name:</label><input data-field="last_name" class="editable" type="text"
-                                                    value="{{ hn_owner.last_name }}"/><br>
-                    <label>Date of Birth:</label><input data-field="date_of_birth" class="editable" type="text"
-                                                        value="{{ hn_owner.date_of_birth }}"/><br>
-                    <label>Gender:</label><input data-field="gender" class="editable" type="text"
-                                                 value="{{ hn_owner.gender }}"/><br>
+                    <label for="mi">First Name:</label><input id="mi" data-parsley-required data-field="first_name"
+                                                              class="editable" type="text"
+                                                              value="{{ hn_owner.first_name }}"/><br>
+                    <label for="mi">Middle Initial:</label><input id="mi" data-field="middle_initial" class="editable"
+                                                                  type="text"
+                                                                  value="{{ hn_owner.middle_initial }}"/><br>
+                    <label for="mi">Last Name:</label><input id="mi" data-field="last_name" class="editable" type="text"
+                                                             value="{{ hn_owner.last_name }}"/><br>
+                    <label for="mi">Date of Birth:</label><input id="mi" data-field="date_of_birth" class="editable"
+                                                                 type="text" value="{{ hn_owner.date_of_birth }}"/><br>
+                    <label for="mi">Gender:</label><input id="mi" data-field="gender" class="editable" type="text"
+                                                          value="{% labelify hn_owner.gender 'gender' %}"/><br>
+                    <label for="mi">Address line one:</label><input id="mi" data-field="date_of_birth" class="editable"
+                                                                    type="text"
+                                                                    value="{{ hn_owner.address_line_one }}"/><br>
+                    <label for="mi">Address line two:</label><input id="mi" data-field="date_of_birth" class="editable"
+                                                                    type="text"
+                                                                    value="{{ hn_owner.address_line_two }}"/><br>
+                    <label for="mi">City:</label><input id="mi" data-field="date_of_birth" class="editable" type="text"
+                                                        value="{{ hn_owner.address_city }}"/><br>
+                    <label for="mi">State:</label><input id="mi" data-field="date_of_birth" class="editable" type="text"
+                                                         value="{{ hn_owner.address_state }}"/><br>
+                    <label for="mi">ZipCode:</label><input id="mi" data-field="date_of_birth" class="editable"
+                                                           type="text" value="{{ hn_owner.address_zipcode }}"/><br>
                 </form>
             </div>
-            {% if has_inbox %}
+
             <div id="tab6" class="tab">
                 <table id="inbox">
                     <thead>
                         <tr>
-                            <th id="check"><div class="patientHead"><input type="checkbox" id="checkAll"/></div></th>
                             <th colspan="4">
-                                <div class="patientHead">
-                                    <p id="patientTitle">{{ hn_owner.first_name }}&#8217;s Inbox
-                                    <p>
-                                    <div id="patientSearch" class="patientHead">Search:
+                                <div class="inboxHead">
+                                    <p id="inboxTitle">{{ hn_owner.first_name }}&#8217;s Inbox</p>
+                                    <div id="inboxSearch" class="inboxHead">Search:
                                         <input id="InboxSearchBar" type="text" placeholder="Search Inbox..">
                                     </div>
                                 </div>
                             </th>
                         </tr>
+                        <tr>
+                            <th id="check">
+                                <div id="checkBox" class="inboxHead"><input type="checkbox" id="checkAll"/></div>
+                            </th>
+                            <th>
+                                <div class="inboxHead">From</div>
+                            </th>
+                            <th>
+                                <div class="inboxHead">Title</div>
+                            </th>
+                            <th>
+                                <div class="inboxHead">Date</div>
+                            </th>
+                        </tr>
                     </thead>
                     <tbody>
-                        <tr href="#tab7">
+                    {% for m in inbox %}
+                        <tr data-message-id="{{ m.uuid }}" href="#tab7">
                             <td class="inboxBody"><input type="checkbox"/></td>
-                            <td class="inboxBody">Dr. Blah Blahh</td>
-                            <td class="inboxBody">Medical Exams</td>
-                            <td class="inboxBody">March 20th</td>
+                            <td class="inboxBody">{{ m.sender }}</td>
+                            <td class="inboxBody">{{ m.title }}</td>
+                            <td class="inboxBody">{{ m.date }}</td>
                         </tr>
-
-                        <tr href="#tab7">
-                            <td class="inboxBody"><input type="checkbox"/></td>
-                            <td class="inboxBody">Dr. Blah Blahh</td>
-                            <td class="inboxBody">Medical Exams</td>
-                            <td class="inboxBody">March 20th</td>
-                        </tr>
-
-                        <tr href="#tab7">
-                            <td class="inboxBody"><input type="checkbox"/></td>
-                            <td class="inboxBody">Dr. Blah Blahh</td>
-                            <td class="inboxBody">Medical Exams</td>
-                            <td class="inboxBody">March 20th</td>
-                        </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
 
                 <div id="buttons">
-                    <a href="#tab8"><button>New Message</button></a>
+                    <a id="newMessage">
+                        <button>New Message</button>
+                    </a>
                     <a href="#tab6"><button>Delete Message(s)</button></a>
                 </div>
             </div>
@@ -110,24 +125,19 @@
                 </div>
                 <table id="message">
                     <tr>
-                        <td class="messageHead">From: Dr Blah</td>
+                        <td class="messageHead">From: <span id="message_sender"></span></td>
                     </tr>
                     <tr>
-                        <td class="messageHead">Date: March 20th</td>
+                        <td id="message_date" class="messageHead">Date: <span id="message_date"></span></td>
                     </tr>
                     <tr>
-                        <td class="messageHead">Medical Exams</td>
+                        <td class="messageHead"><span id="message_title"></span></td>
                     </tr>
                     <tr>
-                        <td class="messageBody"><p>ksldjflksjdfklsjdkljfklsdjklfjskldlfsldjfs<p></td>
+                        <td class="messageBody"><p id="message_content"></p></td>
                     </tr>
                 </table>
             </div>
-
-            <div id="tab8" class="tab">
-                {% crispy form form.helper %}
-            </div>
-            {% endif %}
             {% block userContent %}{% endblock %}
         </div>
 </div>

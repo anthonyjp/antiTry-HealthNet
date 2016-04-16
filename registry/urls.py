@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'^login$', views.login, name='login'),
     url(r'^logout$', views.sign_out, name='logout'),
     url(r'^home$', views.home, name='home'),
+    url(r'^message_creation', views.message_creation, name='message_creation'),
     url(r'^patient_admit/(?P<patient_uuid>.*)$', views.patient_admit, name='patient_admit'),
     url(r'^patient_discharge/(?P<patient_uuid>.*)$', views.patient_discharge, name='patient_discharge'),
     url(r'^patient_transfer_request/(?P<patient_uuid>.*)$', views.patient_transfer_request,
@@ -33,5 +34,8 @@ urlpatterns = [
     url(uuid_url(r'^verify/(?P<uuid>{uuid})$'), views.verify_user, name='verify'),
     url(r'^transfer$', views.create_transfer, name='transfer_create'),
     url(r'^transfer/(?P<pk>[0-9]+)$', views.transfers, name='transfers'),
-    url(r'^rx/(?P<pk>[0-9]+)$', views.rx_op, name='rx')
+    url(r'^rx/(?P<pk>[0-9]+)$', views.rx_op, name='rx'),
+    url(uuid_url(r'^msg/(?P<uuid>{uuid})$'), views.msg, name='msg'),
+    url(uuid_url(r'^msg_view/(?P<uuid>{uuid})$'), views.view_msg, name='view_msg')
+
 ]

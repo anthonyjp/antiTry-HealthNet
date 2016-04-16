@@ -1,6 +1,7 @@
 import uuid
 import rules
 
+from datetime import datetime
 from annoying import fields
 from django.contrib.auth.models import User as DjangoUser
 from django.db import models
@@ -98,6 +99,12 @@ class User(models.Model):
     gender = models.SmallIntegerField(choices=Gender.choices(), default=Gender.MALE)
     security_question = models.SmallIntegerField(choices=SecQ.choices(), default=SecQ.Q1)
     security_answer = models.CharField(max_length=50, null=False, blank=False)
+
+    address_line_one = models.CharField(max_length=255, default='')
+    address_line_two = models.CharField(max_length=255, default='', null=True)
+    address_city = models.CharField(max_length=255, default='')
+    address_state = models.CharField(max_length=2, choices=STATE_CHOICES, blank=False, null=False)
+    address_zipcode = models.CharField(max_length=255, default='')
 
     objects = InheritanceManager()
 
@@ -346,9 +353,11 @@ class Message(models.Model):
     """
     Data container for a message consisting simply of a Sender, Receiver and Content
     """
-    uuid = models.UUIDField(primary_key=True)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4)
     receiver = models.ForeignKey(to=User, related_name='receiver', on_delete=models.CASCADE)
     sender = models.ForeignKey(to=User, related_name='sender', on_delete=models.SET_NULL, null=True)
+    title = models.CharField(max_length=255, default="")
+    date = models.DateTimeField(default=datetime.now, blank=True)
     content = models.TextField()
 
 

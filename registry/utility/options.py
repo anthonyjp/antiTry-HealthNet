@@ -111,11 +111,10 @@ class BloodType(enum.Enum):
 
 
 class Role(enum.Enum):
-    #Hospital Roles
+    # Hospital Roles
     ADMIN = 0
     DOCTOR = 1
     NURSE = 2
-
 
     labels = {
         ADMIN: 'Admin',
@@ -130,8 +129,8 @@ class Gender(enum.Enum):
     FEMALE = 1
 
     labels = {
-        MALE: 'M',
-        FEMALE: 'F'
+        MALE: 'Male',
+        FEMALE: 'Female'
     }
 
 

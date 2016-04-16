@@ -75,9 +75,27 @@ def login(request):
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
+@render_to('registry/data/message_creation.html')
+def message_creation(request):
+    if request.method == "POST":
+        form = MessageCreation(request.POST)
+        message = form.save(commit=False)
+
+        message.sender = User.objects.get_subclass(pk=request.user.hn_user.pk)
+        message.receiver.inbox.messages.add(message)
+
+        message.save()
+    else:
+        form = MessageCreation()
+    return {'form': form}
+
+
+@login_required(login_url=reverse_lazy('registry:login'))
 def home(request):
+
     hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     form = MessageCreation(request.POST)
+    inbox = hn_user.inbox.messages.filter(receiver=hn_user)
 
     if rules.test_rule('is_patient', hn_user):
         return render(request,
@@ -85,10 +103,11 @@ def home(request):
                       {'form': form,
                        'hn_owner': hn_user,
                        'hn_visitor': hn_user,
+                       'inbox': inbox,
                        'appointments': hn_user.appointment_set.all()
                        }, context_instance=RequestContext(request))
 
-    elif rules.test_rule('is_doctor', hn_user) or rules.test_rule('is_nurse', hn_user):
+    elif rules.test_rule('is_doctor', hn_user):
         patients = Patient.objects.filter(provider=hn_user)
         not_patients = Patient.objects.exclude(provider=hn_user)
 
@@ -101,11 +120,26 @@ def home(request):
                        'not_patients': not_patients,
                        'patients': patients,
                        }, context_instance=RequestContext(request))
+
+    elif rules.test_rule('is_nurse', hn_user):
+        patients = Patient.objects.filter(cur_hospital=hn_user.hospital)
+        return render(request,
+                      # 'registry/users/user_nurse.html',
+                      {'form': form,
+                       'hn_user': hn_user,
+                       'appointments': hn_user.appointment_set.all(),
+                       'patients': patients,
+                       })
+
     else:
+        logs = HNLogEntry.objects.all()
+        print(logs)
         return render(request,
                       'registry/users/user_admin.html',
                       {'hn_owner': hn_user,
                        'hn_visitor': hn_user,
+                       'inbox': inbox,
+                       'logs': logs,
                        'form': form,
                        }, context_instance=RequestContext(request))
 
@@ -491,6 +525,7 @@ def log_actions(request):
 
 
 @require_http_methods(['GET'])
+@login_required(login_url=reverse_lazy('registry:login'))
 @ajax_request
 def list_user(request):
     users = User.objects.all()
@@ -699,3 +734,16 @@ def create_transfer(request):
 
     return ajax_failure()
 
+
+@require_http_methods(['GET'])
+@login_required(login_url=reverse_lazy('registry:login'))
+def msg(request, uuid):
+    if is_safe_request(request.method):
+        return view_msg(request, uuid)
+
+
+@ajax_request
+def view_msg(request, uuid):
+    msg = Message.objects.get(uuid=uuid)
+    return ajax_success(sender={'name': str(msg.sender), 'uuid': msg.sender.uuid}, content=msg.content, date=msg.date,
+                        title=msg.title)

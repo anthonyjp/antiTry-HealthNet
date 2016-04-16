@@ -8,6 +8,7 @@
 {% block set-active %}__NONE__{% endblock %}
 
 {% block calendar_cssimport %}
+    <link rel="stylesheet" href="{% sass_src 'registry/css/doctor.scss' %}"/>
 	<link href="{% static 'fullcalendar/dist/fullcalendar.min.css' %}" rel="stylesheet" />
 	<link href="{% static 'fullcalendar/dist/fullcalendar.print.css' %}" rel="stylesheet" media="print" />
 {% endblock %}
@@ -55,7 +56,7 @@
                                                           src="{% static "registry/img/logo.png" %}"/></div>
                                 <ul>
                                     <li>
-                                        <a href="{% url 'registry:patient_viewing' p.uuid %}">
+                                        <a href="">
                                             <p id="patientName">{{ p.first_name }} {{p.middle_initial}} {{p.last_name }}</p>
                                         </a>
                                     </li>
