@@ -138,7 +138,8 @@ class AdmissionInfo(models.Model):
     admitted_by = models.TextField()
     reason = models.SmallIntegerField(choices=AdmitOptions.choices(), default=AdmitOptions.EMERGENCY)
     admission_time = models.OneToOneField(to=TimeRange, on_delete=models.SET_NULL, null=True)
-    hospital = models.ForeignKey(to=Hospital, null=True)
+    hospital = models.ForeignKey(to=Hospital)
+    doctor = models.ForeignKey('Doctor')
 
     def __str__(self):
         return "%s was admitted by %s to %s on %s" % \
@@ -197,15 +198,16 @@ class Patient(User):
     weight = models.PositiveIntegerField()
 
     provider = models.ForeignKey(to=Doctor, related_name='providers', on_delete=models.SET_NULL, null=True)
-    admission_status = models.OneToOneField(to=AdmissionInfo, related_name='patient_status', on_delete=models.SET_NULL,
-                                            null=True)
+    admission_status = models.ForeignKey(to=AdmissionInfo, related_name='patient_status', on_delete=models.SET_NULL,
+                                         null=True)
     pref_hospital = models.ForeignKey(to=Hospital, related_name='%(app_label)s_%(class)s_pref_hospital',
                                       on_delete=models.SET_NULL, null=True)
     transfer_status = models.OneToOneField(to=TransferInfo, related_name='patient_transfer_status',
                                            on_delete=models.SET_NULL, null=True)
     blood_type = models.SmallIntegerField(choices=BloodType.choices(), default=BloodType.UNKNOWN)
     insurance = models.CharField(max_length=40, choices=INSURANCE_CHOICES, default=INSURANCE_CHOICES[0][0])
-
+    cur_doctor = models.ForeignKey(to=Doctor, related_name='current_doctor', on_delete=models.SET_NULL, null=True)
+    cur_hospital = models.ForeignKey(to=Hospital, related_name='current_hospital', on_delete=models.SET_NULL, null=True)
     def get_user_type(self):
         return 'Patient'
 

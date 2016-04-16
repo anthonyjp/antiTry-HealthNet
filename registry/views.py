@@ -122,14 +122,17 @@ def home(request):
                        }, context_instance=RequestContext(request))
 
     elif rules.test_rule('is_nurse', hn_user):
-        patients = Patient.objects.filter(cur_hospital=hn_user.hospital)
+        pref_patients = Patient.objects.filter(pref_hospital=hn_user.hospital)
+        # add in the admitted patients
+        admit_patients = Patient.objects.filter(cur_hospital=hn_user.hospital)
         return render(request,
-                      # 'registry/users/user_nurse.html',
+                      'registry/users/user_nurse.html',
                       {'form': form,
-                       'hn_user': hn_user,
+                       'hn_owner': hn_user,
                        'appointments': hn_user.appointment_set.all(),
-                       'patients': patients,
-                       })
+                       'pref_patients': pref_patients,
+                       'admit_patients': admit_patients,
+                       }, context_instance=RequestContext(request))
 
     else:
         logs = HNLogEntry.objects.all()
@@ -195,7 +198,7 @@ def patient_admit(request, patient_uuid):
     next_location = None
     if rules.test_rule('is_doctor', user) or rules.test_rule('is_nurse', user):
         if request.method == "POST":
-            form = PatientAdmitForm(request.POST)
+            form = PatientAdmitForm(request.POST, user)
             if form.is_valid():
                 admit_request = form.save(commit=False)
                 timerange = TimeRange(
@@ -207,6 +210,7 @@ def patient_admit(request, patient_uuid):
                 admit_request.patient = str(patient)
                 admit_request.admitted_by = str(user)
                 admit_request.save()
+                patient.cur_doctor = admit_request.doctor
                 patient.cur_hospital = admit_request.hospital
                 patient.admission_status = admit_request
                 patient.save()
@@ -215,7 +219,7 @@ def patient_admit(request, patient_uuid):
                               admit_request.hospital)
                 return redirect('registry:home')
         else:
-            form = PatientAdmitForm()
+            form = PatientAdmitForm(user)
 
             if 'next' in request.GET:
                 next_location = request.GET['next']
@@ -279,6 +283,8 @@ def patient_transfer_approve(request, patient_uuid):
                 patient.transfer_status = None
                 patient.admission_status = None
                 patient.admission_status = new_admit
+                patient.cur_hospital = new_admit.hospital
+                patient.cur_doctor = new_admit.doctor
                 patient.save()
 
                 logger.action(request, LogAction.PA_TRANSFER_ACCEPTED, '{0!r} to {1!s} accepted by {2!r}', patient,
@@ -371,9 +377,10 @@ def appt_schedule(request):
         if form.is_valid():
             appointment = form.save(commit=False)
             if rules.test_rule('time_gt', appointment.time, tz.now()):
-                for hospital in appointment.doctor.hospitals.all():
+                for hospital in Hospital.objects.filter(provider_to=appointment.doctor):
                     if appointment.location == hospital:
                         location_found = True
+                        break
                 if location_found:
                     dlist = Appointment.objects.filter(
                         doctor__pk=appointment.doctor_id,
@@ -394,6 +401,7 @@ def appt_schedule(request):
                         error = "Appointment Error: DateTime conflict"
                 else:
                     error = "Appointment Error: Doctor does not work in " + appointment.location.name
+
             else:
                 error = "Appointment Error: That date and time has already happen."
     else:

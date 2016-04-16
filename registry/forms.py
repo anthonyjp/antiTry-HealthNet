@@ -30,6 +30,7 @@ class PatientRegisterForm(models.ModelForm):
     height = HeightField(required=True)
     weight = WeightField(required=True)
 
+    address_line_two = fields.CharField(required=False)
     contact_name = fields.CharField(max_length=60)
     contact_relationship = fields.ChoiceField(choices=Relationship.choices(), initial=Relationship.OTHER)
     contact_primary = USPhoneNumberField(required=True)
@@ -292,8 +293,8 @@ class AppointmentSchedulingForm(models.ModelForm):
                 )
         )
         if rules.test_rule('is_patient', user):
-            self.fields['patient'].queryset = Patient.objects.get(uuid=user.uuid)
-            self.fields['doctor'].queryset = Patient.objects.get(uuid=user.uuid).provider
+            print("Hello")
+            self.fields['patient'].queryset = Patient.objects.filter(uuid=user.uuid)
         elif rules.test_rule('is_doctor', user):
             self.fields['patient'].queryset = Patient.objects.filter(provider=user)
         elif rules.test_rule('is_nurse', user):
@@ -453,6 +454,7 @@ class PatientAdmitForm(models.ModelForm):
     model = AdmissionInfo
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
         super(PatientAdmitForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form admittance'
@@ -462,6 +464,7 @@ class PatientAdmitForm(models.ModelForm):
         self.helper.layout = Layout(
             Fieldset('Patient Admit Form',
                      'hospital',
+                     'doctor',
                      'reason'
                      ),
             FormActions(
@@ -473,9 +476,16 @@ class PatientAdmitForm(models.ModelForm):
             )
         )
 
+        if rules.test_rule('is_doctor', user):
+            self.fields['doctor'].queryset = Doctor.objects.filter(uuid=user.uuid)
+            self.fields['hospital'].queryset = Hospital.objects.filter(provider_to=user)
+        elif rules.test_rule('is_nurse', user):
+            self.fields['doctor'].queryset = Doctor.objects.filter(provider_to=user.hospital)
+            self.fields['hospital'].queryset = Hospital.objects.filter(name=user.hospital.name)
+
     class Meta:
         model = AdmissionInfo
-        fields = 'reason',
+        fields = 'hospital', 'doctor', 'reason',
         exclude = ['patient', 'admitted_by', 'admission_time']
 
 
@@ -525,9 +535,15 @@ class PatientTransferForm(models.ModelForm):
                 )
             )
         )
+        # Filter the fields for doctor and hospital based on the user requesting transfer
+        # A doctor will see his name and the hospital he works at
+        # An admin will see his hospital and the doctors that work there
         if rules.test_rule('is_doctor', user):
             self.fields['doctor'].queryset = Doctor.objects.filter(uuid=user.uuid)
-            # self.fields['hospital'].queryset = Hospital.objects.filter(provider_to=user)
+            self.fields['hospital'].queryset = Hospital.objects.filter(provider_to=user)
+        elif rules.test_rule('is_admin', user):
+            self.fields['hospital'].queryset = Hospital.objects.filter(admin_to=user)
+            self.fields['doctor'].queryset = Doctor.objects.filter(provider_to=user.hospital)
 
     class Meta:
         model = TransferInfo
