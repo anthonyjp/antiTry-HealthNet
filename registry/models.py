@@ -100,7 +100,6 @@ class User(models.Model):
     objects = InheritanceManager()
 
     def has_perm(self, perm, *args, **kwargs):
-        print('TEMPLATE?', perm, *args)
         return rules.has_perm(perm, self, *args, **kwargs)
 
     def has_module_perms(self, app_label):

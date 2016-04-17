@@ -149,7 +149,7 @@
 
 {% block customjs %}
     <script type="text/javascript">
-        registry.forms.user.hook("{{ request.user.hn_user.uuid }}");
+        registry.forms.user.hook("{{ hn_owner.uuid }}");
     </script>
     {% block user_customjs %}{% endblock %}
 {% endblock %}
