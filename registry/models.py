@@ -232,10 +232,12 @@ class Administrator(User):
 
 
 class MedicalCondition(models.Model):
-    condition = models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
+    desc = models.TextField()
 
     def __str__(self):
-        return self.condition
+        return self.name
+
 
 class Prescription(models.Model):
     """
