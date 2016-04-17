@@ -211,15 +211,6 @@ $(document).ready(function(){
 
     var inbox = $("#inbox");
 
-    // Highlight a whole row from inbox table
-    inbox.find("tr").not(':first').hover(
-      function () {
-        $(this).children().css("backgroundColor","#f3fef7");
-      },
-      function () {
-        $(this).children().css("backgroundColor","#e3eee7");
-      }
-    );
 
         // Highlight a whole row from inbox table
     $("#patient").find("tr").not(':first').hover(

@@ -100,6 +100,18 @@ li.active a, li.active a:hover {
   font-family: $healthnet-standard-font;
 }
 
+tr.inbox-row {
+  background-color: #f3fef7;
+
+  & td {
+    @include hover-animate-full($inbox-hover-out-color, $inbox-hover-transition-function, 0.5s, 20em);
+  }
+
+  &:hover td {
+    @include hover-animate-full($inbox-hover-in-color, $inbox-hover-transition-function, 0.2s, 20em);
+  }
+}
+
 .inboxBody {
   background-color: #e3eee7;
   text-align: center;

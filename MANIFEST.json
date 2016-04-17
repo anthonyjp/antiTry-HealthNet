@@ -6,7 +6,9 @@
       "requirements.txt",
       "README.md",
       "bower.json",
-      "manage.py"
+      "manage.py",
+      "run.cmd",
+      "run.sh"
     ],
     "dirs": {
       "HealthNet/": "**/*.*",
