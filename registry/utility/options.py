@@ -65,6 +65,10 @@ class LogAction(enum.Enum):
         PAGE_ACCESS: 'ACCESS'
     }
 
+    @classmethod
+    def aliases(cls, *args, **kwargs):
+        return ['actions']
+
 
 class AdmitOptions(enum.Enum):
     # Admit options

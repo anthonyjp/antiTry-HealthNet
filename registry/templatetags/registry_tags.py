@@ -16,8 +16,7 @@ compat_enums = {
 
 registered_enums = {}
 
-for fqname, enum in inspect.getmembers(options, lambda x: inspect.isclass(x) and x is Enum):
-
+for fqname, enum in inspect.getmembers(options, lambda x: inspect.isclass(x) and issubclass(x, Enum)):
     # Populate Defaults, Lowercase Name, Snakecase Name and Slug Name
     key_all_lowercase = fqname.lower()
     key_snake = camelcase_to_snakecase(fqname)
@@ -36,16 +35,24 @@ for fqname, enum in inspect.getmembers(options, lambda x: inspect.isclass(x) and
     if hasattr(enum, 'aliases'):
         alias_f = getattr(enum, 'aliases', lambda x: [])
         if callable(alias_f):
-            aliases = alias_f(enum)
-            if aliases is list:
-                for alias in aliases:
-                    registered_enums[alias] = enum
-            elif aliases is str:
-                registered_enums[aliases] = enum
+            sig = inspect.signature(alias_f)
+
+            # check the function can be called properly
+            # That is it has no required positional arguments
+            for param in sig.parameters.values():
+                if param.kind == inspect.Parameter.POSITIONAL_OR_KEYWORD and param.default == inspect.Parameter.empty:
+                    break
+            else:
+                # Call and register aliases, if possible
+                aliases = alias_f()
+                if isinstance(aliases, list):
+                    for alias in aliases:
+                        registered_enums[alias] = enum
+                elif isinstance(aliases, str):
+                    registered_enums[aliases] = enum
 
 # Register compatibility names, compatible with older system
 registered_enums.update(compat_enums)
-
 
 register = template.Library()
 

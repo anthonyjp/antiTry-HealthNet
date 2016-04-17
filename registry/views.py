@@ -59,6 +59,24 @@ def index(request):
         return {}
 
 
+@render_to('registry/about.html')
+def about(request):
+    def create_dev(name, role, desc, *links, img=static('registry/img/logo.png')):
+        real_links = []
+        for l in links:
+            real_links.append({'url': l[0], 'text': l[1] if len(l) > 1 and l[1] else l[0]})
+
+        return {'name': name, 'role': role, 'desc': desc, 'img': img, 'links': real_links}
+
+    return {'aboutus': [
+        create_dev('Matthew Crocco', 'Development Coordinator', 'Test', ('https://github.com/Matt529', 'Github')),
+        create_dev('Lisa Ni', 'Requirements Coordinator', 'Test'),
+        create_dev('Anthony Perez', 'Quality Assurance Coordinator', 'Test'),
+        create_dev('Alice Fischer', 'Team Coordinator', 'Test'),
+        create_dev('Kyle Scagnelli', 'Test Coordinator', 'Test')
+    ]}
+
+
 @render_to('registry/login.html')
 def login(request):
     if request.method == "POST":

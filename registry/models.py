@@ -100,6 +100,7 @@ class User(models.Model):
     objects = InheritanceManager()
 
     def has_perm(self, perm, *args, **kwargs):
+        print('TEMPLATE?', perm, *args)
         return rules.has_perm(perm, self, *args, **kwargs)
 
     def has_module_perms(self, app_label):
@@ -137,7 +138,7 @@ class AdmissionInfo(models.Model):
             history.delete()
 
         self.admission_time.end_time = tz.now()
-        MedicalHistory.objects.create(admission_details=self, patient_uuid=self.patient_user.uuid)
+        MedicalHistory.objects.create(admission_details=self)
         self.save()
 
     def __str__(self):
@@ -335,7 +336,6 @@ class MedicalHistory(MedicalData):
     """
     Medical History consists of the admission detail of a patient
     """
-    patient_id = models.UUIDField()
     admission_details = models.OneToOneField(to=AdmissionInfo, on_delete=models.CASCADE)
 
 

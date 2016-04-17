@@ -3,8 +3,6 @@ if (!registry.has('forms.user'))
 
 registry.forms['user'] = (function(){
 
-    // TODO This works for demonstration, we should move to querying the server for user verification so people can't hook in by simple javascript.
-    // TODO We can do this by enumerating permissions and checking with the server immediately before edits are made
     /*
         This can be done by registering a User UUID to use and then querying a specific URL via AJAX to verify user can
         do such things. Seriously. <3 AJAX.
@@ -166,9 +164,9 @@ Object.preventExtensions(registry.forms.user);
 
 $(document).ready(function(){
     //  When user clicks on tab, this code will be executed
-    $("#tab-links li").click(function() {
+    $("#tab-links").find("li").click(function () {
         //  First remove class "active" from currently active tab
-        $("#tab-links li").removeClass('active');
+        $("#tab-links").find("li").removeClass('active');
 
         //  Now add class "active" to the selected/clicked tab
         $(this).addClass("active");
@@ -186,9 +184,9 @@ $(document).ready(function(){
         return true;
     });
 
-    $("#innertab-links li").click(function() {
+    $("#innertab-links").find("li").click(function () {
         //  First remove class "active" from currently active tab
-        $("#innertab-links li").removeClass('active');
+        $("#innertab-links").find("li").removeClass('active');
 
         //  Now add class "active" to the selected/clicked tab
         $(this).addClass("active");
@@ -211,8 +209,10 @@ $(document).ready(function(){
         $("input:checkbox").prop('checked', $(this).prop("checked"));
     });
 
+    var inbox = $("#inbox");
+
     // Highlight a whole row from inbox table
-    $("#inbox tr").not(':first').hover(
+    inbox.find("tr").not(':first').hover(
       function () {
         $(this).children().css("backgroundColor","#f3fef7");
       },
@@ -222,7 +222,7 @@ $(document).ready(function(){
     );
 
         // Highlight a whole row from inbox table
-    $("#patient tr").not(':first').hover(
+    $("#patient").find("tr").not(':first').hover(
       function () {
         $(this).children().css("backgroundColor","#f3fef7");
       },
@@ -273,7 +273,7 @@ $(document).ready(function(){
         });
     });
 
-    $("#inbox tr").not(':first').click(function () {
+    inbox.find("tr").not(':first').click(function () {
         //  Hide all tab content
 
         var selected_tab = $(this).attr("href");
@@ -287,15 +287,15 @@ $(document).ready(function(){
 
                 var data = response;
 
-                var sender = document.createTextNode(data.sender["name"]);
-                var date = document.createTextNode(data["date"]);
-                var title = document.createTextNode(data["title"]);
-                var content = document.createTextNode(data["content"]);
+                var sender = data.sender["name"];
+                var date = moment(data["date"]).format('MMMM Do YYYY [at] h:mm:ss a');
+                var title = data["title"];
+                var content = registry.escapeHtml(data["content"]).replace(/(?:\r\n|\r|\n)/g, '<br />');
 
-                $("#message_sender").append(sender);
-                $("#message_date").append(date);
-                $("#message_title").append(title);
-                $("#message_content").append(content);
+                $("#message_sender").text(sender);
+                $("#message_date").text(date);
+                $("#message_title").text(title);
+                $("#message_content").html(content);
 
                 $(".tab").hide();
                 //  Show the selected tab content

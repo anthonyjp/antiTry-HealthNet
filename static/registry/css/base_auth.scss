@@ -1,13 +1,9 @@
 @import 'constants';
 
-div.hn-page-wrapper {
-  justify-content: center;
-  align-items: center;
-}
-
 div.hn-form.wrapper {
   width: 68%;
   height: auto;
+  margin: 0 auto;
 
   &> .content {
     padding: 3% 5%;

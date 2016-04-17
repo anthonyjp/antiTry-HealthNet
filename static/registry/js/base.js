@@ -153,13 +153,29 @@ registry = (function () {
         })
     }
 
+    var entityMap = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': '&quot;',
+        "'": '&#39;',
+        "/": '&#x2F;'
+    };
+
+    function escapeHtml(string) {
+        return String(string).replace(/[&<>"'\/]/g, function (s) {
+            return entityMap[s];
+        });
+    }
+
     return {
         'NO_MENUITEM': NONE_CHOICE,
         'has': has,
         'module': register,
         'inArray': inArray,
         'setActiveMenuItem': setActiveMenuitem,
-        'initUserSearch': initUserSearch
+        'initUserSearch': initUserSearch,
+        'escapeHtml': escapeHtml
     }
 })();
 

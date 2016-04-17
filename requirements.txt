@@ -5,6 +5,7 @@ django-axes==1.6.0
 django-bower==5.1.0
 django-compat==1.0.8
 django-crispy-forms==1.6.0
+django-debug-toolbar==1.4
 django-enumfield==1.2.1
 django-extensions==1.6.1
 django-hijack==2.0.3
@@ -18,3 +19,4 @@ python-dateutil==2.5.2
 pytz==2016.3
 rules==1.1.1
 six==1.10.0
+sqlparse==0.1.19

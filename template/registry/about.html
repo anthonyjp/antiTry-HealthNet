@@ -1,0 +1,49 @@
+{% extends 'registry/base/base.html' %}
+
+{% load sass_tags %}
+{% load staticfiles %}
+
+{% block  set-active %}About|About Us{% endblock %}
+
+{% block cssimport %}
+    <link rel="stylesheet" href="{% sass_src 'registry/css/about.scss' %}"/>
+{% endblock %}
+
+{% block content %}
+    <div class="hn-container floating">
+        {% for dev in aboutus %}
+            {% if forloop.counter|divisibleby:2 %}
+                <section class="about-box">
+                    <section class="about left">
+                        <h3>{{ dev.name }}</h3>
+                        <h5>{{ dev.role }}</h5>
+                        <h6>{% for link in dev.links %}<a class="about-link" href="{{ link.url }}">
+                            {% if link.text %}{{ link.text }}{% else %}{{ link }}{% endif %}</a>
+                            {% if not forloop.last %}|{% endif %}{% endfor %}</h6>
+                        <p>{{ dev.desc }}</p>
+                    </section>
+                    <div class="avatar-wrapper right">
+                        <img class="avatar" src="{% static dev.img %}"/>
+                    </div>
+                </section>
+            {% else %}
+                <section class="about-box">
+                    <section class="about right">
+                        <h3>{{ dev.name }}</h3>
+                        <h5>{{ dev.role }}</h5>
+                        <h6>{% for link in dev.links %}<a class="about-link" href="{{ link.url }}">
+                            {% if link.text %}{{ link.text }}{% else %}{{ link }}{% endif %}</a>
+                            {% if not forloop.last %}|{% endif %}{% endfor %}</h6>
+                        <p>{{ dev.desc }}</p>
+                    </section>
+                    <div class="avatar-wrapper left">
+                        <img class="avatar" src="{% static dev.img %}"/>
+                    </div>
+                </section>
+            {% endif %}
+            {% if not forloop.last %}
+                <hr class="hn-sep-1"/>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}

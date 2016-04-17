@@ -6,10 +6,7 @@
 {% load registry_tags %}
 {% load crispy_forms_tags %}
 
-{% has_perm 'registry.inbox' hn_owner hn_visitor as has_inbox %}
 {% block title %}HealthNet | Home{% endblock %}
-
-{% debug %}
 
 {% block cssimport %}
     <link rel="stylesheet" href="{% sass_src 'registry/css/base_user.scss' %}"/>
@@ -17,12 +14,13 @@
 {% endblock %}
 
 {% block _base_jsimport %}
+    <script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'registry/js/base_user.js' %}"></script>
     {% block calendar_jsimport %}{% endblock %}
 {% endblock %}
 
 {% block content %}
-
+    {% has_perm 'registry.inbox' hn_owner hn_visitor as has_inbox %}
 <div id="left">
     <ul class="profile">
         <li>
@@ -40,7 +38,9 @@
             <li><a href ="#tab1" rel="tab1" class="hn-tab">Personal</a></li>
             {% block userLinks %}{% endblock %}
 
+            {% if has_inbox %}
             <li><a href ="#tab6" rel="tab6" class="hn-tab">Inbox</a></li>
+            {% endif %}
         </ul>
 
         <div id="tab-content">
@@ -73,6 +73,7 @@
                 </form>
             </div>
 
+            {% if has_inbox %}
             <div id="tab6" class="tab">
                 <table id="inbox">
                     <thead>
@@ -120,6 +121,7 @@
                     <a href="#tab6"><button>Delete Message(s)</button></a>
                 </div>
             </div>
+            {% endif %}
 
             <div id="tab7" class="tab">
                 <div id="button">
@@ -130,10 +132,10 @@
                         <td class="messageHead">From: <span id="message_sender"></span></td>
                     </tr>
                     <tr>
-                        <td id="message_date" class="messageHead">Date: <span id="message_date"></span></td>
+                        <td class="messageHead">Date: <span id="message_date"></span></td>
                     </tr>
                     <tr>
-                        <td class="messageHead"><span id="message_title"></span></td>
+                        <td class="messageHead">Subject: <span id="message_title"></span></td>
                     </tr>
                     <tr>
                         <td class="messageBody"><p id="message_content"></p></td>

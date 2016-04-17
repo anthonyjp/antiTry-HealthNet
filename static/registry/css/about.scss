@@ -1,0 +1,46 @@
+div.hn-container {
+  border-radius: 10px;
+}
+
+.about-box {
+  display: block;
+  width: 95%;
+  height: 20%;
+  margin: 1% auto;
+
+  .about {
+    width: 75%;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+
+    &.right {
+      text-align: right;
+    }
+
+    h3, h5, h6, p {
+      margin: 0;
+    }
+
+    & > h3 {
+
+    }
+
+    & > h5 {
+
+    }
+
+    & > p {
+
+    }
+
+  }
+
+  .avatar-wrapper {
+    height: 100%;
+    width: 20%;
+    .avatar {
+      width: 60%;
+    }
+  }
+}

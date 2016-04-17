@@ -10,6 +10,7 @@ def uuid_url(fmt: str):
 app_name = 'registry'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^about$', views.about, name='about'),
     url(r'^register$', views.register, name='register'),
     url(r'^login$', views.login, name='login'),
     url(r'^logout$', views.sign_out, name='logout'),
