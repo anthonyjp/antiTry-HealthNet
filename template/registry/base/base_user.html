@@ -120,7 +120,7 @@
                     </thead>
                     <tbody>
                     {% for m in inbox %}
-                        <tr data-message-id="{{ m.uuid }}" href="#tab7">
+                        <tr data-message-id="{{ m.uuid }}" class="inbox-row" href="#tab7">
                             <td class="inboxBody"><input type="checkbox"/></td>
                             <td class="inboxBody">{{ m.sender }}</td>
                             <td class="inboxBody">{{ m.title }}</td>
