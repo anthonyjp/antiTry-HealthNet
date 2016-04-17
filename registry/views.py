@@ -157,13 +157,21 @@ def home(request):
 
     else:
         logs = HNLogEntry.objects.all()
-        print(logs)
-        admin_form = AdminRegistrationForm(request.POST)
+        if request.method == "POST":
+            form = MessageCreation(request.POST)
+
+            message = form.save(commit=False)
+
+            message.sender = User.objects.get_subclass(pk=request.user.hn_user.pk)
+            message.receiver.inbox.messages.add(message)
+
+            message.save()
+        else:
+            form = MessageCreation()
         return render(request,
                       'registry/users/user_admin.html',
                       {'hn_owner': hn_user,
                        'hn_visitor': hn_user,
-                       'admin_form': admin_form,
                        'inbox': inbox,
                        'logs': logs,
                        'form': form,

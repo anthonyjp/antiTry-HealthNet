@@ -165,7 +165,9 @@ li.active a, li.active a:hover {
 }
 
 #id_content {
-  width: 550%;
+  width: 500%;
+  max-width: 500%;
+  max-height: 100%;
 }
 
 /*-------- End Inbox --------*/
