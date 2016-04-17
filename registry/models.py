@@ -1,8 +1,10 @@
 import uuid
 import rules
+import django.utils.timezone as tz
 
 from datetime import datetime
 from annoying import fields
+
 from django.contrib.auth.models import User as DjangoUser
 from django.db import models
 from django.db.models.signals import post_save
@@ -123,12 +125,20 @@ class AdmissionInfo(models.Model):
     option from the preset enum, and the admission time which start time will be set in the view and the end
     date will be set when patient is transferred or discharged
     """
-    patient = models.TextField()
-    admitted_by = models.TextField()
-    reason = models.SmallIntegerField(choices=AdmitOptions.choices(), default=AdmitOptions.EMERGENCY)
+    reason = models.SmallIntegerField(choices=AdmitOptions.choices(), default=AdmitOptions.UNKNOWN)
     admission_time = models.OneToOneField(to=TimeRange, on_delete=models.SET_NULL, null=True)
     hospital = models.ForeignKey(to=Hospital)
     doctor = models.ForeignKey('Doctor')
+
+    def end_admission(self):
+        if self.medicalhistory:
+            history = self.medicalhistory
+            self.medicalhistory = None
+            history.delete()
+
+        self.admission_time.end_time = tz.now()
+        MedicalHistory.objects.create(admission_details=self, patient_uuid=self.patient_user.uuid)
+        self.save()
 
     def __str__(self):
         return "%s was admitted by %s to %s on %s" % \
@@ -187,16 +197,17 @@ class Patient(User):
     weight = models.PositiveIntegerField()
 
     provider = models.ForeignKey(to=Doctor, related_name='providers', on_delete=models.SET_NULL, null=True)
-    admission_status = models.ForeignKey(to=AdmissionInfo, related_name='patient_status', on_delete=models.SET_NULL,
-                                         null=True)
+    admission_status = models.OneToOneField(to=AdmissionInfo, related_name='patient_user', on_delete=models.SET_NULL,
+                                            null=True)
     pref_hospital = models.ForeignKey(to=Hospital, related_name='%(app_label)s_%(class)s_pref_hospital',
                                       on_delete=models.SET_NULL, null=True)
     transfer_status = models.OneToOneField(to=TransferInfo, related_name='patient_transfer_status',
                                            on_delete=models.SET_NULL, null=True)
     blood_type = models.SmallIntegerField(choices=BloodType.choices(), default=BloodType.UNKNOWN)
     insurance = models.CharField(max_length=40, choices=INSURANCE_CHOICES, default=INSURANCE_CHOICES[0][0])
-    cur_doctor = models.ForeignKey(to=Doctor, related_name='current_doctor', on_delete=models.SET_NULL, null=True)
-    cur_hospital = models.ForeignKey(to=Hospital, related_name='current_hospital', on_delete=models.SET_NULL, null=True)
+
+    conditions = models.ManyToManyField(to='MedicalCondition')
+
     def get_user_type(self):
         return 'Patient'
 
@@ -222,7 +233,6 @@ class Administrator(User):
 
 class MedicalCondition(models.Model):
     condition = models.CharField(max_length=200)
-    patient = models.ForeignKey(Patient)
 
     def __str__(self):
         return self.condition
@@ -325,6 +335,7 @@ class MedicalHistory(MedicalData):
     """
     Medical History consists of the admission detail of a patient
     """
+    patient_id = models.UUIDField()
     admission_details = models.OneToOneField(to=AdmissionInfo, on_delete=models.CASCADE)
 
 
@@ -376,8 +387,8 @@ class Inbox(models.Model):
     """
     user = models.OneToOneField(to=User, on_delete=models.CASCADE, null=True)
     num_messages = models.PositiveIntegerField(default=0)
-    messages = models.ManyToManyField(Message)
-    contacts = models.ManyToManyField(Contact)
+    messages = models.ManyToManyField(Message, blank=True)
+    contacts = models.ManyToManyField(Contact, blank=True)
 
     def __str__(self):
         return "%s's Inbox" % str(User.objects.get_subclass(pk=self.user.pk))

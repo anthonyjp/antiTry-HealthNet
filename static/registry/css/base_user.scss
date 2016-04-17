@@ -169,8 +169,15 @@ li.active a, li.active a:hover {
   margin-left: 10%;
 }
 
+.profile {
+  padding: 0;
+  align-content: center;
+  text-align: center;
+}
+
 #avatar {
-  height: 100px;
+  width: 100%;
+  height: auto;
   box-shadow: 0 0 5px 2px #B3B3B3;
   margin-bottom: 2%;
 }
@@ -178,10 +185,6 @@ li.active a, li.active a:hover {
 #leftName {
   font-weight: bold;
   font-size: 120%;
-}
-
-#leftDOB {
-  margin-left: 12%;
 }
 
 /*-------- End Left Panel --------*/

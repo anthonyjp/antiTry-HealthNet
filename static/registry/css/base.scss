@@ -96,6 +96,11 @@ div.search-result {
     & > .small-avatar {
       width: 100%;
       height: auto;
+
+      &#avatar {
+        height: auto;
+      }
+
       margin: 0 auto;
     }
   }

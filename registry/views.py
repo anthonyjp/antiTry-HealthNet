@@ -98,8 +98,7 @@ def home(request):
     inbox = hn_user.inbox.messages.filter(receiver=hn_user)
 
     if rules.test_rule('is_patient', hn_user):
-        medical_conditions = MedicalCondition.objects.filter(patient=hn_user)
-        medical_history = AdmissionInfo.objects.filter(patient=hn_user.uuid)
+        medical_history = MedicalHistory.objects.filter(patient_user=hn_user)
         return render(request,
                       'registry/users/user_patient.html',
                       {'form': form,
@@ -107,7 +106,7 @@ def home(request):
                        'hn_visitor': hn_user,
                        'inbox': inbox,
                        'appointments': hn_user.appointment_set.all(),
-                       'medical_conditions': medical_conditions,
+                       'medical_conditions': hn_user.conditions,
                        'medical_history': medical_history,
                        }, context_instance=RequestContext(request))
 
@@ -140,7 +139,6 @@ def home(request):
 
     else:
         logs = HNLogEntry.objects.all()
-        print(logs)
         return render(request,
                       'registry/users/user_admin.html',
                       {'hn_owner': hn_user,
@@ -205,22 +203,16 @@ def patient_admit(request, patient_uuid):
             form = PatientAdmitForm(request.POST, user)
             if form.is_valid():
                 admit_request = form.save(commit=False)
-                timerange = TimeRange(
-                        start_time=tz.now(),
-                        end_time=None
-                )
-                timerange.save()
+                timerange = TimeRange.objects.create()
                 admit_request.admission_time = timerange
-                admit_request.patient = str(patient)
-                admit_request.admitted_by = str(user)
                 admit_request.save()
-                patient.cur_doctor = admit_request.doctor
-                patient.cur_hospital = admit_request.hospital
+
                 patient.admission_status = admit_request
                 patient.save()
 
                 logger.action(request, LogAction.PA_ADMIT, '{0!r} admitted by {1!r} to {2!s}', patient, user,
                               admit_request.hospital)
+
                 return redirect('registry:home')
         else:
             form = PatientAdmitForm(user)
@@ -275,20 +267,18 @@ def patient_transfer_approve(request, patient_uuid):
             form = ApproveTransferForm(request.POST, instance=patient.transfer_status)
             if form.is_valid():
                 transfer_request = patient.transfer_status
+
                 old_admit = patient.admission_status
                 old_admit.admission_time.end_time = tz.now()
-                old_admit.save()
-                new_time = TimeRange(start_time=tz.now())
-                new_time.save()
-                new_admit = AdmissionInfo(patient=str(patient), admitted_by=transfer_request.admitted_by,
-                                          hospital=transfer_request.hospital, reason=transfer_request.reason,
-                                          admission_time=new_time)
-                new_admit.save()
+                old_admit.end_admission()
+
+                new_admit = AdmissionInfo.objects.create(hospital=transfer_request.hospital,
+                                                         reason=transfer_request.reason,
+                                                         admission_time=TimeRange.objects.create(),
+                                                         doctor=transfer_request.doctor)
+
                 patient.transfer_status = None
-                patient.admission_status = None
                 patient.admission_status = new_admit
-                patient.cur_hospital = new_admit.hospital
-                patient.cur_doctor = new_admit.doctor
                 patient.save()
 
                 logger.action(request, LogAction.PA_TRANSFER_ACCEPTED, '{0!r} to {1!s} accepted by {2!r}', patient,

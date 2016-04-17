@@ -9,6 +9,8 @@
 {% has_perm 'registry.inbox' hn_owner hn_visitor as has_inbox %}
 {% block title %}HealthNet | Home{% endblock %}
 
+{% debug %}
+
 {% block cssimport %}
     <link rel="stylesheet" href="{% sass_src 'registry/css/base_user.scss' %}"/>
     {% block calendar_cssimport %}{% endblock %}

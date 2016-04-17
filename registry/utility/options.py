@@ -71,6 +71,14 @@ class AdmitOptions(enum.Enum):
     EMERGENCY = 0
     SURGERY = 1
     OBSERVANCE = 2
+    UNKNOWN = 3
+
+    labels = {
+        EMERGENCY: 'Emergency',
+        SURGERY: 'Surgery',
+        OBSERVANCE: 'Observation',
+        UNKNOWN: 'Unknown'
+    }
 
 # Insurance Choices
 INSURANCE_CHOICES = (
