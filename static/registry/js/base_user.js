@@ -240,6 +240,7 @@ $(document).ready(function(){
 
         var div = $("#msg-create-form-html").clone();
         div.css("display", "block");
+        $("#id_title").css("width", "80%");
 
         vex.open().append(div)
 

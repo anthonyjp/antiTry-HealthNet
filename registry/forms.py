@@ -312,8 +312,92 @@ class AdminRegistrationForm(models.ModelForm):
 
 # class DoctorRegistrationForm(models.ModelForm):
 #
-# class NurseRegistrationForm(models.ModelForm):
 
+class NurseRegistrationForm(models.ModelForm):
+    model = Nurse
+    first_name = fields.CharField(max_length=25)
+    last_name = fields.CharField(max_length=30)
+    password = fields.CharField(max_length=40, widget=widgets.PasswordInput)
+    email = fields.EmailField(max_length=256)
+
+    def __init__(self, *args, **kwargs):
+        super(NurseRegistrationForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal hn-form register'
+        self.helper.form_method = 'POST'
+        self.helper.form_action = 'register'
+        self.helper.label_class = 'col-lg-3'
+        self.helper.field_class = 'col-lg-8'
+
+        self.helper.layout = Layout(
+            Fieldset('Administrator Registration',
+                     Div(
+                         Div('first_name', css_class='col-md-4'),
+                         Div('middle_initial', css_class='col-xs-1'),
+                         Div('last_name', css_class='col-md-4'),
+                         css_class='row',
+                     ),
+                     Div(
+                         Div('date_of_birth', css_class='col-lg-3'),
+                         Div('gender', css_class='col-md-1'),
+                         css_class='row',
+                     ),
+                     Div(
+                         Div('address_line_one', css_class='col-lg-5'),
+                         css_class='row',
+                     ),
+                     Div(
+                         Div('address_line_two', css_class='col-lg-5'),
+                         css_class='row',
+                     ),
+                     Div(
+                         Div('address_city', css_class='col-lg-3'),
+                         Div('address_state', css_class='col-lg-3'),
+                         Div('address_zipcode', css_class='col-lg-3'),
+                         css_class='row',
+                     ),
+                     Div(
+                         Div('email', css_class='col-lg-5'),
+                         Div('password', css_class='col-md-5'),
+                         css_class='row',
+                     ),
+                     Div(
+                         Div('security_question', css_class='col-lg-4'),
+                         Div('security_answer', css_class='col-md-4'),
+                         css_class='row',
+                     ),
+                     'hospital',
+                     'is_sysadmin',
+                     ),
+            FormActions(
+                Submit('submit', 'Submit'),
+                HTML('<a class="btn btn-default" href={% url "registry:home" %}>Cancel</a>')
+            )
+        )
+
+        self.fields['first_name'].widget.attrs['size'] = 40
+        self.fields['last_name'].widget.attrs['size'] = 40
+        self.fields['email'].widget.attrs['size'] = 40
+        self.fields['password'].widget.attrs['size'] = 40
+
+        self.fields['address_line_one'].widget.attrs['size'] = 45
+        self.fields['address_line_two'].widget.attrs['size'] = 45
+
+        self.fields['middle_initial'].required = False
+        self.fields['middle_initial'].label = 'M.I.'
+        self.fields['middle_initial'].widget.attrs['maxlength'] = 1
+        self.fields['middle_initial'].widget.attrs['size'] = 3
+        self.fields['date_of_birth'].widget.attrs['datepicker'] = True
+
+    class Meta:
+        model = Administrator
+        fields = ('first_name', 'middle_initial', 'last_name', 'date_of_birth', 'gender',
+                  'address_line_one', 'address_line_two', 'address_city', 'address_state',
+                  'address_zipcode', 'email', 'password', 'security_question',
+                  'security_answer', 'is_sysadmin', 'hospital')
+        widgets = {
+            'password': widgets.PasswordInput
+        }
 # class StaffRegistrationForm(forms.Form):
 #     """
 #     Name: StaffRegistrationForm
@@ -760,7 +844,7 @@ class MessageCreation(models.ModelForm):
         self.helper.form_class = 'form-horizontal hn-form messsage'
         self.helper.form_method = 'POST'
         # self.helper.form_action = reverse_lazy('')
-        self.helper.label_class = 'col-lg-2'
+        self.helper.label_class = 'col-lg-8'
         self.helper.field_class = 'col-lg-8'
 
         self.helper.layout = Layout(
@@ -770,7 +854,7 @@ class MessageCreation(models.ModelForm):
                                  css_class='row',
                          ),
                          Div(
-                             Div('title', css_class='col-lg-4'),
+                             Div('title', css_class='col-lg-3'),
                              css_class='row',
                          ),
                          Div(
@@ -785,6 +869,7 @@ class MessageCreation(models.ModelForm):
                             '{% url "registry:home" %}{% endif %}>Cancel</a>')
                 )
         )
+        self.fields['title'].widget.attrs['size'] = 30
 
     class Meta:
         model = Message
