@@ -80,7 +80,7 @@ nav.navbar {
 select#user-search, .selectize-control {
 
   margin-top: $header-margin-topbottom;
-  width: 25rem;
+  width: 30rem;
 
   &.loading {
 
@@ -119,7 +119,7 @@ div.search-result {
     vertical-align: center;
 
     & > #search-result-name {
-      font-size: 1.3rem;
+      font-size: 1.5rem;
     }
 
   }
