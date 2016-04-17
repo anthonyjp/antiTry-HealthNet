@@ -158,6 +158,10 @@
             </div>
             {% block userContent %}{% endblock %}
         </div>
+
+    <div id="msg-create-form-html" style="display: none">
+        {% crispy form form.helper %}
+    </div>
 </div>
 {% endblock %}
 

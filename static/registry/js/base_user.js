@@ -237,34 +237,12 @@ $(document).ready(function(){
 	});
 
     $("#newMessage").click(function () {
-        vex.dialog.open({
-            message: "Create New Message",
-            content: "<input id='newMessageTo' type='text' placeholder='To'/><br><input type='text' placeholder='Subject'/><br><textarea id='newMessageContent' placeholder='Content'/></textarea><br></form>",
-            buttons: [
-                $.extend({}, vex.dialog.buttons.YES, {
-                    text: 'Send'
-                }), $.extend({}, vex.dialog.buttons.NO, {
-                    text: 'Cancel'
-                })
-            ],
-            callback: function (value) {
-                if (value) {
-                    $.ajax({
-                        url: 'new_msg',
-                        type: "POST",
-                        data: form,
-                        success: function (resp) {
-                            console.log("resp: ");
-                            console.dir(resp);
-                        },
-                        failure: function (resp) {
-                            console.log('failure');
-                        }
-                    });
-                    clearChanged();
-                }
-            }
-        });
+
+        var div = $("#msg-create-form-html").clone();
+        div.css("display", "block");
+
+        vex.open().append(div)
+
     });
 
     inbox.find("tr").not(':first').click(function () {

@@ -148,7 +148,7 @@ class AdminRegistrationForm(models.ModelForm):
 
     It's a patient registration form based on the Patient Model.
     """
-    model = Patient
+    model = Administrator
     first_name = fields.CharField(max_length=25)
     last_name = fields.CharField(max_length=30)
     password = fields.CharField(max_length=40, widget=widgets.PasswordInput)
@@ -164,7 +164,7 @@ class AdminRegistrationForm(models.ModelForm):
         self.helper.field_class = 'col-lg-8'
 
         self.helper.layout = Layout(
-            Fieldset('Patient Registration',
+            Fieldset('Administrator Registration',
                      Div(
                          Div('first_name', css_class='col-md-4'),
                          Div('middle_initial', css_class='col-xs-1'),
