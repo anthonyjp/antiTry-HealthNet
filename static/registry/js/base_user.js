@@ -239,7 +239,7 @@ $(document).ready(function(){
     $("#newMessage").click(function () {
         vex.dialog.open({
             message: "Create New Message",
-            input: "<form>{% crispy form form.helper %}</form>",
+            content: "<input id='newMessageTo' type='text' placeholder='To'/><br><input type='text' placeholder='Subject'/><br><textarea id='newMessageContent' placeholder='Content'/></textarea><br></form>",
             buttons: [
                 $.extend({}, vex.dialog.buttons.YES, {
                     text: 'Send'
@@ -250,12 +250,9 @@ $(document).ready(function(){
             callback: function (value) {
                 if (value) {
                     $.ajax({
-                        url: getUpdateUrl(userUuid),
-                        type: "PATCH",
-                        data: changed,
-                        cache: false,
-                        dataType: "json",
-                        headers: {'X-CSRFToken': csrf},
+                        url: 'new_msg',
+                        type: "POST",
+                        data: form,
                         success: function (resp) {
                             console.log("resp: ");
                             console.dir(resp);
@@ -264,9 +261,6 @@ $(document).ready(function(){
                             console.log('failure');
                         }
                     });
-                    clearChanged();
-                } else {
-                    revertChanged();
                     clearChanged();
                 }
             }

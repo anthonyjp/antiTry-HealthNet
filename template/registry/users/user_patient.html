@@ -25,7 +25,6 @@
 {% block userLinks %}
     <li><a href ="#tab2" rel="tab2" class="hn-tab">Medical</a></li>
     <li><a href ="#tab3" rel="tab3" class="hn-tab">Insurance</a></li>
-    <li><a href ="#tab4" rel="tab4" class="hn-tab">Admission</a></li>
     <li><a href="#tab5" id="appt-tab" rel="tab5" class="hn-tab">Appointments</a></li>
     {#    <li><a href="#ta7" rel="tab7" class="hn-tab">Medical Tests</a></li>#}
 {% endblock %}
@@ -75,10 +74,6 @@
                     <label>Insurance:</label><input data-field="insurance" class="editable" type="text"
                                                     value="{{ hn_owner.insurance }}"/><br>
                 </form>
-            </div>
-
-            <div id="tab4" class="tab">
-                <p>Admission information will go here!</p>
             </div>
 
             <div id="tab5" class="tab">

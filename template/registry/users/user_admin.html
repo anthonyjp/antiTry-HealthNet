@@ -1,9 +1,10 @@
 {% extends 'registry/users/../base/base_user.html' %}
+{% load crispy_forms_tags %}
 
 {% block userLinks %}
     <li><a href ="#tab2" rel="tab2" class="hn-tab">Logs/Stats</a></li>
     <li><a href ="#tab3" rel="tab2" class="hn-tab">Add Staff</a></li>
-    <li><a href ="#tab4" rel="tab2" class="hn-tab">Add Patient</a></li>
+    <li><a href="{% url 'registry:register' %}" class="hn-tab">Add Patient</a></li>
 {% endblock %}
 {% block userContent %}
      <div id="tab2" class="tab">
@@ -28,9 +29,6 @@
          </table>
      </div>
     <div id="tab3" class="tab">
-         <p>Logs will go here!</p>
-    </div>
-    <div id="tab4" class="tab">
-         <p>Logs will go here!</p>
+        {% crispy admin_form admin_form.helper %}
     </div>
 {% endblock %}

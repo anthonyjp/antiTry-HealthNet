@@ -46,30 +46,46 @@
         <div id="tab-content">
             <div id="tab1" class="tab" style="display: block;">
                 <form id="form">
-                    <label for="mi">First Name:</label><input id="mi" data-parsley-required data-field="first_name"
-                                                              class="editable" type="text"
-                                                              value="{{ hn_owner.first_name }}"/><br>
-                    <label for="mi">Middle Initial:</label><input id="mi" data-field="middle_initial" class="editable"
-                                                                  type="text"
-                                                                  value="{{ hn_owner.middle_initial }}"/><br>
-                    <label for="mi">Last Name:</label><input id="mi" data-field="last_name" class="editable" type="text"
-                                                             value="{{ hn_owner.last_name }}"/><br>
-                    <label for="mi">Date of Birth:</label><input id="mi" data-field="date_of_birth" class="editable"
-                                                                 type="text" value="{{ hn_owner.date_of_birth }}"/><br>
-                    <label for="mi">Gender:</label><input id="mi" data-field="gender" class="editable" type="text"
-                                                          value="{% labelify hn_owner.gender 'gender' %}"/><br>
-                    <label for="mi">Address line one:</label><input id="mi" data-field="date_of_birth" class="editable"
-                                                                    type="text"
-                                                                    value="{{ hn_owner.address_line_one }}"/><br>
-                    <label for="mi">Address line two:</label><input id="mi" data-field="date_of_birth" class="editable"
-                                                                    type="text"
-                                                                    value="{{ hn_owner.address_line_two }}"/><br>
-                    <label for="mi">City:</label><input id="mi" data-field="date_of_birth" class="editable" type="text"
-                                                        value="{{ hn_owner.address_city }}"/><br>
-                    <label for="mi">State:</label><input id="mi" data-field="date_of_birth" class="editable" type="text"
-                                                         value="{{ hn_owner.address_state }}"/><br>
-                    <label for="mi">ZipCode:</label><input id="mi" data-field="date_of_birth" class="editable"
-                                                           type="text" value="{{ hn_owner.address_zipcode }}"/><br>
+                    <label for="mi">First Name:</label>
+                    <input id="mi" data-parsley-required data-field="first_name"
+                           class="editable" type="text" value="{{ hn_owner.first_name }}"/>
+                    <br>
+                    <label for="mi">Middle Initial:</label>
+                    <input id="mi" data-field="middle_initial"
+                           class="editable" type="text" value="{{ hn_owner.middle_initial }}"/>
+                    <br>
+                    <label for="mi">Last Name:</label>
+                    <input id="mi" data-field="last_name"
+                           class="editable" type="text" value="{{ hn_owner.last_name }}"/>
+                    <br>
+                    <label for="mi">Date of Birth:</label>
+                    <input id="mi" data-field="date_of_birth"
+                           class="editable" type="text" value="{{ hn_owner.date_of_birth }}"/>
+                    <br>
+                    <label for="mi">Gender:</label>
+                    <input id="mi" data-field="gender"
+                           class="editable" type="text" value="{% labelify hn_owner.gender 'gender' %}"/>
+                    <br>
+                    <label for="mi">Address line one:</label>
+                    <input id="mi" data-field="date_of_birth"
+                           class="editable" type="text" value="{{ hn_owner.address_line_one }}"/>
+                    <br>
+                    <label for="mi">Address line two:</label>
+                    <input id="mi" data-field="date_of_birth"
+                           class="editable" type="text" value="{{ hn_owner.address_line_two }}"/>
+                    <br>
+                    <label for="mi">City:</label>
+                    <input id="mi" data-field="date_of_birth"
+                           class="editable" type="text" value="{{ hn_owner.address_city }}"/>
+                    <br>
+                    <label for="mi">State:</label>
+                    <input id="mi" data-field="date_of_birth"
+                           class="editable" type="text" value="{{ hn_owner.address_state }}"/>
+                    <br>
+                    <label for="mi">ZipCode:</label>
+                    <input id="mi" data-field="date_of_birth"
+                           class="editable" type="text" value="{{ hn_owner.address_zipcode }}"/>
+                    <br>
                 </form>
             </div>
 
@@ -114,10 +130,8 @@
                     </tbody>
                 </table>
 
-                <div class="button-group">
-                    <a href="{% url 'registry:message_creation' %}">
-                        <button>New Message</button>
-                    </a>
+                <div id="buttons">
+                    <button id="newMessage">New Message</button>
                     <a href="#tab6"><button>Delete Message(s)</button></a>
                 </div>
             </div>

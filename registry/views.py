@@ -157,10 +157,13 @@ def home(request):
 
     else:
         logs = HNLogEntry.objects.all()
+        print(logs)
+        admin_form = AdminRegistrationForm(request.POST)
         return render(request,
                       'registry/users/user_admin.html',
                       {'hn_owner': hn_user,
                        'hn_visitor': hn_user,
+                       'admin_form': admin_form,
                        'inbox': inbox,
                        'logs': logs,
                        'form': form,
