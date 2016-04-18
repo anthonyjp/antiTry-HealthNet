@@ -11,8 +11,8 @@
 {% block userLinks %}
     <li><a href ="#tab2" rel="tab2" class="hn-tab">Logs/Stats</a></li>
     <li><a href="#tab3" rel="tab2" class="hn-tab">Add Admin</a></li>
-    <li><a href="#tab3" rel="tab2" class="hn-tab">Add Doctor</a></li>
-    <li><a href="#tab3" rel="tab2" class="hn-tab">Add Nurse</a></li>
+    <li><a href="#tab4" rel="tab4" class="hn-tab">Add Doctor</a></li>
+    <li><a href="#tab5" rel="tab5" class="hn-tab">Add Nurse</a></li>
     <li><a href="{% url 'registry:register' %}" class="hn-tab">Add Patient</a></li>
 {% endblock %}
 {% block userContent %}
@@ -56,6 +56,15 @@
              </tbody>
          </table>
      </div>
+    <div id="tab3" class="tab">
+        {% include "registry/components/admin_registration.html" %}
+    </div>
+    <div id="tab4" class="tab">
+        {% include "registry/components/doctor_registration.html" %}
+    </div>
+    <div id="tab5" class="tab">
+        {% include "registry/components/nurse_registration.html" %}
+    </div>
 {% endblock %}
 
 {% block jsimport %}
