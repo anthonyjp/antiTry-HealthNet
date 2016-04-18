@@ -88,12 +88,18 @@ li.active a, li.active a:hover {
   padding: 1.94%;
   box-shadow: -1px 1px 1px rgba(0, 0, 0, 0.15);
   background: #fff;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.container.calendar {
+  width: 100%;
 }
 
 /*-------- End Tab Links ---------*/
 
 /*-------- Inbox --------*/
-.inboxHead {
+.inboxHead, .hn-table-header {
   background-color: #AEBEB4;
   text-align: center;
   color: white;
@@ -112,17 +118,18 @@ tr.inbox-row {
   }
 }
 
-.inboxBody {
+.inboxBody, .hn-table td {
   background-color: #e3eee7;
   text-align: center;
   border: 1px solid white;
 }
 
-#inboxTitle {
+#inboxTitle, .hn-table-title {
   font-size: 1.3em;
   float: left;
-  margin-left: 40%;
+  margin-left: 50%;
   margin-top: .2%;
+  transform: translateX(-50%);
 }
 
 .check-box-wrapper {

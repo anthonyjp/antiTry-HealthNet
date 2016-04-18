@@ -183,6 +183,7 @@ registry.module('utility');
 registry.module('forms');
 registry.module('forms');
 registry.module('auth');
+registry.module('data');
 
 Object.preventExtensions(registry);
 

@@ -320,8 +320,6 @@ $(document).ready(function(){
         });
 
         var handleMessages = function (messages, failures) {
-            console.dir(messages);
-            console.dir(failures);
             messages = _.without(messages, failures);
             _.each(messages, function (mId) {
                 $('.inbox-row[data-message-id=\'' + mId + '\']').remove();

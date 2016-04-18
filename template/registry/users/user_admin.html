@@ -1,5 +1,12 @@
 {% extends 'registry/users/../base/base_user.html' %}
 {% load crispy_forms_tags %}
+{% load staticfiles %}
+{% load sass_tags %}
+
+{% block user_cssimport %}
+    <link rel="stylesheet" href="{% static 'pikaday/css/pikaday.css' %}"/>
+    <link rel="stylesheet" href="{% sass_src 'registry/css/logrender.scss' %}"/>
+{% endblock %}
 
 {% block userLinks %}
     <li><a href ="#tab2" rel="tab2" class="hn-tab">Logs/Stats</a></li>
@@ -10,27 +17,57 @@
 {% endblock %}
 {% block userContent %}
      <div id="tab2" class="tab">
-         Hospital: {{ hn_owner.hospital }}<br>
-         <table>
+
+         <label>Start Date:
+             <input id="log-start-date" class="dateinput" type="text" datepicker readonly/>
+         </label>
+
+         <label>End Date:
+             <input id="log-end-date" class="dateinput" type="text" datepicker readonly/>
+         </label>
+
+         <table class="hn-table" id="log-table">
+             <thead>
              <tr>
-                 <td>Date Time</td>
-                 <td>User who did Action</td>
-                 <td>Action</td>
-                 <td>Patient Affected</td>
-                 <td>Staff Member Affected</td>
+                 <th colspan="5">
+                     <p class="hn-table-title">Hospital: {{ hn_owner.hospital }}</p>
+                 </th>
              </tr>
-             {% for log in loglist %}
-                 <tr>
-                     <td>{{ log.date }}</td>
-                     <td>{{ log.user_action }}</td>
-                     <td>{{ log.action_string }}</td>
-                     <td>{% if log.patient_exists %}{{ log.user_patient }} {% else %}None{% endif %}</td>
-                     <td>{% if log.staff_exists %}{{ log.user_staff_affected }}{% else %}None {% endif %}</td>
-                 </tr>
-             {% endfor %}
+             <tr>
+                 <th>
+                     <div class="hn-table-header">Timestamp</div>
+                 </th>
+                 <th>
+                     <div class="hn-table-header">Level</div>
+                 </th>
+                 <th>
+                     <div class="hn-table-header">Action</div>
+                 </th>
+                 <th>
+                     <div class="hn-table-header">URL</div>
+                 </th>
+                 <th>
+                     <div class="hn-table-header priority">Message</div>
+                 </th>
+             </tr>
+             </thead>
+             <tbody>
+
+             </tbody>
          </table>
      </div>
-    {#    <div id="tab3" class="tab">#}
-    {#        {% crispy admin_form admin_form.helper %}#}
-    {#    </div>#}
+{% endblock %}
+
+{% block jsimport %}
+    <script type="text/javascript" src="{% static 'pikaday/pikaday.js' %}"></script>
+    <script type="text/javascript" src="{% static 'pikaday/plugins/pikaday.jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'registry/js/utility.js' %}"></script>
+    <script type="text/javascript" src="{% static 'registry/js/logrender.js' %}"></script>
+{% endblock %}
+
+{% block customjs %}
+    <script type="text/javascript">
+        registry.utility.hookDatepicker();
+        registry.data.logrender.renderLogs({});
+    </script>
 {% endblock %}

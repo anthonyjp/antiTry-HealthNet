@@ -65,3 +65,8 @@ def stringify(obj):
 @register.simple_tag
 def labelify(value, enum):
     return registered_enums[enum].label(value)
+
+
+@register.simple_tag
+def loggify(value):
+    return 'log-%s' % (options.LogLevel.label(value).lower())

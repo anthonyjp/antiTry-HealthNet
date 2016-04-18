@@ -1,0 +1,35 @@
+@import "constants";
+
+td {
+  padding: 0 1%;
+}
+
+tr.log-error, tr.log-error td {
+  background-color: #cb7775;
+  color: whitesmoke;
+
+  font-weight: bold;
+}
+
+tr.log-warning, tr.log-warning td {
+  background-color: #c9cf73;
+  font-weight: bold;
+}
+
+tr.log-info, tr.log-info td {
+  background-color: #e3eee7;
+}
+
+tr.log-debug, tr.log-debug td {
+  background-color: #8ed3d5;
+  font-weight: bold;
+}
+
+tr.log-verbose, tr.log-verbose td {
+  background-color: #9db7a5;
+  font-style: italic;
+}
+
+td#log-message-col {
+  text-align: left;
+}

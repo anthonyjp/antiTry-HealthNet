@@ -543,6 +543,19 @@ def log_actions(request):
     return {"action_list": get_log_data(), 'from': fro, 'to': to}
 
 
+@require_http_methods(['GET', 'HEAD', 'PATCH'])
+@login_required(login_url=reverse_lazy('registry:login'))
+def user(request, uuid):
+    if request.method == 'PATCH':
+        read_request_body_to(request, request.method)
+        if 'admit' in request.PATCH:
+            admit_user(request, uuid)
+        else:
+            return update_user(request, uuid)
+    elif is_safe_request(request.method):
+        return view_user(request, uuid)
+
+
 @require_http_methods(['GET'])
 @login_required(login_url=reverse_lazy('registry:login'))
 @ajax_request
@@ -555,19 +568,6 @@ def list_user(request):
             'type': hn_user.get_user_type()} for hn_user in [User.objects.get_subclass(pk=user.pk) for user in users]]
 
     return ajax_success(users=res)
-
-
-@require_http_methods(['GET', 'HEAD', 'PATCH'])
-@login_required(login_url=reverse_lazy('registry:login'))
-def user(request, uuid):
-    if request.method == 'PATCH':
-        read_request_body_to(request, request.method)
-        if 'admit' in request.PATCH:
-            admit_user(request, uuid)
-        else:
-            return update_user(request, uuid)
-    elif is_safe_request(request.method):
-        return view_user(request, uuid)
 
 
 @render_to("registry/base/base_user.html")
@@ -631,7 +631,7 @@ def update_user(request, uuid):
 
 @require_http_methods(['GET'])
 @ajax_request
-def verify_user(request, uuid):
+def user_verify(request, uuid):
     hn_visitor = User.objects.get_subclass(pk=request.user.hn_user.pk)
     hn_owner = get_user_or_404(uuid)
 
@@ -756,7 +756,7 @@ def transfers(request, pk):
 
 @require_http_methods(['POST'])
 @login_required(login_url=reverse_lazy('registry:login'))
-def create_transfer(request):
+def transfer_create(request):
     transferer = User.objects.get_subclass(pk=request.user.hn_user.pk)
     transferee = get_user_or_404(request.POST['whom'])
 
@@ -780,7 +780,7 @@ def create_transfer(request):
 @require_http_methods(['POST'])
 @login_required(login_url=reverse_lazy('registry:login'))
 @ajax_request
-def create_msg(request):
+def msg_create(request):
     form = MessageCreation(request.POST)
 
     if not form.is_valid():
@@ -841,3 +841,45 @@ def view_msg(request, uuid):
     msg = Message.objects.get(uuid=uuid)
     return ajax_success(sender={'name': str(msg.sender), 'uuid': msg.sender.uuid}, content=msg.content, date=msg.date,
                         title=msg.title)
+
+
+@require_http_methods(['GET'])
+@login_required(login_url=reverse_lazy('registry:login'))
+@ajax_request
+def logs(request, start, end):
+    start_time = dateutil.parser.parse(start)
+    end_time = dateutil.parser.parse(end)
+
+    if start_time > end_time:
+        start_time, end_time = end_time, start_time
+
+    log_level = int(request.GET['level']) if 'level' in request.GET and LogLevel.VERBOSE <= int(
+        request.GET['level']) <= LogLevel.ERROR else LogLevel.INFO
+
+    if 'ignore' in request.GET:
+        ignore_req = request.GET['ignore'].lower()
+        if ignore_req == 'both':
+            start_time = end_time = None
+        elif ignore_req == 'start':
+            start_time = None
+        elif ignore_req == 'end':
+            end_time = None
+
+    print(start_time, end_time)
+    log_entries = logger.get_logs(start_time, end_time, log_level, True)
+    print(log_entries)
+
+    result = []
+
+    for entry in log_entries:
+        from registry.templatetags.registry_tags import loggify
+        result.append({
+            'level': LogLevel.label(entry.level),
+            'action': LogAction.label(entry.action),
+            'location': entry.where,
+            'timestamp': entry.timestamp,
+            'message': entry.message,
+            'class': loggify(entry.level)
+        })
+
+    return ajax_success(entries=result)

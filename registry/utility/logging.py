@@ -130,7 +130,7 @@ class HNLogger(object):
         self.time_format = fmt
 
     @staticmethod
-    def get_logs(start=None, end=None, level_filter=LogLevel.VERBOSE):
+    def get_logs(start=None, end=None, level_filter=LogLevel.VERBOSE, ordered=False):
         """
         Gets every log entry created by all HNLoggersm, optionally filtered to fit in a time range and/or specific log
         levels. The level filter accepts all entrys at, or above that level. e.g. LogLevel.INFO means all entries
@@ -145,10 +145,7 @@ class HNLogger(object):
         logs = HNLogEntry.objects
         if start:
             if end:  # If we have a time range (a start and an end
-                if start == end:  # If start == end it is chekcing for a single time, so check exact
-                    logs = logs.filter(timestamp__exact=start, level__gte=level_filter)
-                else:  # Otherwise we are just checking a range
-                    logs = logs.filter(timestamp__range=(start, end), level__gte=level_filter)
+                logs = logs.filter(timestamp__range=(start, end), level__gte=level_filter)
             else:  # Only a start time
                 logs = logs.filter(timestamp__gte=start, level__gte=level_filter)
         else:
@@ -157,4 +154,7 @@ class HNLogger(object):
             else:  # All LogEntrys, No time range provided
                 logs = logs.filter(level__gte=level_filter)
 
-        return [x for x in logs]
+        if ordered:
+            logs = logs.order_by('-timestamp')
+
+        return [x for x in logs.all()]
