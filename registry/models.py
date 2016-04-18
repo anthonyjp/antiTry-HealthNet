@@ -144,49 +144,6 @@ class Nurse(User):
         return "%s RN" % (super(Nurse, self).__str__())
 
 
-class Patient(User):
-    """
-    A patient account that extends User and has multiple fields for the medical infomation and personal information
-    of a patient.
-    """
-    height = models.PositiveIntegerField()
-    weight = models.PositiveIntegerField()
-
-    provider = models.ForeignKey(to=Doctor, related_name='providers', on_delete=models.SET_NULL, null=True)
-    admission_status = models.OneToOneField(to=AdmissionInfo, related_name='patient_user', on_delete=models.SET_NULL,
-                                            null=True)
-    pref_hospital = models.ForeignKey(to=Hospital, related_name='%(app_label)s_%(class)s_pref_hospital',
-                                      on_delete=models.SET_NULL, null=True)
-    transfer_status = models.OneToOneField(to=TransferInfo, related_name='patient_transfer_status',
-                                           on_delete=models.SET_NULL, null=True)
-    blood_type = models.SmallIntegerField(choices=BloodType.choices(), default=BloodType.UNKNOWN)
-    insurance = models.CharField(max_length=40, choices=INSURANCE_CHOICES, default=INSURANCE_CHOICES[0][0])
-
-    conditions = models.ManyToManyField(to='MedicalCondition')
-
-    def get_user_type(self):
-        return 'Patient'
-
-    def is_admitted(self):
-        return self.admission_status is not None
-
-    def transfer_requested(self):
-        return self.transfer_status
-
-
-class Administrator(User):
-    """
-    An administer account that extends User consisting of a boolean field of whether or not the administer is
-    a system admin and the hospital they belong to
-    """
-    is_sysadmin = models.BooleanField(default=False)
-    hospital = models.ForeignKey(to=Hospital, related_name='admin_to', null=True)
-    # null is true just because we have existing admins before the hospital field was added
-
-    def get_user_type(self):
-        return 'Administrator'
-
-
 class AdmissionInfo(models.Model):
     """
     Admission info is an object that consists of the patient as a text field, admitted by which is the string
@@ -230,6 +187,49 @@ class TransferInfo(models.Model):
     def __str__(self):
         return "%s is being request to transfer to %s by %s" % \
                (self.patient, self.hospital, self.admitted_by)
+
+
+class Patient(User):
+    """
+    A patient account that extends User and has multiple fields for the medical infomation and personal information
+    of a patient.
+    """
+    height = models.PositiveIntegerField()
+    weight = models.PositiveIntegerField()
+
+    provider = models.ForeignKey(to=Doctor, related_name='providers', on_delete=models.SET_NULL, null=True)
+    admission_status = models.OneToOneField(to=AdmissionInfo, related_name='patient_user', on_delete=models.SET_NULL,
+                                            null=True)
+    pref_hospital = models.ForeignKey(to=Hospital, related_name='%(app_label)s_%(class)s_pref_hospital',
+                                      on_delete=models.SET_NULL, null=True)
+    transfer_status = models.OneToOneField(to=TransferInfo, related_name='patient_transfer_status',
+                                           on_delete=models.SET_NULL, null=True)
+    blood_type = models.SmallIntegerField(choices=BloodType.choices(), default=BloodType.UNKNOWN)
+    insurance = models.CharField(max_length=40, choices=INSURANCE_CHOICES, default=INSURANCE_CHOICES[0][0])
+
+    conditions = models.ManyToManyField(to='MedicalCondition')
+
+    def get_user_type(self):
+        return 'Patient'
+
+    def is_admitted(self):
+        return self.admission_status is not None
+
+    def transfer_requested(self):
+        return self.transfer_status
+
+
+class Administrator(User):
+    """
+    An administer account that extends User consisting of a boolean field of whether or not the administer is
+    a system admin and the hospital they belong to
+    """
+    is_sysadmin = models.BooleanField(default=False)
+    hospital = models.ForeignKey(to=Hospital, related_name='admin_to', null=True)
+    # null is true just because we have existing admins before the hospital field was added
+
+    def get_user_type(self):
+        return 'Administrator'
 
 
 class MedicalCondition(models.Model):
