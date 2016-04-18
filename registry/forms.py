@@ -8,9 +8,6 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import *
 from django.core.urlresolvers import reverse_lazy
 from localflavor.us.forms import USPhoneNumberField
-from localflavor.us.forms import USZipCodeField
-from localflavor.us.forms import USStateSelect
-from localflavor.us.forms import USStateSelect
 from django.forms import forms, models, fields, widgets
 
 import rules
@@ -43,8 +40,8 @@ class PatientRegisterForm(models.ModelForm):
         self.helper.form_class = 'form-horizontal hn-form register'
         self.helper.form_method = 'POST'
         self.helper.form_action = 'register'
-        self.helper.label_class = 'col-lg-3'
-        self.helper.field_class = 'col-lg-8'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-2'
 
         self.helper.layout = Layout(
                 Fieldset('Patient Registration',
@@ -52,7 +49,7 @@ class PatientRegisterForm(models.ModelForm):
                              Div('first_name', css_class='col-md-4'),
                              Div('middle_initial', css_class='col-xs-1'),
                              Div('last_name', css_class='col-md-4'),
-                                 css_class='row',
+                             css_class='row',
                          ),
                          Div(
                                  Div('date_of_birth', css_class='col-lg-3'),
@@ -160,8 +157,8 @@ class AdminRegistrationForm(models.ModelForm):
         self.helper.form_class = 'form-horizontal hn-form register'
         self.helper.form_method = 'POST'
         self.helper.form_action = 'register'
-        self.helper.label_class = 'col-lg-3'
-        self.helper.field_class = 'col-lg-8'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-2'
 
         self.helper.layout = Layout(
             Fieldset('Administrator Registration',
@@ -234,84 +231,90 @@ class AdminRegistrationForm(models.ModelForm):
         }
 
 
-# class AdminRegistrationForm(models.ModelForm):
-#
-#     model = Administrator
-#
-#     first_name = fields.CharField(max_length=25)
-#     middle_initial = fields.CharField(max_length=1)
-#     last_name = fields.CharField(max_length=30)
-#
-#     email = fields.EmailField()
-#     password = fields.CharField(max_length=255, widget=widgets.PasswordInput)
-#
-#     date_of_birth = fields.DateTimeField()
-#     gender = fields.ChoiceField(choices=Gender.choices(), initial=Gender.MALE)
-#
-#     def __init__(self, *args, **kwargs):
-#         super(AdminRegistrationForm, self).__init__(*args, **kwargs)
-#         self.helper = FormHelper()
-#         self.helper.form_class = 'form-horizontal hn-form register'
-#         self.helper.form_method = 'POST'
-#         self.helper.form_action = 'register'
-#         self.helper.label_class = 'col-lg-3'
-#         self.helper.field_class = 'col-lg-8'
-#
-#         self.helper.layout = Layout(
-#                 Fieldset('Patient Registration',
-#                          Div(
-#                              Div('first_name', css_class='col-md-4'),
-#                              Div('middle_initial', css_class='col-xs-1'),
-#                              Div('last_name', css_class='col-md-4'),
-#                                  css_class='row',
-#                          ),
-#                          Div(
-#                              Div('date_of_birth', css_class='col-lg-3'),
-#                              Div('gender', css_class='col-md-1'),
-#                              css_class='row',
-#                          ),
-#                          Div(
-#                              Div('address_line_one', css_class='col-lg-5'),
-#                              css_class='row',
-#                          ),
-#                          Div(
-#                              Div('address_line_two', css_class='col-lg-5'),
-#                              css_class='row',
-#                          ),
-#                          Div(
-#                              Div('address_city', css_class='col-lg-3'),
-#                              Div('address_state', css_class='col-lg-3'),
-#                              Div('address_zipcode', css_class='col-lg-3'),
-#                              css_class='row',
-#                          ),
-#                          Div(
-#                                  Div('email', css_class='col-lg-5'),
-#                                  Div('password', css_class='col-md-5'),
-#                                  css_class='row',
-#                          ),
-#                          Div(
-#                                  Div('security_question', css_class='col-lg-4'),
-#                                  Div('security_answer', css_class='col-md-4'),
-#                                  css_class='row',
-#                          ),
-#                 FormActions(
-#                         Submit('submit', 'Submit'),
-#                         HTML('<a class="btn btn-default" href={% url "registry:index" %}>Cancel</a>')
-#                 )
-#         )
-#
-#         class Meta:
-#         model = Patient
-#         fields = ('first_name', 'middle_initial', 'last_name', 'date_of_birth', 'gender',
-#                   'address_line_one', 'address_line_two', 'address_city', 'address_state',
-#                   'address_zipcode', 'email', 'password', 'height', 'weight', 'blood_type',
-#                   'insurance', 'pref_hospital', 'provider', 'security_question', 'security_answer')
-#         widgets = {
-#             'password': widgets.PasswordInput
-#         }
+class DoctorRegistrationForm(models.ModelForm):
+    model = Doctor
+    first_name = fields.CharField(max_length=25)
+    last_name = fields.CharField(max_length=30)
+    password = fields.CharField(max_length=40, widget=widgets.PasswordInput)
+    email = fields.EmailField(max_length=256)
 
-# class DoctorRegistrationForm(models.ModelForm):
-#
+    def __init__(self, *args, **kwargs):
+        super(DoctorRegistrationForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal hn-form register'
+        self.helper.form_method = 'POST'
+        self.helper.form_action = 'register'
+
+        self.helper.layout = Layout(
+            Fieldset('Doctor Registration',
+                     Div(
+                         Div('first_name', css_class='col-lg-4'),
+                         Div('middle_initial', css_class='col-lg-2'),
+                         Div('last_name', css_class='col-lg-4'),
+                         css_class='row',
+                     ),
+                     Div(
+                         Div('date_of_birth', css_class='col-lg-5'),
+                         Div('gender', css_class='col-lg-6'),
+                         css_class='row',
+                     ),
+                     Div(
+                         Div('address_line_one', css_class='col-lg-12'),
+                         css_class='row',
+                     ),
+                     Div(
+                         Div('address_line_two', css_class='col-lg-12'),
+                         css_class='row',
+                     ),
+                     Div(
+                         Div('address_city', css_class='col-lg-4'),
+                         Div('address_state', css_class='col-lg-4'),
+                         Div('address_zipcode', css_class='col-lg-4'),
+                         css_class='row',
+                     ),
+                     Div(
+                         Div('email', css_class='col-lg-6'),
+                         Div('password', css_class='col-lg-6'),
+                         css_class='row',
+                     ),
+                     Div(
+                         Div('security_question', css_class='col-lg-6'),
+                         Div('security_answer', css_class='col-lg-6'),
+                         css_class='row',
+                     ),
+                     Div('hospitals', css_class='col-lg-12'),
+                     css_class='row',
+                     ),
+            FormActions(
+                Submit('submit', 'Submit'),
+                HTML('<a class="btn btn-default" href={% url "registry:home" %}>Cancel</a>')
+            )
+        )
+
+        self.fields['first_name'].widget.attrs['size'] = 50
+        self.fields['last_name'].widget.attrs['size'] = 40
+        self.fields['email'].widget.attrs['size'] = 40
+        self.fields['password'].widget.attrs['size'] = 40
+
+        self.fields['address_line_one'].widget.attrs['size'] = 45
+        self.fields['address_line_two'].widget.attrs['size'] = 45
+
+        self.fields['middle_initial'].required = False
+        self.fields['middle_initial'].label = 'M.I.'
+        self.fields['middle_initial'].widget.attrs['maxlength'] = 1
+        self.fields['middle_initial'].widget.attrs['size'] = 3
+        self.fields['date_of_birth'].widget.attrs['datepicker'] = True
+
+    class Meta:
+        model = Doctor
+        fields = ('first_name', 'middle_initial', 'last_name', 'date_of_birth', 'gender',
+                  'address_line_one', 'address_line_two', 'address_city', 'address_state',
+                  'address_zipcode', 'email', 'password', 'security_question',
+                  'security_answer', 'hospitals')
+        widgets = {
+            'password': widgets.PasswordInput
+        }
+
 
 class NurseRegistrationForm(models.ModelForm):
     model = Nurse
@@ -367,7 +370,6 @@ class NurseRegistrationForm(models.ModelForm):
                          css_class='row',
                      ),
                      'hospital',
-                     'is_sysadmin',
                      ),
             FormActions(
                 Submit('submit', 'Submit'),
@@ -390,81 +392,14 @@ class NurseRegistrationForm(models.ModelForm):
         self.fields['date_of_birth'].widget.attrs['datepicker'] = True
 
     class Meta:
-        model = Administrator
+        model = Nurse
         fields = ('first_name', 'middle_initial', 'last_name', 'date_of_birth', 'gender',
                   'address_line_one', 'address_line_two', 'address_city', 'address_state',
                   'address_zipcode', 'email', 'password', 'security_question',
-                  'security_answer', 'is_sysadmin', 'hospital')
+                  'security_answer', 'hospital')
         widgets = {
             'password': widgets.PasswordInput
         }
-# class StaffRegistrationForm(forms.Form):
-#     """
-#     Name: StaffRegistrationForm
-#
-#     It's a form that allows admin users to create a new staff user.
-#     """
-#
-#     first_name = fields.CharField(max_length=25)
-#     middle_initial = fields.CharField(max_length=1)
-#     last_name = fields.CharField(max_length=30)
-#
-#     email = fields.EmailField()
-#     password = fields.CharField(max_length=255, widget=widgets.PasswordInput)
-#
-#     date_of_birth = fields.DateTimeField()
-#     gender = fields.ChoiceField(choices=Gender.choices(), initial=Gender.MALE)
-#     role = fields.ChoiceField(choices=Role.choices(), initial=Role.DOCTOR)
-#
-#     address_line_one = fields.CharField(max_length=255)
-#     address_line_two = fields.CharField(max_length=255)
-#     address_city = fields.CharField(max_length=255)
-#     address_state = USStateSelect()
-#     address_zipcode = USZipCodeField()
-#
-#     def __init__(self, *args, **kwargs):
-#         super(StaffRegistrationForm, self).__init__(*args, **kwargs)
-#         self.helper = FormHelper()
-#         self.helper.form_class = 'form-horizontal hn-form login'
-#         self.helper.form_method = 'POST'
-#         self.helper.label_class = 'control-label col-lg-2'
-#         self.helper.field_class = 'col-lg-8'
-#
-#         self.helper.layout = Layout(
-#             Fieldset('Staff Registration',
-#                      Div(
-#                         Div('first_name', css_class='col-lg-2'),
-#                         Div('middle_initial', css_class='col-md-2'),
-#                         Div('last_name', css_class='col-md-2'),
-#                         css_class='row',
-#                      ),
-#                      Div(
-#                          Div('email', css_class='col-lg-3'),
-#                          Div('password', css_class='col-lg-3')
-#                      ),
-#                      Div(
-#                         Div('date_of_birth', css_class='col-lg-5'),
-#                         Div('gender', css_class='col-lg-3'),
-#                         Div('role', css_class='col-lg-3'),
-#                         css_class='row',
-#                      ),
-#                      Div(
-#                         Div('address_line_one', css_class='col-lg-5'),
-#                         Div('address_line_two', css_class='col-lg-5'),
-#                         css_class='row',
-#                      ),
-#                      Div(
-#                         Div('address_city', css_class='col-lg-5'),
-#                         Div('address_state', css_class='col-lg-5'),
-#                         Div('address_zipcode', css_class='col-lg-5'),
-#                         css_class='row',
-#                      )
-#                      ),
-#             FormActions(
-#                 Submit('submit', 'Submit'),
-#                 HTML('<a class="btn btn-default" href={% url "registry:home" %}>Cancel</a>')
-#             )
-#         )
 
 
 class LoginForm(forms.Form):

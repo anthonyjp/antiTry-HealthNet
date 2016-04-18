@@ -156,10 +156,16 @@ def home(request):
 
     else:
         logs = HNLogEntry.objects.all()
+        admin_form = AdminRegistrationForm()
+        doc_form = DoctorRegistrationForm()
+        nurse_form = NurseRegistrationForm()
         return render(request,
                       'registry/users/user_admin.html',
                       {'hn_owner': hn_user,
                        'hn_visitor': hn_user,
+                       'admin_form': admin_form,
+                       'doc_form': doc_form,
+                       'nurse_form': nurse_form,
                        'inbox': inbox,
                        'logs': logs,
                        'form': form,

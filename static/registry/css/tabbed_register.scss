@@ -1,0 +1,30 @@
+@import "base_user";
+
+.comp h1 {
+  text-align: center;
+}
+
+.comp #form {
+  display: block;
+  width: 50%;
+  margin: 0 auto;
+  border: 2px solid black;
+}
+
+.comp label {
+  width: 50%;
+  float: left;
+  text-align: right;
+  margin-right: 1%;
+}
+
+.comp input {
+  width: 35%;
+}
+
+.comp #buttons {
+  display: block;
+  width: 15%;
+  margin: 0 auto;
+  padding-bottom: 1.5%;
+}
