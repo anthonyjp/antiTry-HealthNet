@@ -675,6 +675,29 @@ def verify_user(request, uuid):
     return ajax_success(**resp)
 
 
+@login_required(login_url=reverse_lazy('registry:login'))
+@render_to('registry/data/mc_add.html')
+def mc_add(request, patient_uuid):
+    user = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    patient = get_object_or_404(Patient, uuid=patient_uuid)
+    if rules.test_rule('is_doctor', user) or rules.test_rule('is_nurse', user):
+        if request.method == "POST":
+            form = MedicalConditionAdd(request.POST)
+            if form.is_valid():
+                condition = form.save(commit=False)
+                condition.save()
+                patient.conditions.add(condition)
+                patient.save()
+                return redirect('registry:home')
+        else:
+            form = MedicalConditionAdd()
+
+        return {'form': form}
+
+    return HttpResponseNotFound(
+        '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+
+
 @require_http_methods(['GET', 'PATCH', 'DELETE'])
 @login_required(login_url=reverse_lazy('registry:login'))
 def rx_op(request, pk):

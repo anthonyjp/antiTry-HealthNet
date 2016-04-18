@@ -829,6 +829,42 @@ class DeleteTransferForm(models.ModelForm):
         fields = []
 
 
+class MedicalConditionAdd(models.ModelForm):
+    """
+    Name: MedicalConditionAdd
+
+    MedicalConditionAdd is for adding a new medical condition to a patient
+    It takes in the name of the condition and the description of the condition
+
+    """
+    model = MedicalCondition
+
+    def __init__(self, *args, **kwargs):
+        super(MedicalConditionAdd, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal hn-form admittance'
+        self.helper.form_method = 'POST'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+        self.helper.layout = Layout(
+            Fieldset('Medical Condition Form',
+                     'name',
+                     'desc',
+                     ),
+            FormActions(
+                Submit('submit', 'Submit'),
+                HTML(
+                    '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
+                    '{% url "registry:home" %}{% endif %}>Cancel</a>'
+                )
+            )
+        )
+
+    class Meta:
+        model = MedicalCondition
+        fields = 'name', 'desc'
+
+
 class MessageCreation(models.ModelForm):
     """
     Name: MessageCreation
