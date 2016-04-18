@@ -227,7 +227,7 @@ $(document).ready(function(){
         var div = $("#msg-create-form-html").clone();
         document.getElementById("msgCreation").reset();
         div.css("display", "block");
-        $("#id_title").css("width", "80%");
+        div.find('span.help-inline').remove();
 
         vex.dialog.buttons.YES.text = 'Submit';
         vex.dialog.open({

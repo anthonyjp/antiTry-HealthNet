@@ -899,6 +899,7 @@ class MessageCreation(models.ModelForm):
                          )
         )
         self.fields['title'].widget.attrs['size'] = 30
+        self.fields['title'].widget.attrs['style'] = ""
 
     class Meta:
         model = Message
