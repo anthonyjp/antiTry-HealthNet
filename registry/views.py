@@ -793,7 +793,7 @@ def create_msg(request):
 
     message.save()
 
-    return ajax_success(sender=str(sender), timestamp=message.date.isoformat())
+    return ajax_success(id=message.uuid, sender=str(sender), timestamp=message.date.isoformat())
 
 
 @require_http_methods(['GET', 'DELETE'])

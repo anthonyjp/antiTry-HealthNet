@@ -250,11 +250,10 @@ $(document).ready(function(){
                         },
                         headers: {'X-CSRFToken': registry.forms.user.csrf},
                         success: function (resp) {
-
                             if (resp.success && registry.forms.user.isAuthUser(receiver)) {
                                 var time = moment(resp.timestamp).format('MMMM D, YYYY, h:mm a');
                                 time = time.replace(/ am/g, ' a.m.').replace(/ pm/g, ' p.m.');
-                                inbox.find('tbody tr:first').before(sprintf(
+                                inbox.find('tbody').prepend(sprintf(
                                     '<tr data-message-id="%s" class="inbox-row" href="#tab7">' +
                                     '<td class="inboxBody check-box-wrapper">' +
                                     '<input id="msg-checkbox" type="checkbox"/>' +
@@ -262,13 +261,15 @@ $(document).ready(function(){
                                     '<td class="inboxBody">%s</td>' +
                                     '<td class="inboxBody">%s</td>' +
                                     '<td class="inboxBody">%s</td>' +
-                                    '</tr>', receiver, resp.sender, title, time));
+                                    '</tr>', resp.id, resp.sender, title, time));
 
                             }
 
                             vex.close();
                         },
                         failure: function (resp) {
+                            console.log('Failure');
+                            console.dir(resp);
                             vex.close();
                         }
                     })
@@ -313,7 +314,7 @@ $(document).ready(function(){
     $("#id-delete-msg").click(function () {
         var mIds = [];
 
-        inbox.find('input:checked').each(function () {
+        inbox.find('input:checked').not('#checkAll').each(function () {
             var td = $(this).parent('td');
             mIds.push(td.parent('tr').data('message-id'));
         });
