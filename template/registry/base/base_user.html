@@ -163,11 +163,13 @@
             {% block userContent %}{% endblock %}
         </div>
 
+    {% if has_inbox %}
     <div id="msg-create-form-html" style="display: none">
         <form id="msgCreation">
             {% crispy form form.helper %}
         </form>
     </div>
+    {% endif %}
 </div>
 {% endblock %}
 

@@ -1,4 +1,8 @@
 {% load crispy_forms_tags %}
-<form class="comp">
+<form class="comp" id="nurse-reg-form">
     {% crispy nurse_form nurse_form.helper %}
+    <div class="reg-buttons">
+        <button class="btn btn-primary" id="nurse-reg-submit">Create Nurse</button>
+        <button class="btn" id="reg-cancel">Clear</button>
+    </div>
 </form>

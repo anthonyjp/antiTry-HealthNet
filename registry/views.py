@@ -549,6 +549,71 @@ def log_actions(request):
     return {"action_list": get_log_data(), 'from': fro, 'to': to}
 
 
+@require_http_methods(['POST'])
+@login_required(login_url=reverse_lazy('registry:login'))
+@ajax_request
+def user_create(request):
+    if 'user-type' not in request.POST:
+        return ajax_failure()
+
+    user_type = request.POST['user-type']
+
+    if user_type == 'admin':
+        return admin_create(request)
+    elif user_type == 'nurse':
+        return nurse_create(request)
+    elif user_type == 'doctor':
+        return doctor_create(request)
+    else:
+        return ajax_failure()
+
+
+@ajax_request
+def admin_create(request):
+    form = AdminRegistrationForm(request.POST)
+
+    if form.is_valid():
+        admin = form.save(commit=False)
+        username = '{!s}'.format(admin)
+        admin.auth_user = DjangoUser.objects.create_user(username, form.cleaned_data['email'],
+                                                         form.cleaned_data['password'])
+        admin.save()
+        return ajax_success()
+
+    return ajax_failure()
+
+
+@ajax_request
+def doctor_create(request):
+    form = DoctorRegistrationForm(request.POST)
+
+    if form.is_valid():
+        doc = form.save(commit=False)
+        username = '{!s}'.format(doc)
+        doc.auth_user = DjangoUser.objects.create_user(username, form.cleaned_data['email'],
+                                                       form.cleaned_data['password'])
+        doc.save()
+        return ajax_success()
+    print(form.errors)
+
+    return ajax_failure()
+
+
+@ajax_request
+def nurse_create(request):
+    form = NurseRegistrationForm(request.POST)
+
+    if form.is_valid():
+        nurse = form.save(commit=False)
+        username = '{!s}'.format(nurse)
+        nurse.auth_user = DjangoUser.objects.create_user(username, form.cleaned_data['email'],
+                                                         form.cleaned_data['password'])
+        nurse.save()
+        return ajax_success()
+
+    return ajax_failure()
+
+
 @require_http_methods(['GET', 'HEAD', 'PATCH'])
 @login_required(login_url=reverse_lazy('registry:login'))
 def user(request, uuid):
@@ -871,9 +936,7 @@ def logs(request, start, end):
         elif ignore_req == 'end':
             end_time = None
 
-    print(start_time, end_time)
     log_entries = logger.get_logs(start_time, end_time, log_level, True)
-    print(log_entries)
 
     result = []
 

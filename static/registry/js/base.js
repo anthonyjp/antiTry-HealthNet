@@ -168,6 +168,10 @@ registry = (function () {
         });
     }
 
+    function getCsrf(tree) {
+        return $(tree).find('[name="csrfmiddlewaretoken"]').val();
+    }
+
     return {
         'NO_MENUITEM': NONE_CHOICE,
         'has': has,
@@ -175,7 +179,8 @@ registry = (function () {
         'inArray': inArray,
         'setActiveMenuItem': setActiveMenuitem,
         'initUserSearch': initUserSearch,
-        'escapeHtml': escapeHtml
+        'escapeHtml': escapeHtml,
+        'getCsrf': getCsrf
     }
 })();
 

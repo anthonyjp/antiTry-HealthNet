@@ -3,7 +3,7 @@
 :: Collect Any Uncollected Static Files, clearing the stale files
 :: Attempt to make migrations and then migrate. If python is a link to python2 then this will fail, an explicit python3 case is included
 (pip install -r requirements.txt || pip install -r requirements.txt --user) && <nul ^
- (python manage.py makemigrations --noinput --merge || python3 manage.py makemigrations --noinput --merge) && <nul ^
+ (python manage.py makemigrations --noinput || python3 manage.py makemigrations --noinput --merge) && <nul ^
  (python manage.py migrate || python3 manage.py migrate) && <nul ^
- python manage.py collectstatic --noinput -c -v 0 && <nul ^
+ python manage.py collectstatic --noinput -v 0 && <nul ^
  python manage.py runserver 8000 --insecure --noreload

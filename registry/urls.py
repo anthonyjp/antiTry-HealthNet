@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^log$', views.log_actions, name='logs'),
 
     # User Related URLs
+    url(r'^user/create$', views.user_create, name='user_create'),
     url(uuid_url(r'^user/(?P<uuid>{uuid})$'), views.user, name='user'),
     url(uuid_url(r'^user/(?P<patient_uuid>{uuid})/rx$'), views.rx_create, name='rx_create'),
     url(uuid_url(r'^user/(?P<patient_uuid>{uuid})/rx/(?P<pk>[0-9]+)'), views.rx_delete, name='rx_delete'),

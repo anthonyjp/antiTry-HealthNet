@@ -28,7 +28,7 @@ registry.data.logrender = (function () {
         var ignorereq = options.ignore || 'none';
 
         if (!from)
-            from = "1990-01-01";
+            from = moment().subtract(1, 'days').format('YYYY-MM-DD');
 
         if (!to)
             to = moment().format('YYYY-MM-DD');
@@ -99,7 +99,7 @@ $(document).ready(function () {
     var startDatePicker = $("#log-start-date");
     var endDatePicker = $("#log-end-date");
 
-    startDatePicker.val('01/01/1990');
+    startDatePicker.val(moment().subtract(1, 'days').format('MM/DD/YYYY'));
     endDatePicker.val(moment().format('MM/DD/YYYY'));
 
     startDatePicker.change(renderHook);

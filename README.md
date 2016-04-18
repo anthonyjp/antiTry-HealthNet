@@ -1,5 +1,22 @@
 ## antiTry HealthNet Implementation (Placeholder)
 ---
+
+### Installation
+---
+
+Once extracted, simply run:
+
+For windows:
+
+    run.cmd
+
+For linux:
+
+    run.sh
+
+Then simply go to `127.0.0.1:8000` and your app will be running! 
+
+---
 #### Development Environment
 ---
 To setup the development environment, the following is required:
@@ -54,15 +71,3 @@ This will run few a few steps:
 Steps 3 and 4 can be skipped by adding the `--no-migrate` flag. 
 
 This will create a new `dist` directory containing the packaged app. Then it can be extracted anywhere.
-
----
-### Installation
----
-
-Once extracted, simply run:
-
-    pip install -r requirements.txt --user
-    python manage.py migrate
-    python manage.py runserver
-
-Then simply go to `127.0.0.1:8000` and your app will be running! The rest is simply server configuration. _(* - `--user` can be dropped if you have admin access to the machine.)_

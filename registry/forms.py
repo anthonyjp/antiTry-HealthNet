@@ -200,10 +200,6 @@ class AdminRegistrationForm(models.ModelForm):
                      'hospital',
                      'is_sysadmin',
                      ),
-            FormActions(
-                Submit('submit', 'Submit'),
-                HTML('<a class="btn btn-default" href={% url "registry:home" %}>Cancel</a>')
-            )
         )
 
         self.fields['first_name'].widget.attrs['size'] = 40
@@ -285,10 +281,6 @@ class DoctorRegistrationForm(models.ModelForm):
                      Div('hospitals', css_class='col-lg-12'),
                      css_class='row',
                      ),
-            FormActions(
-                Submit('submit', 'Submit'),
-                HTML('<a class="btn btn-default" href={% url "registry:home" %}>Cancel</a>')
-            )
         )
 
         self.fields['first_name'].widget.attrs['size'] = 50
@@ -333,7 +325,7 @@ class NurseRegistrationForm(models.ModelForm):
         self.helper.field_class = 'col-lg-8'
 
         self.helper.layout = Layout(
-            Fieldset('Administrator Registration',
+            Fieldset('Nurse Registration',
                      Div(
                          Div('first_name', css_class='col-md-4'),
                          Div('middle_initial', css_class='col-xs-1'),
@@ -371,10 +363,6 @@ class NurseRegistrationForm(models.ModelForm):
                      ),
                      'hospital',
                      ),
-            FormActions(
-                Submit('submit', 'Submit'),
-                HTML('<a class="btn btn-default" href={% url "registry:home" %}>Cancel</a>')
-            )
         )
 
         self.fields['first_name'].widget.attrs['size'] = 40
