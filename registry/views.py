@@ -113,7 +113,7 @@ def home(request):
 
     hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     form = MessageCreation(request.POST)
-    inbox = hn_user.inbox.messages.filter(receiver=hn_user)
+    inbox = hn_user.inbox.messages.filter(receiver=hn_user).order_by('-date')
 
     if rules.test_rule('is_patient', hn_user):
         medical_history = MedicalHistory.objects.filter(patient=hn_user).all()

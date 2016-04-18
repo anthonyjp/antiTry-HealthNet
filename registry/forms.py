@@ -865,8 +865,7 @@ class MessageCreation(models.ModelForm):
                 FormActions(
                         Submit('submit', 'Submit'),
                         HTML(
-                            '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
-                            '{% url "registry:home" %}{% endif %}>Cancel</a>')
+                            '<button onClick="closeForm();">Cancel</button>')
                 )
         )
         self.fields['title'].widget.attrs['size'] = 30

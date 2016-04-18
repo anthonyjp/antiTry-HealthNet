@@ -230,11 +230,11 @@ $(document).ready(function(){
     $("#newMessage").click(function () {
 
         var div = $("#msg-create-form-html").clone();
+        document.getElementById("msgCreation").reset();
         div.css("display", "block");
         $("#id_title").css("width", "80%");
 
         vex.open().append(div)
-
     });
 
     inbox.find("tr").not(':first').click(function () {
@@ -271,6 +271,10 @@ $(document).ready(function(){
     });
 
 });
+
+function closeForm() {
+    vex.close()
+}
 
 function searchTable(inputVal)
 {
