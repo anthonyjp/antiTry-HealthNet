@@ -154,9 +154,15 @@ registry.forms['user'] = (function(){
         });
     }
 
+    function isRequestUser(uuid) {
+        return userUuid === uuid;
+    }
+
     return {
         'hook': hookEditability,
-        'updateUser': updateUser
+        'updateUser': updateUser,
+        'csrf': csrf,
+        'isAuthUser': isRequestUser
     };
 })();
 
@@ -211,17 +217,6 @@ $(document).ready(function(){
 
     var inbox = $("#inbox");
 
-
-        // Highlight a whole row from inbox table
-    $("#patient").find("tr").not(':first').hover(
-      function () {
-        $(this).children().css("backgroundColor","#f3fef7");
-      },
-      function () {
-        $(this).children().css("backgroundColor","#e3eee7");
-      }
-    );
-
     $('#patientSearchBar').keyup(function()
 	{
 		searchTable($(this).val());
@@ -234,14 +229,59 @@ $(document).ready(function(){
         div.css("display", "block");
         $("#id_title").css("width", "80%");
 
-        vex.open().append(div)
+        vex.dialog.buttons.YES.text = 'Submit';
+        vex.dialog.open({
+            //message: '',
+            message: div,
+            callback: function (data) {
+                if (data) {
+                    var vexContent = $('.vex-content');
+                    var receiver = vexContent.find('#id_receiver').find(':selected').val();
+                    var title = vexContent.find('#id_title').val();
+                    var content = vexContent.find('#id_content').val();
+
+                    $.ajax({
+                        url: '/msg',
+                        type: 'POST',
+                        data: {
+                            'receiver': registry.escapeHtml(receiver),
+                            'content': content,
+                            'title': registry.escapeHtml(title)
+                        },
+                        headers: {'X-CSRFToken': registry.forms.user.csrf},
+                        success: function (resp) {
+
+                            if (resp.success && registry.forms.user.isAuthUser(receiver)) {
+                                var time = moment(resp.timestamp).format('MMMM D, YYYY, h:mm a');
+                                time = time.replace(/ am/g, ' a.m.').replace(/ pm/g, ' p.m.');
+                                inbox.find('tbody tr:first').before(sprintf(
+                                    '<tr data-message-id="%s" class="inbox-row" href="#tab7">' +
+                                    '<td class="inboxBody check-box-wrapper">' +
+                                    '<input id="msg-checkbox" type="checkbox"/>' +
+                                    '</td>' +
+                                    '<td class="inboxBody">%s</td>' +
+                                    '<td class="inboxBody">%s</td>' +
+                                    '<td class="inboxBody">%s</td>' +
+                                    '</tr>', receiver, resp.sender, title, time));
+
+                            }
+
+                            vex.close();
+                        },
+                        failure: function (resp) {
+                            vex.close();
+                        }
+                    })
+                }
+            }
+        });
     });
 
-    inbox.find("tr").not(':first').click(function () {
+    inbox.find("td").not('.check-box-wrapper').click(function () {
         //  Hide all tab content
 
-        var selected_tab = $(this).attr("href");
-        var uuid = $(this).data('message-id');
+        var selected_tab = $(this).parent('tr').attr("href");
+        var uuid = $(this).parent('tr').data('message-id');
 
         $.ajax({
             url: 'msg/' + uuid,
@@ -268,6 +308,37 @@ $(document).ready(function(){
         });
 
         return true;
+    });
+
+    $("#id-delete-msg").click(function () {
+        var mIds = [];
+
+        inbox.find('input:checked').each(function () {
+            var td = $(this).parent('td');
+            mIds.push(td.parent('tr').data('message-id'));
+        });
+
+        var handleMessages = function (messages, failures) {
+            console.dir(messages);
+            console.dir(failures);
+            messages = _.without(messages, failures);
+            _.each(messages, function (mId) {
+                $('.inbox-row[data-message-id=\'' + mId + '\']').remove();
+            });
+        };
+
+        $.ajax({
+            url: 'msg/' + mIds[0],
+            type: 'DELETE',
+            data: {'messages': mIds},
+            headers: {'X-CSRFToken': registry.forms.user.csrf},
+            success: function (resp) {
+                handleMessages(mIds, resp.fails);
+            },
+            failure: function (resp) {
+                handleMessages(mIds, resp.fails);
+            }
+        })
     });
 
 });

@@ -163,7 +163,7 @@ class AdmissionInfo(models.Model):
             history.delete()
 
         self.admission_time.end_time = tz.now()
-        MedicalHistory.objects.create(admission_details=self)
+        MedicalHistory.objects.create(patient=self.patient_user, admission_details=self)
         self.save()
 
     def __str__(self):

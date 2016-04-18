@@ -104,7 +104,7 @@ tr.inbox-row {
   background-color: #f3fef7;
 
   & td {
-    @include hover-animate-full($inbox-hover-out-color, $inbox-hover-transition-function, 0.5s, 20em);
+    @include hover-animate-full($inbox-hover-out-color, $inbox-hover-transition-function, 0.2s, 20em);
   }
 
   &:hover td {
@@ -123,6 +123,10 @@ tr.inbox-row {
   float: left;
   margin-left: 40%;
   margin-top: .2%;
+}
+
+.check-box-wrapper {
+  width: 5%;
 }
 
 #checkBox {

@@ -122,7 +122,7 @@
                     <tbody>
                     {% for m in inbox %}
                         <tr data-message-id="{{ m.uuid }}" class="inbox-row" href="#tab7">
-                            <td class="inboxBody"><input type="checkbox"/></td>
+                            <td class="inboxBody check-box-wrapper"><input id="msg-checkbox" type="checkbox"/></td>
                             <td class="inboxBody">{{ m.sender }}</td>
                             <td class="inboxBody">{{ m.title }}</td>
                             <td class="inboxBody">{{ m.date }}</td>
@@ -133,7 +133,9 @@
 
                 <div id="buttons">
                     <button id="newMessage">New Message</button>
-                    <a href="#tab6"><button>Delete Message(s)</button></a>
+                    <a href="#tab6">
+                        <button id="id-delete-msg">Delete Message(s)</button>
+                    </a>
                 </div>
             </div>
             {% endif %}
@@ -162,7 +164,7 @@
 
     <div id="msg-create-form-html" style="display: none">
         <form id="msgCreation">
-        {% crispy form form.helper %}
+            {% crispy form form.helper %}
         </form>
     </div>
 </div>

@@ -117,14 +117,6 @@ def home(request):
 
     if rules.test_rule('is_patient', hn_user):
         medical_history = MedicalHistory.objects.filter(patient=hn_user).all()
-        if request.method == "POST":
-            form = MessageCreation(request.POST)
-            message = form.save(commit=False)
-            message.sender = User.objects.get_subclass(pk=request.user.hn_user.pk)
-            message.receiver.inbox.messages.add(message)
-            message.save()
-        else:
-            form = MessageCreation()
         return render(request,
                       'registry/users/user_patient.html',
                       {'form': form,
@@ -139,14 +131,6 @@ def home(request):
     elif rules.test_rule('is_doctor', hn_user):
         patients = Patient.objects.filter(provider=hn_user)
         not_patients = Patient.objects.exclude(provider=hn_user)
-        if request.method == "POST":
-            form = MessageCreation(request.POST)
-            message = form.save(commit=False)
-            message.sender = User.objects.get_subclass(pk=request.user.hn_user.pk)
-            message.receiver.inbox.messages.add(message)
-            message.save()
-        else:
-            form = MessageCreation()
         return render(request,
                       'registry/users/user_doctor.html',
                       {'form': form,
@@ -161,14 +145,6 @@ def home(request):
         pref_patients = Patient.objects.filter(pref_hospital=hn_user.hospital)
         # add in the admitted patients
         admit_patients = Patient.objects.filter(cur_hospital=hn_user.hospital)
-        if request.method == "POST":
-            form = MessageCreation(request.POST)
-            message = form.save(commit=False)
-            message.sender = User.objects.get_subclass(pk=request.user.hn_user.pk)
-            message.receiver.inbox.messages.add(message)
-            message.save()
-        else:
-            form = MessageCreation()
         return render(request,
                       'registry/users/user_nurse.html',
                       {'form': form,
@@ -180,14 +156,6 @@ def home(request):
 
     else:
         logs = HNLogEntry.objects.all()
-        if request.method == "POST":
-            form = MessageCreation(request.POST)
-            message = form.save(commit=False)
-            message.sender = User.objects.get_subclass(pk=request.user.hn_user.pk)
-            message.receiver.inbox.messages.add(message)
-            message.save()
-        else:
-            form = MessageCreation()
         return render(request,
                       'registry/users/user_admin.html',
                       {'hn_owner': hn_user,
@@ -809,11 +777,63 @@ def create_transfer(request):
     return ajax_failure()
 
 
-@require_http_methods(['GET'])
+@require_http_methods(['POST'])
+@login_required(login_url=reverse_lazy('registry:login'))
+@ajax_request
+def create_msg(request):
+    form = MessageCreation(request.POST)
+
+    if not form.is_valid():
+        return ajax_failure()
+
+    message = form.save(commit=False)
+
+    message.sender = sender = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    message.receiver.inbox.messages.add(message)
+
+    message.save()
+
+    return ajax_success(sender=str(sender), timestamp=message.date.isoformat())
+
+
+@require_http_methods(['GET', 'DELETE'])
 @login_required(login_url=reverse_lazy('registry:login'))
 def msg(request, uuid):
     if is_safe_request(request.method):
         return view_msg(request, uuid)
+    else:
+        read_request_body_to(request, request.method)
+        if request.method == 'DELETE':
+            return delete_msg(request, uuid)
+
+
+# TODO Combine msg, create_msg and delete_msg and get UUIDs from Request Data
+@ajax_request
+def delete_msg(request, uuid):
+    failures = []
+
+    try:
+        if 'messages[]' in request.DELETE:
+            mIdList = request.DELETE.getlist('messages[]')
+            failures.extend(mIdList)
+            for mId in mIdList:
+                try:
+                    msg = Message.objects.get(uuid=mId)
+                    msg.delete()
+
+                    failures.remove(mId)
+                except Message.DoesNotExist:
+                    pass
+        else:
+            try:
+                msg = Message.objects.get(uuid=uuid)
+                msg.delete()
+            except Message.DoesNotExist:
+                failures.append(uuid)
+    except:
+        return ajax_failure(fails=failures)
+
+    return ajax_success(fails=failures)
 
 
 @ajax_request

@@ -13,4 +13,4 @@ fi
 
 pip install -r requirements.txt || pip install -r requirements.txt --user && \
 "$pycmd" manage.py makemigration --noinput --merge && "$pycmd" manage.py migrate && \
-"$pycmd" manage.py collectstatic --noinpu -c -v 0 && "$pycmd" manage.py runserver 8000 --insecure --noreload
+"$pycmd" manage.py collectstatic --noinput -c -v 0 && "$pycmd" manage.py runserver 8000 --insecure --noreload

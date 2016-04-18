@@ -879,7 +879,6 @@ class MessageCreation(models.ModelForm):
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form messsage'
         self.helper.form_method = 'POST'
-        # self.helper.form_action = reverse_lazy('')
         self.helper.label_class = 'col-lg-8'
         self.helper.field_class = 'col-lg-8'
 
@@ -897,12 +896,7 @@ class MessageCreation(models.ModelForm):
                                  Div('content', css_class='col-lg-3'),
                                  css_class='row',
                          ),
-                         ),
-                FormActions(
-                        Submit('submit', 'Submit'),
-                        HTML(
-                            '<button onClick="closeForm();">Cancel</button>')
-                )
+                         )
         )
         self.fields['title'].widget.attrs['size'] = 30
 
