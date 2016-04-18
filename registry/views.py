@@ -117,6 +117,14 @@ def home(request):
 
     if rules.test_rule('is_patient', hn_user):
         medical_history = MedicalHistory.objects.filter(patient=hn_user).all()
+        if request.method == "POST":
+            form = MessageCreation(request.POST)
+            message = form.save(commit=False)
+            message.sender = User.objects.get_subclass(pk=request.user.hn_user.pk)
+            message.receiver.inbox.messages.add(message)
+            message.save()
+        else:
+            form = MessageCreation()
         return render(request,
                       'registry/users/user_patient.html',
                       {'form': form,
@@ -131,7 +139,14 @@ def home(request):
     elif rules.test_rule('is_doctor', hn_user):
         patients = Patient.objects.filter(provider=hn_user)
         not_patients = Patient.objects.exclude(provider=hn_user)
-
+        if request.method == "POST":
+            form = MessageCreation(request.POST)
+            message = form.save(commit=False)
+            message.sender = User.objects.get_subclass(pk=request.user.hn_user.pk)
+            message.receiver.inbox.messages.add(message)
+            message.save()
+        else:
+            form = MessageCreation()
         return render(request,
                       'registry/users/user_doctor.html',
                       {'form': form,
@@ -146,6 +161,14 @@ def home(request):
         pref_patients = Patient.objects.filter(pref_hospital=hn_user.hospital)
         # add in the admitted patients
         admit_patients = Patient.objects.filter(cur_hospital=hn_user.hospital)
+        if request.method == "POST":
+            form = MessageCreation(request.POST)
+            message = form.save(commit=False)
+            message.sender = User.objects.get_subclass(pk=request.user.hn_user.pk)
+            message.receiver.inbox.messages.add(message)
+            message.save()
+        else:
+            form = MessageCreation()
         return render(request,
                       'registry/users/user_nurse.html',
                       {'form': form,
@@ -159,12 +182,9 @@ def home(request):
         logs = HNLogEntry.objects.all()
         if request.method == "POST":
             form = MessageCreation(request.POST)
-
             message = form.save(commit=False)
-
             message.sender = User.objects.get_subclass(pk=request.user.hn_user.pk)
             message.receiver.inbox.messages.add(message)
-
             message.save()
         else:
             form = MessageCreation()
