@@ -118,51 +118,6 @@ class User(models.Model):
         return "%s [%s]" % (str(self), str(self.uuid))
 
 
-class AdmissionInfo(models.Model):
-    """
-    Admission info is an object that consists of the patient as a text field, admitted by which is the string
-    of the user who is submitting the admit, the hospital that the patient will stay at, the reason which is an
-    option from the preset enum, and the admission time which start time will be set in the view and the end
-    date will be set when patient is transferred or discharged
-    """
-    reason = models.SmallIntegerField(choices=AdmitOptions.choices(), default=AdmitOptions.UNKNOWN)
-    admission_time = models.OneToOneField(to=TimeRange, on_delete=models.SET_NULL, null=True)
-    hospital = models.ForeignKey(to=Hospital)
-    doctor = models.ForeignKey('Doctor')
-
-    def end_admission(self):
-        if self.medicalhistory:
-            history = self.medicalhistory
-            self.medicalhistory = None
-            history.delete()
-
-        self.admission_time.end_time = tz.now()
-        MedicalHistory.objects.create(admission_details=self)
-        self.save()
-
-    def __str__(self):
-        return "%s was admitted by %s to %s on %s" % \
-               (self.patient, self.admitted_by, self.hospital, self.admission_time.start_time)
-
-
-class TransferInfo(models.Model):
-    """
-    Transfer info is an object that consists of the patient as a text field, admitted by which is the string
-    of the user who is submitting the transfer, the hospital that the patient will stay at, and the reason which is an
-    option from the preset enum
-    Similar to the Admission Info except missing the admission_time
-    """
-    patient = models.TextField()
-    admitted_by = models.TextField()
-    doctor = models.ForeignKey('Doctor')
-    hospital = models.ForeignKey(Hospital)
-    reason = models.SmallIntegerField(choices=AdmitOptions.choices(), default=AdmitOptions.EMERGENCY)
-
-    def __str__(self):
-        return "%s is being request to transfer to %s by %s" % \
-               (self.patient, self.hospital, self.admitted_by)
-
-
 class Doctor(User):
     """
     A doctor account that extends User consisting of a set of Hospitals
@@ -174,6 +129,7 @@ class Doctor(User):
 
     def __str__(self):
         return "Dr. %s" % (super(Doctor, self).__str__())
+
 
 class Nurse(User):
     """
@@ -231,12 +187,62 @@ class Administrator(User):
         return 'Administrator'
 
 
+class AdmissionInfo(models.Model):
+    """
+    Admission info is an object that consists of the patient as a text field, admitted by which is the string
+    of the user who is submitting the admit, the hospital that the patient will stay at, the reason which is an
+    option from the preset enum, and the admission time which start time will be set in the view and the end
+    date will be set when patient is transferred or discharged
+    """
+    reason = models.SmallIntegerField(choices=AdmitOptions.choices(), default=AdmitOptions.UNKNOWN)
+    admission_time = models.OneToOneField(to=TimeRange, on_delete=models.SET_NULL, null=True)
+    hospital = models.ForeignKey(to=Hospital)
+    doctor = models.ForeignKey('Doctor')
+
+    def end_admission(self):
+        if self.medicalhistory:
+            history = self.medicalhistory
+            self.medicalhistory = None
+            history.delete()
+
+        self.admission_time.end_time = tz.now()
+        MedicalHistory.objects.create(admission_details=self)
+        self.save()
+
+    def __str__(self):
+        return "Admitted by %s to %s on %s" % \
+               (self.doctor, self.hospital, self.admission_time.start_time)
+
+
+class TransferInfo(models.Model):
+    """
+    Transfer info is an object that consists of the patient as a text field, admitted by which is the string
+    of the user who is submitting the transfer, the hospital that the patient will stay at, and the reason which is an
+    option from the preset enum
+    Similar to the Admission Info except missing the admission_time
+    """
+    patient = models.TextField()
+    admitted_by = models.TextField()
+    doctor = models.ForeignKey('Doctor')
+    hospital = models.ForeignKey(Hospital)
+    reason = models.SmallIntegerField(choices=AdmitOptions.choices(), default=AdmitOptions.EMERGENCY)
+
+    def __str__(self):
+        return "%s is being request to transfer to %s by %s" % \
+               (self.patient, self.hospital, self.admitted_by)
+
+
 class MedicalCondition(models.Model):
+    """
+    Medical condition is an object that consists of the name of the overall condition and then a brief
+    description of the condition. For example, a Patient may have cancer and then the description would like
+    'a disease caused by an uncontrolled division of abnormal cells in a part of the body'
+    """
     name = models.CharField(max_length=200)
     desc = models.TextField()
 
     def __str__(self):
-        return self.name
+        return self.name + ": " + self.desc
 
 
 class Prescription(models.Model):
@@ -263,16 +269,6 @@ class Prescription(models.Model):
 
     def is_valid(self):
         return not self.time_range.is_elapsed()
-
-    def can_refill(self):
-        return self.refills > 0
-
-    def refill(self):
-        if not self.can_refill():
-            raise RuntimeError('Cannot refill')
-        else:
-            self.refills -= 1
-            return self.refills
 
 
 ### Patient Data Models
@@ -309,14 +305,10 @@ class Note(models.Model):
 
 class MedicalData(models.Model):
     """
-    The medical data object which belongs to one patient, it contains the patient, patient name, the doctor
-    who is entering the medical data, the sign off, and the notes.
+    The medical data object which belongs to one patient, it contains the patient nd the notes.
+    The creation of this is like the doctor uploading a test
     """
     patient = models.ForeignKey(to=Patient, related_name='medical_info', on_delete=models.SET_NULL, null=True)
-
-    patient_name = models.TextField()
-    doctor = models.TextField()
-    sign_off = models.TextField()
     notes = models.ManyToManyField(Note, related_name='%(app_label)s_%(class)s_medical_notes')
 
     objects = InheritanceManager()
@@ -324,9 +316,8 @@ class MedicalData(models.Model):
 
 class MedicalTest(MedicalData):
     """
-    The medical test object which will include the timestamp of when the medical test is uploaded,
-    the results as a Note object, the images if there are image files, and the sign off user which is
-    the doctor that uploads the test
+    The medical test object which will include the timestamp of when the medical test is released,
+    the comments as a Note object and the sign off user which is the doctor that releasing the test
     """
     timestamp = models.DateTimeField()
     results = models.OneToOneField(to=Note, related_name='test_note', on_delete=models.SET_NULL, null=True)
