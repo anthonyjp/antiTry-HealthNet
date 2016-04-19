@@ -144,7 +144,7 @@ def home(request):
     elif rules.test_rule('is_nurse', hn_user):
         pref_patients = Patient.objects.filter(pref_hospital=hn_user.hospital)
         # add in the admitted patients
-        admit_patients = Patient.objects.filter(cur_hospital=hn_user.hospital)
+        admit_patients = Patient.objects.filter(admission_status__hospital=hn_user.hospital)
         return render(request,
                       'registry/users/user_nurse.html',
                       {'form': form,

@@ -47,7 +47,7 @@
             </thead>
             <tbody>
             <tr>
-                <td>Patients that list hospital {{ hn_user.hospital }} as their preferred Hospital</td>
+                <td>Patients that list hospital <b>{{ hn_owner.hospital }}</b> as their preferred Hospital</td>
             </tr>
             {% for p in pref_patients %}
                 <tr>
@@ -70,7 +70,7 @@
             </tbody>
             <tbody>
             <tr>
-                <td>Patients are admitted to hospital {{ hn_user.hospital }}</td>
+                <td>Patients are admitted to hospital <b>{{ hn_owner.hospital }}</b></td>
             </tr>
             {% for p in admit_patients %}
                 <tr>
