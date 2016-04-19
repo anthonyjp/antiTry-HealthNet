@@ -338,7 +338,7 @@ def patient_transfer_delete(request, patient_uuid):
             patient.save()
 
             logger.action(request, LogAction.PA_TRANSFER_DENIED, '{0!r} to {1!s} denied by {2!r}', patient,
-                          patient.cur_hospital, user)
+                          patient.admission_status.hospital, user)
 
             return redirect('registry:home')
 
@@ -669,7 +669,6 @@ def admit_user(request, uuid):
             admission.admitted_by = str(admitter)
             admission.save()
 
-            admittee.cur_hospital = admission.hospital
             admittee.admission_status = admission
             admittee.save()
 
