@@ -209,7 +209,7 @@ class AdminRegistrationForm(models.ModelForm):
 
         self.fields['address_line_one'].widget.attrs['size'] = 45
         self.fields['address_line_two'].widget.attrs['size'] = 45
-
+        self.fields['address_line_two'].required = False
         self.fields['middle_initial'].required = False
         self.fields['middle_initial'].label = 'M.I.'
         self.fields['middle_initial'].widget.attrs['maxlength'] = 1
@@ -290,6 +290,7 @@ class DoctorRegistrationForm(models.ModelForm):
 
         self.fields['address_line_one'].widget.attrs['size'] = 45
         self.fields['address_line_two'].widget.attrs['size'] = 45
+        self.fields['address_line_two'].required = False
 
         self.fields['middle_initial'].required = False
         self.fields['middle_initial'].label = 'M.I.'
@@ -372,6 +373,7 @@ class NurseRegistrationForm(models.ModelForm):
 
         self.fields['address_line_one'].widget.attrs['size'] = 45
         self.fields['address_line_two'].widget.attrs['size'] = 45
+        self.fields['address_line_two'].required = False
 
         self.fields['middle_initial'].required = False
         self.fields['middle_initial'].label = 'M.I.'
