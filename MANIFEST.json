@@ -13,9 +13,9 @@
     ],
     "dirs": {
       "HealthNet/": "**/*.*",
-      "private_static/": "**/*.*",
       "registry/": "**/*.*",
       "static/": "**/*.*",
+      "bower_components/": "**/*.*",
       "template/": "**/*.*"
     }
   },

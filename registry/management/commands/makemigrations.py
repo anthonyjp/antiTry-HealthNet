@@ -1,4 +1,5 @@
 from django.core.management.commands import makemigrations
+from django.contrib.auth.management.commands import createsuperuser
 from django.db import migrations
 
 

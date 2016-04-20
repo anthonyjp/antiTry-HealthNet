@@ -59,7 +59,6 @@ def main():
                 for p in path.glob(antiglob):
                     positives = [x for x in positives if x != p]    # Very inefficient
             for p in positives:
-                print(p)
                 z.write(str(p))
 
     print("MAKE SURE TO SET DEBUG BACK TO TRUE FOR DEBUGGING!")

@@ -3,7 +3,7 @@
 /bower_components
 /node_modules
 /jspm_packages
-/private_static
+/static/compiled
 /.idea/*
 
 *.pyc

@@ -1,6 +1,9 @@
 if (!registry.has('data.logrender'))
     registry.module('data.logrender');
 
+const DEFAULT_OFFSET_DAYS_PAST = 2;
+const DEFAULT_OFFSET_DAYS_FUTURE = 2;
+
 registry.data.logrender = (function () {
 
     const csrf = registry.has('forms.user') ? registry.forms.user.csrf : $('[name="csrfmiddlewaretoken"]').val();
@@ -28,10 +31,10 @@ registry.data.logrender = (function () {
         var ignorereq = options.ignore || 'none';
 
         if (!from)
-            from = moment().subtract(1, 'days').format('YYYY-MM-DD');
+            from = moment().subtract(DEFAULT_OFFSET_DAYS_PAST, 'days').format('YYYY-MM-DD');
 
         if (!to)
-            to = moment().format('YYYY-MM-DD');
+            to = moment().add(DEFAULT_OFFSET_DAYS_FUTURE, 'days').format('YYYY-MM-DD');
 
         if (moment(from).isAfter(moment(to)))
             to = from;
@@ -63,14 +66,15 @@ registry.data.logrender = (function () {
                         body.prepend(sprintf(html, e.class, time, e.level, e.action, e.location, msg));
 
                         rendered = true;
-                        rendering = false;
                     });
                 }
+
+                rendering = false;
             },
             failure: function (resp) {
                 console.log('Failed!');
                 console.dir(resp);
-                rendering = true;
+                rendering = false;
             }
         })
     }
@@ -99,8 +103,8 @@ $(document).ready(function () {
     var startDatePicker = $("#log-start-date");
     var endDatePicker = $("#log-end-date");
 
-    startDatePicker.val(moment().subtract(1, 'days').format('MM/DD/YYYY'));
-    endDatePicker.val(moment().format('MM/DD/YYYY'));
+    startDatePicker.val(moment().subtract(DEFAULT_OFFSET_DAYS_PAST, 'days').format('MM/DD/YYYY'));
+    endDatePicker.val(moment().add(DEFAULT_OFFSET_DAYS_FUTURE, 'days').format('MM/DD/YYYY'));
 
     startDatePicker.change(renderHook);
     endDatePicker.change(renderHook);

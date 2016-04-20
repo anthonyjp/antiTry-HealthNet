@@ -18,6 +18,10 @@ class HNLogEntry(models.Model):
     action = models.SmallIntegerField(choices=LogAction.choices(), default=LogAction.GENERIC)
     message = models.CharField(max_length=500)
 
+    def __str__(self):
+        return "{!s} | [{!s}] at {} doing {!s}: {}".format(self.level, self.timestamp, self.where, self.action,
+                                                           self.message)
+
 
 class HNLogger(object):
     """

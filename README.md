@@ -1,4 +1,4 @@
-## antiTry HealthNet Implementation (Placeholder)
+## antiTry HealthNet
 ---
 
 ### Installation
@@ -14,7 +14,14 @@ For linux:
 
     run.sh
 
-Then simply go to `127.0.0.1:8000` and your app will be running! 
+Then simply go to `127.0.0.1:8000` and your app will be running! The scripts will make sure everything is set up properly assuming you
+have python3 setup properly (as 'python'). The script will also create a Super User with the credentials:
+
+- Email: admin@admin.com
+- Password: qwerty123
+
+And create a hospital called 'Test Hospital'. This will you to do almost any action currently available. The password can of course be
+changed in the admin site under '/admin'.
 
 ---
 #### Development Environment
@@ -61,13 +68,22 @@ This will run few a few steps:
 1. Check that DEBUG is set to false
 2. Execute `python manage.py check --deploy` which will be spit out and then you are asked to confirm to continue.
 3. Execute `python manage.py makemigrations`
-4. Execute `python manage.py migreate`
+4. Execute `python manage.py migrate`
 4. Read `MANIFEST.json`
     1. Retrieve APPNAME
     2. Retrieve VERSION
     3. Retrieve INCLUDES
+    4. Retrieve EXCLUDES and filter patterns out of INCLUDES
 5. Package all includes into a file named APPNAME-VERSION.zip
 
 Steps 3 and 4 can be skipped by adding the `--no-migrate` flag. 
 
 This will create a new `dist` directory containing the packaged app. Then it can be extracted anywhere.
+
+### Primary Developers:
+---
+- Matthew Crocco as Development Coordinator
+- Lisa Ni as Requirements Coordinator
+- Anthony Perez as Quality Assurance Coordinator
+- Alice Fischer as Team Coordinator
+- Kyle Scagnelli as Test Coordinator
