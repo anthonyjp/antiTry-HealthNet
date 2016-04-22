@@ -4,7 +4,7 @@
 /node_modules
 /jspm_packages
 /static/compiled
-/.idea/*
+/.idea
 
 *.pyc
 db.sqlite3

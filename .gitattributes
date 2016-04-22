@@ -7,6 +7,9 @@
 *.pyw 		text
 *.pyx  		text
 
+*.cmd       text eol=crlf
+*.xml       text=auto
+
 # Binary files
 *.db		binary
 *.p 		binary
