@@ -659,7 +659,7 @@ class PatientAdmitForm(models.ModelForm):
             self.fields['doctor'].queryset = Doctor.objects.filter(uuid=user.uuid)
             self.fields['hospital'].queryset = Hospital.objects.filter(provider_to=user)
         elif rules.test_rule('is_nurse', user):
-            self.fields['doctor'].queryset = Doctor.objects.filter(provider_to=user.hospital)
+            self.fields['doctor'].queryset = user.hospital.provider_to
             self.fields['hospital'].queryset = Hospital.objects.filter(name=user.hospital.name)
 
     class Meta:
@@ -719,7 +719,7 @@ class PatientTransferForm(models.ModelForm):
         # An admin will see his hospital and the doctors that work there
         if rules.test_rule('is_doctor', user):
             self.fields['doctor'].queryset = Doctor.objects.filter(uuid=user.uuid)
-            self.fields['hospital'].queryset = Hospital.objects.filter(provider_to=user)
+            self.fields['hospital'].queryset = user.hospitals.all()
         elif rules.test_rule('is_admin', user):
             self.fields['hospital'].queryset = Hospital.objects.filter(admin_to=user)
             self.fields['doctor'].queryset = Doctor.objects.filter(provider_to=user.hospital)

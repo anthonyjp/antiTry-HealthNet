@@ -43,6 +43,9 @@
                         </div>
                     </div>
                 </th>
+                <th id="theader">
+                    <div class="patientHead"><p>Admit Status</p></div>
+                </th>
             </tr>
             </thead>
             <tbody>
@@ -61,6 +64,17 @@
                                 <li><p id="patientDOB">{{ p.date_of_birth }}</p></li>
                             </ul>
                         </div>
+                    </td>
+                    <td class="patientBody">
+                        {% if p.is_admitted %}
+                            Admitted<br>
+                            Hospital: {{ p.admission_status.hospital }}
+                        {% else %}
+                            Not Admitted<br>
+                            <a href="{% url 'registry:patient_admit' p.uuid %}">
+                                <button>Admit Patient</button>
+                            </a>
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}
