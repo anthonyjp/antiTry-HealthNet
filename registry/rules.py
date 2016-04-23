@@ -55,13 +55,6 @@ def is_self(user_one, user_two):
 
 
 @predicate
-def is_admitted(patient):
-    if patient.admission_status is None:
-        return False
-    else:
-        return True
-
-@predicate
 def time_gt(time1, time2):
     return time1 > time2
 
@@ -69,7 +62,6 @@ def time_gt(time1, time2):
 has_appointment_check = (is_doctor | is_nurse) & has_appointment
 is_doctor_check = is_doctor & is_doctor_of
 is_nurse_check = is_nurse & is_nurse_for
-is_patient_in = is_patient & is_admitted
 # Define Permissions
 
 rules.add_perm('registry.create_appointment', is_patient | is_doctor | is_nurse)
@@ -83,8 +75,6 @@ rules.add_perm('registry.medinfo', is_doctor | is_nurse)
 
 rules.add_perm('registry.prescriptions', is_doctor)
 
-rules.add_perm('registry.staff_admit', is_doctor_check | is_nurse_check)
-rules.add_perm('registry.patient_admit', is_patient_in)
 rules.add_perm('registry.discharge', is_doctor)
 
 rules.add_perm('registry.transfer_request', is_doctor | is_administrator)
