@@ -60,7 +60,11 @@
                             {
                                 title: "{{ appt.patient|stringify }} & Dr. {{ appt.doctor|stringify }}",
                                 start: "{{ appt.time.isoformat }}",
-                                url: "{% url 'registry:appt_edit' appt.pk %}",
+                                url: {%  if appt.is_future %}
+                                    "{% url 'registry:appt_edit' appt.pk %}",
+                                {% else %}
+                                    "{% url 'registry:appt_view' appt.pk %}",
+                                {% endif %}
                                 allDay: false
                             }{% if not forloop.last %},{% endif %}
                         {% endfor %}

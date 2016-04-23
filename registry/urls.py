@@ -28,6 +28,7 @@ urlpatterns = [
         name='patient_transfer_delete'),
     url(r'^appt$', views.appt_schedule, name='appt_create'),
     url(r'^appt/(?P<pk>[0-9]+)$', views.appt_edit, name='appt_edit'),
+    url(r'^appt/view/(?P<pk>[0-9]+)$', views.appt_view, name='appt_view'),
     url(r'^appt/(?P<pk>[0-9]+)/delete$', views.appt_delete, name='appt_delete'),
     url(r'^user$', views.list_user, name='list_user'),
     url(r'^mc/(?P<patient_uuid>.*)$', views.mc_add, name='mc_add'),

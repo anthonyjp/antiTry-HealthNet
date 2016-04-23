@@ -149,7 +149,7 @@ def home(request):
                       'registry/users/user_nurse.html',
                       {'form': form,
                        'hn_owner': hn_user,
-                       'appointments': hn_user.appointment_set.all(),
+                       'appointments': hn_user.hospital.appointment_set.all(),
                        'pref_patients': pref_patients,
                        'admit_patients': admit_patients,
                        }, context_instance=RequestContext(request))
@@ -422,6 +422,10 @@ def appt_schedule(request):
             else:
                 error = "Appointment Error: That date and time has already happen."
     else:
+        if rules.test_rule('is_administrator', user):
+            return HttpResponseNotFound(
+                '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+
         if 'start' in request.GET:
             form = AppointmentSchedulingForm(user=user, initial={'time': dateutil.parser.parse(request.GET['start'])})
         else:
@@ -436,6 +440,11 @@ def appt_schedule(request):
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/appt_edit.html')
 def appt_edit(request, pk):
+    user = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    if rules.test_rule('is_administrator', user):
+        return HttpResponseNotFound(
+            '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+
     initial_appointment = get_object_or_404(Appointment, pk=pk)
     appt = get_object_or_404(Appointment, pk=pk)
     initial_start_time = appt.time
@@ -466,6 +475,26 @@ def appt_edit(request, pk):
     else:
         form = AppointmentEditForm(instance=appt, appt_id=pk)
     return {'form': form, 'appt': initial_appointment, 'error': error}
+
+
+@login_required(login_url=reverse_lazy('registry:login'))
+@render_to('registry/data/appt_view.html')
+def appt_view(request, pk):
+    appt = get_object_or_404(Appointment, pk=pk)
+    user = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    if rules.test_rule('is_doctor', user) and (appt.doctor.uuid != user.uuid):
+        return HttpResponseNotFound(
+            '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    elif rules.test_rule('is_patient', user) and (appt.patient.uuid != user.uuid):
+        return HttpResponseNotFound(
+            '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    elif rules.test_rule('is_nurse', user) and appt.location != user.hospital:
+        return HttpResponseNotFound(
+            '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    elif rules.test_rule('is_administrator', user):
+        return HttpResponseNotFound(
+            '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    return {'appt': appt}
 
 
 @login_required(login_url=reverse_lazy('registry:login'))

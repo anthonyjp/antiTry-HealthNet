@@ -291,6 +291,8 @@ class Appointment(models.Model):
         time_str = self.time.strftime("%a %x at %X")
         return "%s with Dr. %s, %s, at %s" % (str(self.patient), str(self.doctor), str(self.location), time_str)
 
+    def is_future(self):
+        return self.time >= datetime.now()
 
 class Note(models.Model):
     """
