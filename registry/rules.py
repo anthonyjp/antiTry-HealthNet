@@ -1,4 +1,4 @@
-# Pycharm isnt pushing correctly so I'm testing this
+# Pycharm isnt pushing correctly so I'm testing this lol
 import rules
 from rules.predicates import predicate
 from django.db.models import Q
