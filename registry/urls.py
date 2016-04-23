@@ -48,6 +48,7 @@ urlpatterns = [
 
     # RX Related URLs
     url(r'^rx/(?P<pk>[0-9]+)$', views.rx_op, name='rx'),
+    url(r'^rx/create/(?P<patient_uuid>.*)$', views.rx_create, name='rx_create'),
 
     # Message Related URLs
     url(r'^msg$', views.msg_create, name='msg_create'),

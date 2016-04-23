@@ -1,7 +1,7 @@
 import rules
 from rules.predicates import predicate
-
-from registry.models import Patient, Doctor, Nurse, Administrator, User
+from django.db.models import Q
+from registry.models import Patient, Doctor, Nurse, Administrator, User, Appointment
 
 
 # Define All Predicates
@@ -21,8 +21,19 @@ is_administrator = is_user(Administrator)
 
 @predicate
 def is_doctor_of(doctor, patient):
-    return doctor.patient_set.filter(pk=patient.uuid).exists()
+    provider = doctor.providers.filter(pk=patient.uuid).exists()
+    if patient.admission_status is not None:
+        transfer_doctor = (patient.admission_status.doctor.uuid == doctor.uuid)
+    else:
+        transfer_doctor = False
+    return provider or transfer_doctor
 
+
+@predicate
+def is_nurse_for(nurse, patient):
+    # check only appts that
+    appt_list = patient.appointment_set.filter(Q(is_future=False) | Q(is_today=True))
+    return nurse.hospital == patient.pref_hospital or appt_list.filter(location=nurse.hospital).exists()
 
 @predicate
 def has_appointment(user, patient):
@@ -44,13 +55,21 @@ def is_self(user_one, user_two):
 
 
 @predicate
+def is_admitted(patient):
+    if patient.admission_status is None:
+        return False
+    else:
+        return True
+
+@predicate
 def time_gt(time1, time2):
     return time1 > time2
 
 
 has_appointment_check = (is_doctor | is_nurse) & has_appointment
 is_doctor_check = is_doctor & is_doctor_of
-
+is_nurse_check = is_nurse & is_nurse_for
+is_patient_in = is_patient & is_admitted
 # Define Permissions
 
 rules.add_perm('registry.create_appointment', is_patient | is_doctor | is_nurse)
@@ -64,7 +83,8 @@ rules.add_perm('registry.medinfo', is_doctor | is_nurse)
 
 rules.add_perm('registry.prescriptions', is_doctor)
 
-rules.add_perm('registry.admit', is_doctor | is_nurse)
+rules.add_perm('registry.staff_admit', is_doctor_check | is_nurse_check)
+rules.add_perm('registry.patient_admit', is_patient_in)
 rules.add_perm('registry.discharge', is_doctor)
 
 rules.add_perm('registry.transfer_request', is_doctor | is_administrator)

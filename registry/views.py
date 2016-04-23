@@ -223,7 +223,7 @@ def patient_admit(request, patient_uuid):
     next_location = None
     if rules.test_rule('is_doctor', user) or rules.test_rule('is_nurse', user):
         if request.method == "POST":
-            form = PatientAdmitForm(request.POST, user)
+            form = PatientAdmitForm(request.POST, user=user)
             if form.is_valid():
                 admit_request = form.save(commit=False)
                 timerange = TimeRange.objects.create()
@@ -238,7 +238,7 @@ def patient_admit(request, patient_uuid):
 
                 return redirect('registry:home')
         else:
-            form = PatientAdmitForm(user)
+            form = PatientAdmitForm(user=user)
 
             if 'next' in request.GET:
                 next_location = request.GET['next']

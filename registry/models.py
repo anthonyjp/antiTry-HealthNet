@@ -294,6 +294,10 @@ class Appointment(models.Model):
     def is_future(self):
         return self.time >= datetime.now()
 
+    def is_today(self):
+        now = datetime.now()
+        return self.time.date() == now.date()
+
 class Note(models.Model):
     """
     A note object which consists of the author, timestamp of when it was created, the content as a text field,

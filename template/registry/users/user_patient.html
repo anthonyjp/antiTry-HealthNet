@@ -42,42 +42,7 @@
                     <label>Blood Type:</label><input data-field="blood_type" class="editable" type="text"
                                                      value="{% labelify hn_owner.blood_type 'blood' %}"/><br>
                 </form>
-                <table>
-                    <tr>
-                        <th id="theader" colspan="3">
-                            <div>
-                                <p id="patientTitle">Medical Conditions</p>
-                            </div>
-                        </th>
-                    </tr>
-
-                        {% for mc in medical_conditions %}
-                            <tr>
-                            <td>{{ mc }}</td>
-                            </tr>
-                        {% endfor %}
-                    <tr>
-                        <td>
-                            <a href="{% url 'registry:mc_add' hn_owner.uuid %}">
-                                <button>Add Medical Condition</button>
-                            </a>
-                        </td>
-                    </tr>
-                </table>
-                <table>
-                    <tr>
-                        <th id="theader" colspan="3">
-                            <div>
-                                <p id="patientTitle">Medical History</p>
-                            </div>
-                        </th>
-                    </tr>
-                    <tr>
-                        {% for mh in medical_history %}
-                            <td>{{ mh }}</td>
-                        {% endfor %}
-                    </tr>
-                </table>
+                {% include "registry/components/prescription_list.html" %}
             </div>
 
             <div id="tab3" class="tab">
@@ -99,5 +64,4 @@
         </div>
     </div>
 
-    {% include "registry/components/prescription_list.html" %}
 {% endblock %}

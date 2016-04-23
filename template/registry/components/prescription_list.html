@@ -1,6 +1,42 @@
 {% if rxs %}
     <div id="tab8" class="tab">
-        Medical Tests will go here!!
+        <table>
+            <tr>
+                <th id="theader" colspan="3">
+                    <div>
+                        <p id="patientTitle">Medical Conditions</p>
+                    </div>
+                </th>
+            </tr>
+
+            {% for mc in medical_conditions %}
+                <tr>
+                    <td>{{ mc }}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td>
+                    <a href="{% url 'registry:mc_add' hn_owner.uuid %}">
+                        <button>Add Medical Condition</button>
+                    </a>
+                </td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <th id="theader" colspan="3">
+                    <div>
+                        <p id="patientTitle">Medical History</p>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                {% for mh in medical_history %}
+                    <td>{{ mh }}</td>
+                {% endfor %}
+            </tr>
+        </table>
     </div>
 
     <div id="tab9" class="tab">
