@@ -142,12 +142,13 @@ def home(request):
                        }, context_instance=RequestContext(request))
 
     elif rules.test_rule('is_nurse', hn_user):
+        patients_list = Patient.objects.all()
         return render(request,
                       'registry/users/user_nurse.html',
                       {'form': form,
                        'hn_owner': hn_user,
                        'appointments': hn_user.hospital.appointment_set.all(),
-                       'patients': Patient.objects.all(),
+                       'patients': patients_list,
                        }, context_instance=RequestContext(request))
 
     else:
