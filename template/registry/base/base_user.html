@@ -31,7 +31,9 @@
         <li><p id="leftName"
                class="center">{{ hn_owner.first_name }} {{ hn_owner.middle_initial }} {{ hn_owner.last_name }}</p></li>
         <li><p id="leftDOB">{{ hn_owner.date_of_birth }}</p></li>
-        {% if patient_admit %}
+
+        {% has_perm 'registry.patient_admit' hn_owner as patient_info %}
+        {% if patient_info %}
                 Admitted<br>
                 Hospital: {{ hn_owner.admission_status.hospital }}
         {% endif %}

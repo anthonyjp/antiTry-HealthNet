@@ -20,6 +20,10 @@ is_administrator = is_user(Administrator)
 
 
 @predicate
+def is_admit(patient):
+    return patient.is_admitted()
+
+@predicate
 def is_doctor_of(doctor, patient):
     provider = doctor.providers.filter(pk=patient.uuid).exists()
     if patient.admission_status is not None:
@@ -27,7 +31,6 @@ def is_doctor_of(doctor, patient):
     else:
         transfer_doctor = False
     return provider or transfer_doctor
-
 
 @predicate
 def is_nurse_for(nurse, patient):
@@ -70,6 +73,7 @@ rules.add_perm('registry.cancel_appointment', is_patient | is_doctor)
 
 rules.add_perm('registry.rx', is_doctor_check)
 
+rules.add_perm('registry.patient_admit', is_patient & is_admit)
 rules.add_perm('registry.patientinfo', is_patient)
 rules.add_perm('registry.medinfo', is_doctor | is_nurse)
 
