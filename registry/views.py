@@ -129,15 +129,18 @@ def home(request):
                        }, context_instance=RequestContext(request))
 
     elif rules.test_rule('is_doctor', hn_user):
-        patients = Patient.objects.filter(provider=hn_user)
-        not_patients = Patient.objects.exclude(provider=hn_user)
+
+        patients = Patient.objects.all()
+        # the patients a doctor can discharge
+        patients_admitted = Patient.objects.filter(admission_status__isnull=False,
+                                                   admission_status__doctor_id=hn_user.uuid)
         return render(request,
                       'registry/users/user_doctor.html',
                       {'form': form,
                        'hn_owner': hn_user,
                        'hn_visitor': hn_user,
                        'appointments': hn_user.appointment_set.all(),
-                       'not_patients': not_patients,
+                       'doctors_patients': patients_admitted,
                        'patients': patients,
                        }, context_instance=RequestContext(request))
 
