@@ -142,16 +142,12 @@ def home(request):
                        }, context_instance=RequestContext(request))
 
     elif rules.test_rule('is_nurse', hn_user):
-        pref_patients = Patient.objects.filter(pref_hospital=hn_user.hospital)
-        # add in the admitted patients
-        admit_patients = Patient.objects.filter(admission_status__hospital=hn_user.hospital)
         return render(request,
                       'registry/users/user_nurse.html',
                       {'form': form,
                        'hn_owner': hn_user,
                        'appointments': hn_user.hospital.appointment_set.all(),
-                       'pref_patients': pref_patients,
-                       'admit_patients': admit_patients,
+                       'patients': Patient.objects.all(),
                        }, context_instance=RequestContext(request))
 
     else:

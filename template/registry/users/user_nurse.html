@@ -47,32 +47,9 @@
             </thead>
             <tbody>
             <tr>
-                <td>Patients that list hospital <b>{{ hn_owner.hospital }}</b> as their preferred Hospital</td>
+                <td>ALL PATIENTS</td>
             </tr>
-            {% for p in pref_patients %}
-                <tr>
-                    <td class="patientBody">
-                        <div>
-                            <div id="patientPic"><img id="patientAvatar"
-                                                      src="{% static "registry/img/logo.png" %}"/></div>
-                            <ul>
-                                <li>
-                                    <a href="{% url 'registry:user' p.uuid %}">
-                                        <p id="patientName">{{ p.first_name }} {{ p.middle_initial }} {{ p.last_name }}</p>
-                                    </a>
-                                </li>
-                                <li><p id="patientDOB">{{ p.date_of_birth }}</p></li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-            <tbody>
-            <tr>
-                <td>Patients are admitted to hospital <b>{{ hn_owner.hospital }}</b></td>
-            </tr>
-            {% for p in admit_patients %}
+            {% for p in patients %}
                 <tr>
                     <td class="patientBody">
                         <div>
