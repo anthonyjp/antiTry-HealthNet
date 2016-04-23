@@ -1,99 +1,113 @@
-{% if rxs %}
-    <div id="tab8" class="tab">
-        <table>
-            <tr>
-                <th id="theader" colspan="3">
-                    <div>
-                        <p id="patientTitle">Medical Conditions</p>
-                    </div>
-                </th>
-            </tr>
+{% load rules %}
+{% load sass_tags %}
+{% load registry_tags %}
+{% load crispy_forms_tags %}
+{% has_perm 'registry.medinfo' hn_visitor as can_add %}
 
-            {% for mc in medical_conditions %}
-                <tr>
-                    <td>{{ mc }}</td>
-                </tr>
-            {% endfor %}
-            <tr>
-                <td>
-                    <a href="{% url 'registry:mc_add' hn_owner.uuid %}">
-                        <button>Add Medical Condition</button>
-                    </a>
-                </td>
-            </tr>
-        </table>
+<form id="form">
+    <label>Height:</label><input data-field="height" class="editable" type="text" value="{{ hn_owner.height }}"/><br>
+    <label>Weight:</label><input data-field="weight" class="editable" type="text" value="{{ hn_owner.weight }}"/><br>
+    <label>Blood Type:</label><input data-field="blood_type" class="editable" type="text"
+                                     value="{% labelify hn_owner.blood_type 'blood' %}"/><br>
+</form>
 
-        <table>
-            <tr>
-                <th id="theader" colspan="3">
-                    <div>
-                        <p id="patientTitle">Medical History</p>
-                    </div>
-                </th>
-            </tr>
-            <tr>
-                {% for mh in medical_history %}
-                    <td>{{ mh }}</td>
-                {% endfor %}
-            </tr>
-        </table>
-    </div>
+<table>
+    <tr>
+        <th id="theader" colspan="3">
+            <div>
+                <p id="patientTitle">Medical Conditions</p>
+            </div>
+        </th>
+    </tr>
 
-    <div id="tab9" class="tab">
-        <table id="prestable">
-            <thead>
-            <tr>
-                <th>
-                    <div class="presHead">Prescription</div>
-                </th>
-                <th>
-                    <div class="presHead">Count</div>
-                </th>
-                <th>
-                    <div class="presHead">Amount</div>
-                </th>
-                <th>
-                    <div class="presHead">Refills</div>
-                </th>
-                <th>
-                    <div class="presHead">End Date</div>
-                </th>
-                <th>
-                    <div class="presHead">Delete</div>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for rx in rxs %}
-                <tr>
-                    <td>
-                        <div>{{ rx.drug }}</div>
-                    </td>
-                    <td>
-                        <div>{{ rx.count }}</div>
-                    </td>
-                    <td>
-                        <div>{{ rx.amount }}</div>
-                    </td>
-                    <td>
-                        <div>{{ rx.refills }}</div>
-                    </td>
-                    <td>
-                        <div>{{ rx.time_range.end_time }}</div>
-                    </td>
-                    <td>
-                        <div><a href="{% url 'registry:rx_delete' rx.pk %}">
-                            <button>Delete</button>
-                        </a></div>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        <div id="presbuttons">
-            <a href="{% url 'registry:rx_create' patient.uuid %}">
-                <button>Add Prescription</button>
-            </a>
-        </div>
-    </div>
-{% endif %}
+    {% for mc in medical_conditions %}
+        <tr>
+            <td>{{ mc }}</td>
+        </tr>
+    {% endfor %}
+
+    {% if can_add %}
+        <tr>
+            <td>
+                <a href="{% url 'registry:mc_add' hn_owner.uuid %}">
+                    <button>Add Medical Condition</button>
+                </a>
+            </td>
+        </tr>
+    {% endif %}
+
+</table>
+
+<table>
+    <tr>
+        <th id="theader" colspan="3">
+            <div>
+                <p id="patientTitle">Medical History</p>
+            </div>
+        </th>
+    </tr>
+
+    <tr>
+        {% for mh in medical_history %}
+            <td>{{ mh }}</td>
+        {% endfor %}
+    </tr>
+</table>
+
+<table id="prestable">
+    <thead>
+    <tr>
+        <th>
+            <div class="presHead">Prescription</div>
+        </th>
+        <th>
+            <div class="presHead">Count</div>
+        </th>
+        <th>
+            <div class="presHead">Amount</div>
+        </th>
+        <th>
+            <div class="presHead">Refills</div>
+        </th>
+        <th>
+            <div class="presHead">End Date</div>
+        </th>
+        <th>
+            <div class="presHead">Delete</div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for rx in rxs %}
+        <tr>
+            <td>
+                <div>{{ rx.drug }}</div>
+            </td>
+            <td>
+                <div>{{ rx.count }}</div>
+            </td>
+            <td>
+                <div>{{ rx.amount }}</div>
+            </td>
+            <td>
+                <div>{{ rx.refills }}</div>
+            </td>
+            <td>
+                <div>{{ rx.time_range.end_time }}</div>
+            </td>
+            <td>
+                <div><a href="{% url 'registry:rx_delete' rx.pk %}">
+                    <button>Delete</button>
+                </a></div>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<div id="presbuttons">
+    {% if can_add %}
+        <a href="{% url 'registry:rx_create' patient.uuid %}">
+            <button>Add Prescription</button>
+        </a>
+    {% endif %}
+</div>

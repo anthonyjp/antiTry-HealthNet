@@ -34,14 +34,6 @@
 
 {% block userContent %}
             <div id="tab2" class="tab">
-                <form id="form">
-                    <label>Height:</label><input data-field="height" class="editable" type="text"
-                                                 value="{{ hn_owner.height }}"/><br>
-                    <label>Weight:</label><input data-field="weight" class="editable" type="text"
-                                                 value="{{ hn_owner.weight }}"/><br>
-                    <label>Blood Type:</label><input data-field="blood_type" class="editable" type="text"
-                                                     value="{% labelify hn_owner.blood_type 'blood' %}"/><br>
-                </form>
                 {% include "registry/components/prescription_list.html" %}
             </div>
 
@@ -52,7 +44,9 @@
                 </form>
             </div>
 
-            <div id="tab5" class="tab">
+
+
+    <div id="tab5" class="tab">
                 <div class="container calendar">
                     <div id="calendar"></div>
                 </div>

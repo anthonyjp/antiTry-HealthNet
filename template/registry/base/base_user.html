@@ -41,14 +41,23 @@
     </ul>
 </div>
 
+
 <div id="right">
     {% csrf_token %}
         <ul id="tab-links">
             <li><a href ="#tab1" rel="tab1" class="hn-tab">Personal</a></li>
             {% block userLinks %}{% endblock %}
 
+            {% has_perm 'registry.edit_patient' hn_visitor as can_view %}
+            {% has_perm 'registry.patientinfo' hn_owner as patient %}
+
+            {% if can_view and patient %}
+                <li><a href="#tab2" rel="tab2" class="hn-tab">Medical</a></li>
+            {% endif %}
+
+
             {% if has_inbox %}
-            <li><a href ="#tab6" rel="tab6" class="hn-tab">Inbox</a></li>
+                <li><a href="#tab6" rel="tab6" class="hn-tab">Inbox</a></li>
             {% endif %}
         </ul>
 
@@ -97,6 +106,14 @@
                     <br>
                 </form>
             </div>
+
+
+            {% if can_view and patient %}
+                <div id="tab2" class="tab">
+                    {% include "registry/components/prescription_list.html" %}
+                </div>
+            {% endif %}
+
 
             {% if has_inbox %}
             <div id="tab6" class="tab">

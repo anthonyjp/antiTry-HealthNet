@@ -84,7 +84,7 @@ rules.add_perm('registry.discharge', is_doctor)
 rules.add_perm('registry.transfer_request', is_doctor | is_administrator)
 
 rules.add_perm('registry.view_patient', is_patient | is_doctor | is_nurse)
-rules.add_perm('registry.edit_patient', (is_patient & is_self) | is_nurse | is_doctor)
+rules.add_perm('registry.edit_patient', (is_patient & is_self) | is_nurse_check | is_doctor)
 
 rules.add_perm('registry.inbox', is_self)
 
