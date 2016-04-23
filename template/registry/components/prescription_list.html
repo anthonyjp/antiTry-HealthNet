@@ -3,7 +3,7 @@
 {% load registry_tags %}
 {% load crispy_forms_tags %}
 {% has_perm 'registry.medinfo' hn_visitor as can_add %}
-
+{# Pycharm isnt pushing correctly so I'm testing this #}
 <form id="form">
     <label>Height:</label><input data-field="height" class="editable" type="text" value="{{ hn_owner.height }}"/><br>
     <label>Weight:</label><input data-field="weight" class="editable" type="text" value="{{ hn_owner.weight }}"/><br>
