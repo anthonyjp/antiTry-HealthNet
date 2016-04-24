@@ -221,28 +221,37 @@ def patient_admit(request, patient_uuid):
     patient = get_object_or_404(Patient, uuid=patient_uuid)
     # next_location is where it goes if you cancel
     next_location = None
+    location_found = False
+    error = ""
     if rules.test_rule('is_doctor', user) or rules.test_rule('is_nurse', user):
         if request.method == "POST":
-            form = PatientAdmitForm(request.POST, user=user)
+            form = PatientAdmitForm(request.POST)
             if form.is_valid():
                 admit_request = form.save(commit=False)
-                timerange = TimeRange.objects.create()
-                admit_request.admission_time = timerange
-                admit_request.save()
+                for hospital in Hospital.objects.filter(provider_to=admit_request.doctor):
+                    if admit_request.hospital == hospital:
+                        location_found = True
+                        break
+                if location_found:
+                    timerange = TimeRange.objects.create()
+                    admit_request.admission_time = timerange
+                    admit_request.save()
 
-                patient.admission_status = admit_request
-                patient.save()
+                    patient.admission_status = admit_request
+                    patient.save()
 
-                logger.action(request, LogAction.PA_ADMIT, '{0!r} admitted by {1!r} to {2!s}', patient, user,
-                              admit_request.hospital)
+                    logger.action(request, LogAction.PA_ADMIT, '{0!r} admitted by {1!r} to {2!s}', patient, user,
+                                  admit_request.hospital)
 
-                return redirect('registry:home')
+                    return redirect('registry:home')
+                else:
+                    error = "Error: " + str(admit_request.doctor) + " does not work at " + str(admit_request.hospital)
         else:
-            form = PatientAdmitForm(user=user)
+            form = PatientAdmitForm()
 
             if 'next' in request.GET:
                 next_location = request.GET['next']
-        return {'form': form, 'next_url': next_location, 'patient': patient}
+        return {'form': form, 'next_url': next_location, 'patient': patient, 'error': error}
 
     return HttpResponseNotFound(
             '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
@@ -384,7 +393,7 @@ def patient_discharge(request, patient_uuid):
 
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/appt_create.html')
-def appt_schedule(request):
+def appt_create(request):
     user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     next_location = None
     error = ""
@@ -676,10 +685,11 @@ def view_user(request, uuid):
     visitor = User.objects.get_subclass(pk=request.user.hn_user.pk)
 
     rxs = None
-    if rules.test_rule('is_doctor', visitor) and visitor.has_perm('registry.view_patient'):
-        rxs = owner.prescription_set.filter(doctor=visitor)
-    elif rules.test_rule('is_self', owner, visitor):
-        rxs = owner.prescription_set
+    if rules.test_rule('is_patient', owner):
+        if rules.test_rule('is_doctor', visitor) and visitor.has_perm('registry.view_patient'):
+            rxs = owner.prescription_set.filter(doctor=visitor)
+        elif rules.test_rule('is_self', owner, visitor):
+            rxs = owner.prescription_set
 
     return {"hn_owner": owner, "hn_visitor": visitor, 'rxs': rxs}
 

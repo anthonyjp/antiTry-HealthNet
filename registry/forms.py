@@ -633,7 +633,6 @@ class PatientAdmitForm(models.ModelForm):
     model = AdmissionInfo
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user')
         super(PatientAdmitForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form admittance'
@@ -655,12 +654,6 @@ class PatientAdmitForm(models.ModelForm):
             )
         )
 
-        if rules.test_rule('is_doctor', user):
-            self.fields['doctor'].queryset = Doctor.objects.filter(uuid=user.uuid)
-            self.fields['hospital'].queryset = Hospital.objects.filter(provider_to=user)
-        elif rules.test_rule('is_nurse', user):
-            self.fields['doctor'].queryset = user.hospital.provider_to
-            self.fields['hospital'].queryset = Hospital.objects.filter(name=user.hospital.name)
 
     class Meta:
         model = AdmissionInfo
