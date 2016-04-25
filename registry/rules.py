@@ -68,6 +68,8 @@ is_doctor_check = is_doctor & is_doctor_of
 is_nurse_check = is_nurse & is_nurse_for
 # Define Permissions
 
+rules.add_perm('registry.is_admin_or_nurse', is_nurse | is_administrator)
+
 rules.add_perm('registry.create_appointment', is_patient | is_doctor | is_nurse)
 rules.add_perm('registry.update_appointment', is_patient | is_doctor | is_nurse)
 rules.add_perm('registry.cancel_appointment', is_patient | is_doctor)
