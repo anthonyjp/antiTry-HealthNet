@@ -292,78 +292,6 @@ def transfer(request, patient_uuid):
         '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
 
 
-"""
-@login_required(login_url=reverse_lazy('registry:login'))
-@render_to('registry/data/patient_transfer_approve.html')
-def patient_transfer_approve(request, patient_uuid):
-    user = User.objects.get_subclass(pk=request.user.hn_user.pk)
-    patient = get_object_or_404(Patient, uuid=patient_uuid)
-    # next_location is where it goes if you cancel
-    next_location = None
-    if rules.test_rule('is_doctor', user) or rules.test_rule('is_administer', user):
-        if request.method == "POST":
-            form = ApproveTransferForm(request.POST, instance=patient.transfer_status)
-            if form.is_valid():
-                transfer_request = patient.transfer_status
-
-                old_admit = patient.admission_status
-                old_admit.admission_time.end_time = tz.now()
-                old_admit.end_admission()
-
-                new_admit = AdmissionInfo.objects.create(hospital=transfer_request.hospital,
-                                                         reason=transfer_request.reason,
-                                                         admission_time=TimeRange.objects.create(),
-                                                         doctor=transfer_request.doctor)
-
-                patient.transfer_status = None
-                patient.admission_status = new_admit
-                patient.save()
-
-                logger.action(request, LogAction.PA_TRANSFER_ACCEPTED, '{0!r} to {1!s} accepted by {2!r}', patient,
-                              old_admit.hospital, user)
-                logger.action(request, LogAction.PA_TRANSFERRED, '{0!r} to {1!s}', patient, new_admit.hospital)
-
-                return redirect('registry:home')
-        else:
-            form = ApproveTransferForm(instance=patient.transfer_status)
-
-            if 'next' in request.GET:
-                next_location = request.GET['next']
-        return {'form': form, 'next_url': next_location, 'patient': patient}
-    return HttpResponseNotFound(
-        '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
-
-
-@login_required(login_url=reverse_lazy('registry:login'))
-@render_to('registry/data/patient_transfer_delete.html')
-def patient_transfer_delete(request, patient_uuid):
-    user = User.objects.get_subclass(pk=request.user.hn_user.pk)
-    if rules.test_rule('is_nurse', user) or rules.test_rule('is_patient', user):
-        return HttpResponseNotFound(
-            '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
-    patient = get_object_or_404(Patient, uuid=patient_uuid)
-    if rules.test_rule('is_doctor', user):
-        if patient.provider.uuid != user.uuid:
-            return HttpResponseNotFound(
-                '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
-    if request.method == 'POST':
-        form = DeleteTransferForm(request.POST, instance=patient.transfer_status)
-        if form.is_valid():
-            patient.transfer_status = None
-            patient.save()
-
-            logger.action(request, LogAction.PA_TRANSFER_DENIED, '{0!r} to {1!s} denied by {2!r}', patient,
-                          patient.admission_status.hospital, user)
-
-            return redirect('registry:home')
-
-    else:
-        form = DeleteTransferForm(instance=patient.transfer_status)
-
-    template_vars = {'form': form}
-    return template_vars
-"""
-
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/patient_discharge.html')
 def patient_discharge(request, patient_uuid):
@@ -377,7 +305,7 @@ def patient_discharge(request, patient_uuid):
             return HttpResponseNotFound(
                 '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     if request.method == 'POST':
-        form = DeleteAdmitForm(request.POST, instance=patient.admission_status)
+        form = DischargeForm(request.POST, instance=patient.admission_status)
         if form.is_valid():
             patient.admission_status.end_admission()
             patient.admission_status = None
@@ -388,7 +316,7 @@ def patient_discharge(request, patient_uuid):
             return redirect('registry:home')
 
     else:
-        form = DeleteAdmitForm(instance=patient.admission_status)
+        form = DischargeForm(instance=patient.admission_status)
 
     template_vars = {'form': form}
     return template_vars

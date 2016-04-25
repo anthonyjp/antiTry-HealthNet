@@ -661,11 +661,11 @@ class PatientAdmitForm(models.ModelForm):
         exclude = ['patient', 'admitted_by', 'admission_time']
 
 
-class DeleteAdmitForm(models.ModelForm):
+class DischargeForm(models.ModelForm):
     """
-    Name: DeleteAdmitForm
+    Name: DischargeForm
 
-    Deletion of Admit Info form
+    Discharge form
     """
 
     class Meta:
