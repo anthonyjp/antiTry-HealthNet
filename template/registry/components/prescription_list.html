@@ -37,7 +37,7 @@
     {% endif %}
 
 </table>
-
+<br><br>
 <table>
     <tr>
         <th id="theader" colspan="3">
@@ -53,7 +53,7 @@
         {% endfor %}
     </tr>
 </table>
-
+<br><br>
 <table id="prestable">
     <thead>
     <tr>
@@ -72,9 +72,11 @@
         <th>
             <div class="presHead">End Date</div>
         </th>
-        <th>
-            <div class="presHead">Delete</div>
-        </th>
+        {% if can_add %}
+            <th>
+                <div class="presHead">Delete</div>
+            </th>
+        {% endif %}
     </tr>
     </thead>
     <tbody>
@@ -95,11 +97,14 @@
             <td>
                 <div>{{ rx.time_range.end_time }}</div>
             </td>
-            <td>
-                <div><a href="{% url 'registry:rx_delete' rx.pk %}">
-                    <button>Delete</button>
-                </a></div>
-            </td>
+            {% if can_add %}
+                <td>
+
+                    <div><a href="{% url 'registry:rx_delete' rx.pk %}">
+                        <button>Delete</button>
+                    </a></div>
+                </td>
+            {% endif %}
         </tr>
     {% endfor %}
     </tbody>
