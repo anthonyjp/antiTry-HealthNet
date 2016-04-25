@@ -153,40 +153,28 @@ class AdmissionInfo(models.Model):
     """
     reason = models.SmallIntegerField(choices=AdmitOptions.choices(), default=AdmitOptions.UNKNOWN)
     admission_time = models.OneToOneField(to=TimeRange, on_delete=models.SET_NULL, null=True)
-    hospital = models.ForeignKey(to=Hospital)
-    doctor = models.ForeignKey('Doctor')
+    hospital = models.ForeignKey(to=Hospital, null=True)
+    doctor = models.ForeignKey('Doctor', null=True)
 
     def end_admission(self):
+        """
         if self.medicalhistory:
             history = self.medicalhistory
             self.medicalhistory = None
             history.delete()
-
+        """
         self.admission_time.end_time = tz.now()
+        self.admission_time.save()
         MedicalHistory.objects.create(patient=self.patient_user, admission_details=self)
         self.save()
 
     def __str__(self):
-        return "Admitted by %s to %s on %s" % \
-               (self.doctor, self.hospital, self.admission_time.start_time)
-
-
-class TransferInfo(models.Model):
-    """
-    Transfer info is an object that consists of the patient as a text field, admitted by which is the string
-    of the user who is submitting the transfer, the hospital that the patient will stay at, and the reason which is an
-    option from the preset enum
-    Similar to the Admission Info except missing the admission_time
-    """
-    patient = models.TextField()
-    admitted_by = models.TextField()
-    doctor = models.ForeignKey('Doctor')
-    hospital = models.ForeignKey(Hospital)
-    reason = models.SmallIntegerField(choices=AdmitOptions.choices(), default=AdmitOptions.EMERGENCY)
-
-    def __str__(self):
-        return "%s is being request to transfer to %s by %s" % \
-               (self.patient, self.hospital, self.admitted_by)
+        if self is not None:
+            # return "self.doctor, self.hospital, self.admission_time.start_time lol"
+            return "Admitted by %s to %s on %s" % \
+                   (self.doctor, self.hospital, self.admission_time.start_time)
+        else:
+            return "None"
 
 
 class Patient(User):
@@ -202,8 +190,6 @@ class Patient(User):
                                             null=True)
     pref_hospital = models.ForeignKey(to=Hospital, related_name='%(app_label)s_%(class)s_pref_hospital',
                                       on_delete=models.SET_NULL, null=True)
-    transfer_status = models.OneToOneField(to=TransferInfo, related_name='patient_transfer_status',
-                                           on_delete=models.SET_NULL, null=True)
     blood_type = models.SmallIntegerField(choices=BloodType.choices(), default=BloodType.UNKNOWN)
     insurance = models.CharField(max_length=40, choices=INSURANCE_CHOICES, default=INSURANCE_CHOICES[0][0])
 
@@ -214,9 +200,6 @@ class Patient(User):
 
     def is_admitted(self):
         return self.admission_status is not None
-
-    def transfer_requested(self):
-        return self.transfer_status
 
 
 class Administrator(User):
@@ -335,6 +318,11 @@ class MedicalHistory(MedicalData):
     Medical History consists of the admission detail of a patient
     """
     admission_details = models.OneToOneField(to=AdmissionInfo, on_delete=models.CASCADE)
+
+    def __str__(self):
+        rep = str(self.admission_details) + " and released from the hospital on "
+        rep += str(self.admission_details.admission_time.end_time)
+        return rep
 
 
 class Contact(models.Model):

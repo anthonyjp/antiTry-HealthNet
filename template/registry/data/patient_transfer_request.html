@@ -3,8 +3,8 @@
 {% load sass_tags %}
 {% load crispy_forms_tags %}
 
-{% block title %}HealthNet | Request Transfer of Patient{% endblock %}
-{% block inner-title %}Request Transfer of Patient{% endblock %}
+{% block title %}HealthNet | Admit Patient{% endblock %}
+{% block inner-title %}Transfer Patient{% endblock %}
 {% block set-active %}__NONE__{% endblock %}
 
 {% block cssimport %}
@@ -25,7 +25,8 @@
 {% endblock %}
 
 {% block inner-content %}
-    Patient to be Transfered: {{ patient }}
+    <p id="error">{{ error }}</p><br>
+    Patient to be Transferred: {{ patient }}
     {% crispy form form.helper %}
 {% endblock %}
 

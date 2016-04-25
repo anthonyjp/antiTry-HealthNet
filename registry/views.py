@@ -134,6 +134,7 @@ def home(request):
         # the patients a doctor can discharge
         patients_admitted = Patient.objects.filter(admission_status__isnull=False,
                                                    admission_status__doctor_id=hn_user.uuid)
+        patients_transfer = Patient.objects.filter(admission_status__isnull=False)
         return render(request,
                       'registry/users/user_doctor.html',
                       {'form': form,
@@ -142,6 +143,7 @@ def home(request):
                        'appointments': hn_user.appointment_set.all(),
                        'doctors_patients': patients_admitted,
                        'patients': patients,
+                       'patients_transfer': patients_transfer,
                        }, context_instance=RequestContext(request))
 
     elif rules.test_rule('is_nurse', hn_user):
@@ -259,7 +261,7 @@ def patient_admit(request, patient_uuid):
 
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/patient_transfer_request.html')
-def patient_transfer_request(request, patient_uuid):
+def transfer(request, patient_uuid):
     user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     patient = get_object_or_404(Patient, uuid=patient_uuid)
     # next_location is where it goes if you cancel
@@ -270,8 +272,11 @@ def patient_transfer_request(request, patient_uuid):
             if form.is_valid():
                 transfer_request = form.save(commit=False)
                 transfer_request.admitted_by = user.__str__()
+                transfer_request.admisison_time.start_time = tz.now()
                 transfer_request.save()
-                patient.transfer_status = transfer_request
+                patient.admission_status.save()
+                patient.admission_status.end_admission()
+                patient.admission_status = transfer_request
                 patient.save()
 
                 logger.action(request, LogAction.PA_TRANSFER_REQUEST,
@@ -287,6 +292,7 @@ def patient_transfer_request(request, patient_uuid):
         '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
 
 
+"""
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/patient_transfer_approve.html')
 def patient_transfer_approve(request, patient_uuid):
@@ -356,7 +362,7 @@ def patient_transfer_delete(request, patient_uuid):
 
     template_vars = {'form': form}
     return template_vars
-
+"""
 
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/patient_discharge.html')
@@ -367,20 +373,17 @@ def patient_discharge(request, patient_uuid):
             '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     patient = get_object_or_404(Patient, uuid=patient_uuid)
     if rules.test_rule('is_doctor', user):
-        if patient.provider.uuid != user.uuid:
+        if patient.admission_status.doctor.uuid != user.uuid:
             return HttpResponseNotFound(
                 '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     if request.method == 'POST':
         form = DeleteAdmitForm(request.POST, instance=patient.admission_status)
         if form.is_valid():
-            admit_info = patient.admission_status
-            admit_info.admission_time.end_time = tz.now()
-            admit_info.save()
+            patient.admission_status.end_admission()
+            patient.admission_status = None
 
             logger.action(request, LogAction.PA_DISCHARGE, '{0!r} discharged by {1!r}', patient, user)
 
-            patient.admission_status = None
-            patient.transfer_status = None
             patient.save()
             return redirect('registry:home')
 

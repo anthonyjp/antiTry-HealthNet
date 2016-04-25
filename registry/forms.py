@@ -683,7 +683,7 @@ class PatientTransferForm(models.ModelForm):
     All other fields will be set in the view.
 
     """
-    model = TransferInfo
+    model = AdmissionInfo
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
@@ -718,33 +718,9 @@ class PatientTransferForm(models.ModelForm):
             self.fields['doctor'].queryset = Doctor.objects.filter(provider_to=user.hospital)
 
     class Meta:
-        model = TransferInfo
+        model = AdmissionInfo
         fields = 'doctor', 'hospital', 'reason'
         exclude = ['patient', 'admitted_by']
-
-
-class ApproveTransferForm(models.ModelForm):
-    """
-    Name: ApproveTransferForm
-
-    Approval of Transfer Info form
-    """
-
-    class Meta:
-        model = TransferInfo
-        fields = []
-
-
-class DeleteTransferForm(models.ModelForm):
-    """
-    Name: DeleteTransferForm
-
-    Deletion of Transfer Info form
-    """
-
-    class Meta:
-        model = TransferInfo
-        fields = []
 
 
 class MedicalConditionAdd(models.ModelForm):

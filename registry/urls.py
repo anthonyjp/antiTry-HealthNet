@@ -20,12 +20,8 @@ urlpatterns = [
     # TODO Convert
     url(r'^patient_admit/(?P<patient_uuid>.*)$', views.patient_admit, name='patient_admit'),
     url(r'^patient_discharge/(?P<patient_uuid>.*)$', views.patient_discharge, name='patient_discharge'),
-    url(r'^patient_transfer_request/(?P<patient_uuid>.*)$', views.patient_transfer_request,
-        name='patient_transfer_request'),
-    url(r'^patient_transfer_approve/(?P<patient_uuid>.*)$', views.patient_transfer_approve,
-        name='patient_transfer_approve'),
-    url(r'^patient_transfer_delete/(?P<patient_uuid>.*)$', views.patient_transfer_delete,
-        name='patient_transfer_delete'),
+    url(r'^patient_transfer_request/(?P<patient_uuid>.*)$', views.transfer,
+        name='transfer_create'),
     url(r'^appt$', views.appt_create, name='appt_create'),
     url(r'^appt/(?P<pk>[0-9]+)$', views.appt_edit, name='appt_edit'),
     url(r'^appt/view/(?P<pk>[0-9]+)$', views.appt_view, name='appt_view'),
@@ -43,8 +39,8 @@ urlpatterns = [
     url(uuid_url(r'^verify/(?P<uuid>{uuid})$'), views.user_verify, name='verify'),
 
     # Transfer Related URLs
-    url(r'^transfer$', views.transfer_create, name='transfer_create'),
-    url(r'^transfer/(?P<pk>[0-9]+)$', views.transfers, name='transfer'),
+    # url(r'^transfer$', views.transfer_create, name='transfer_create'),
+    # url(r'^transfer/(?P<pk>[0-9]+)$', views.transfers, name='transfer'),
 
     # RX Related URLs
     url(r'^rx/(?P<pk>[0-9]+)$', views.rx_op, name='rx'),
