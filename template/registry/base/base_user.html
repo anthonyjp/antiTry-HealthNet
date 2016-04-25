@@ -34,19 +34,19 @@
 
         {% has_perm 'registry.patientinfo' hn_owner as patient %}
         {% if patient %}
-            Primary Provider: {{ hn_owner.provider }}
-            Preferred Hospital: {{ hn_owner.pref_hospital }}
+            Primary Provider: {{ hn_owner.provider }}<br>
+            Preferred Hospital: {{ hn_owner.pref_hospital }}<br>
         {% endif %}
 
         {% has_perm 'registry.patient_admit' hn_owner as patient_info %}
         {% if patient_info %}
                 Admitted<br>
-                Hospital: {{ hn_owner.admission_status.hospital }}
+            Hospital: {{ hn_owner.admission_status.hospital }}<br>
         {% endif %}
 
         {% has_perm 'registry.is_admin_or_nurse' hn_owner as a_n_staff %}
         {% if a_n_staff %}
-            Hospital: {{ hn_owner.hospital }}
+            Hospital: {{ hn_owner.hospital }}<br>
         {% endif %}
     </ul>
 </div>

@@ -2,7 +2,7 @@
 import rules
 from rules.predicates import predicate
 from django.db.models import Q
-from registry.models import Patient, Doctor, Nurse, Administrator, User, Appointment
+from registry.models import Patient, Doctor, Nurse, Administrator, User, Appointment, Hospital
 
 
 # Define All Predicates
@@ -62,6 +62,10 @@ def is_self(user_one, user_two):
 def time_gt(time1, time2):
     return time1 > time2
 
+
+@predicate
+def is_doctor_at(doctor, hospital):
+    return doctor.hospitals.filter(self=hospital).exists()
 
 has_appointment_check = (is_doctor | is_nurse) & has_appointment
 is_doctor_check = is_doctor & is_doctor_of

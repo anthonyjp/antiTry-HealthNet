@@ -266,28 +266,32 @@ def transfer(request, patient_uuid):
     patient = get_object_or_404(Patient, uuid=patient_uuid)
     # next_location is where it goes if you cancel
     next_location = None
+    error = ""
     if rules.test_rule('is_doctor', user) or rules.test_rule('is_administer', user):
         if request.method == "POST":
             form = PatientTransferForm(request.POST, user=user)
             if form.is_valid():
                 transfer_request = form.save(commit=False)
-                transfer_request.admitted_by = user.__str__()
-                transfer_request.admisison_time.start_time = tz.now()
-                transfer_request.save()
-                patient.admission_status.save()
-                patient.admission_status.end_admission()
-                patient.admission_status = transfer_request
-                patient.save()
+                if rules.test_rule('is_doctor_at', transfer_request.doctor, transfer_request.hospital):
+                    transfer_request.admitted_by = user.__str__()
+                    transfer_request.admisison_time.start_time = tz.now()
+                    transfer_request.save()
+                    patient.admission_status.save()
+                    patient.admission_status.end_admission()
+                    patient.admission_status = transfer_request
+                    patient.save()
 
-                logger.action(request, LogAction.PA_TRANSFER_REQUEST,
-                              'Transfer {0!r} to {1!s} by {2!r}', patient, transfer_request.hospital, user)
-                return redirect('registry:home')
+                    logger.action(request, LogAction.PA_TRANSFER_REQUEST,
+                                  'Transfer {0!r} to {1!s} by {2!r}', patient, transfer_request.hospital, user)
+                    return redirect('registry:home')
+                else:
+                    error = transfer_request.doctor + " does not work at " + transfer_request.hospital
         else:
             form = PatientTransferForm(user=user)
 
             if 'next' in request.GET:
                 next_location = request.GET['next']
-        return {'form': form, 'next_url': next_location, 'patient': patient}
+        return {'form': form, 'next_url': next_location, 'patient': patient, 'error': error}
     return HttpResponseNotFound(
         '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
 
@@ -617,12 +621,13 @@ def view_user(request, uuid):
 
     rxs = None
     if rules.test_rule('is_patient', owner):
-        if rules.test_rule('is_doctor', visitor) and visitor.has_perm('registry.view_patient'):
-            rxs = owner.prescription_set.filter(doctor=visitor)
-        elif rules.test_rule('is_self', owner, visitor):
-            rxs = owner.prescription_set
+        if visitor.has_perm('registry.view_patient') or rules.test_rule('is_self', owner, visitor):
+            rxs = owner.prescription_set.filter()
+            mc = owner.conditions.all()
+            mh = MedicalHistory.objects.filter(patient=owner).all()
+        return {"hn_owner": owner, "hn_visitor": visitor, 'rxs': rxs, 'medical_conditions': mc, 'medical_history': mh}
+    return {"hn_owner": owner, "hn_visitor": visitor}
 
-    return {"hn_owner": owner, "hn_visitor": visitor, 'rxs': rxs}
 
 
 @ajax_request
