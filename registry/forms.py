@@ -472,12 +472,11 @@ class AppointmentSchedulingForm(models.ModelForm):
                 )
         )
         if rules.test_rule('is_patient', user):
-            print("Hello")
             self.fields['patient'].queryset = Patient.objects.filter(uuid=user.uuid)
-        elif rules.test_rule('is_doctor', user):
-            self.fields['patient'].queryset = Patient.objects.filter(provider=user)
-        elif rules.test_rule('is_nurse', user):
-            self.fields['patient'].queryset = Patient.objects.filter(pref_hospital=user.hospital)
+        # elif rules.test_rule('is_doctor', user):
+        #    self.fields['patient'].queryset = Patient.objects.filter(provider=user)
+        # elif rules.test_rule('is_nurse', user):
+        #    self.fields['patient'].queryset = Patient.objects.filter(pref_hospital=user.hospital)
         self.fields['time'].widget.attrs['timepicker'] = True
 
     class Meta:
