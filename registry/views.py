@@ -16,36 +16,9 @@ from .forms import *
 from .models import *
 from .utility.models import *
 from .utility.logging import *
+from .utility.viewutils import *
 
 logger = HNLogger()
-
-
-def ajax_success(**kwargs):
-    kwargs.update({'success': True})
-    return kwargs
-
-
-def ajax_failure(**kwargs):
-    kwargs.update({'success': False})
-    return kwargs
-
-
-def get_user_or_404(uuid):
-    return User.objects.get_subclass(pk=get_object_or_404(User, pk=uuid).pk)
-
-
-def is_safe_request(method):
-    while hasattr(method, 'method'):
-        method = method.method
-    return method in ('GET', 'HEAD')
-
-
-def read_request_body_to_post(request):
-    request.POST = QueryDict(request.body)
-
-
-def read_request_body_to(request, method='POST'):
-    setattr(request, method, QueryDict(request.body))
 
 
 @render_to('registry/landing.html')
@@ -93,19 +66,11 @@ def login(request):
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
-@render_to('registry/data/message_creation.html')
-def message_creation(request):
-    if request.method == "POST":
-        form = MessageCreation(request.POST)
-        message = form.save(commit=False)
+def sign_out(request):
+    if request.user:
+        logout(request)
 
-        message.sender = User.objects.get_subclass(pk=request.user.hn_user.pk)
-        message.receiver.inbox.messages.add(message)
-
-        message.save()
-    else:
-        form = MessageCreation()
-    return {'form': form}
+    return redirect(to=reverse('registry:index'))
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -471,59 +436,22 @@ def appt_delete(request, pk):
     return template_vars
 
 
+@require_http_methods(['GET', 'HEAD', 'PATCH', 'POST'])
+@require_http_methods_not_none(['GET', 'HEAD', 'PATCH'], 'uuid')
 @login_required(login_url=reverse_lazy('registry:login'))
-def sign_out(request):
-    if request.user:
-        logout(request)
-
-    return redirect(to=reverse('registry:index'))
-
-
-# LogEntry Action flags meaning:
-# ADDITION = 1
-# CHANGE = 2
-# DELETION = 3
-
-
-def get_log_data():
-    logs = HNLogEntry.objects.all()
-    action_list = []
-    for l in logs:
-        time = str(l.action_time)
-        user_id = str(l.user)
-        object_repr = str(l.object_repr)
-        action_flag = int(l.action_flag)
-
-        if action_flag == 1:
-            log_action = user_id + " added a new " + object_repr + " at [" + time + "]."
-            action_list.append(log_action)
-        if action_flag == 2:
-            log_action = user_id + " changed their " + object_repr + " at [" + time + "]."
-            action_list.append(log_action)
-        if action_flag == 3:
-            log_action = user_id + " deleted their " + object_repr + " at [" + time + "]."
-            action_list.append(log_action)
-
-    return action_list
+def user(request, uuid=None):
+    if request.method == 'PATCH':
+        read_request_body_to(request, request.method)
+        if 'admit' in request.PATCH:
+            admit_user(request, uuid)
+        else:
+            return update_user(request, uuid)
+    elif is_safe_request(request.method):
+        return view_user(request, uuid)
+    elif request.method == 'POST':
+        return user_create(request)
 
 
-@require_http_methods(['GET'])
-@login_required(login_url=reverse_lazy('registry:login'))
-@render_to('registry/log.html')
-def log_actions(request):
-    fro = tz.now() - datetime.timedelta(days=1)
-    to = tz.now()
-
-    if 'from' in request.GET:
-        fro = dateutil.parser.parse(request.GET['from'])
-    if 'to' in request.GET:
-        to = dateutil.parser.parse(request.GET['to'])
-
-    return {"action_list": get_log_data(), 'from': fro, 'to': to}
-
-
-@require_http_methods(['POST'])
-@login_required(login_url=reverse_lazy('registry:login'))
 @ajax_request
 def user_create(request):
     if 'user-type' not in request.POST:
@@ -587,19 +515,6 @@ def nurse_create(request):
     return ajax_failure()
 
 
-@require_http_methods(['GET', 'HEAD', 'PATCH'])
-@login_required(login_url=reverse_lazy('registry:login'))
-def user(request, uuid):
-    if request.method == 'PATCH':
-        read_request_body_to(request, request.method)
-        if 'admit' in request.PATCH:
-            admit_user(request, uuid)
-        else:
-            return update_user(request, uuid)
-    elif is_safe_request(request.method):
-        return view_user(request, uuid)
-
-
 @require_http_methods(['GET'])
 @login_required(login_url=reverse_lazy('registry:login'))
 @ajax_request
@@ -619,9 +534,14 @@ def view_user(request, uuid):
     owner = User.objects.get_subclass(pk=uuid)
     visitor = User.objects.get_subclass(pk=request.user.hn_user.pk)
 
+    if rules.test_rule('is_self', owner, visitor):
+        return redirect(to=reverse('registry:home'))
+
     rxs = None
     if rules.test_rule('is_patient', owner):
-        if visitor.has_perm('registry.view_patient') or rules.test_rule('is_self', owner, visitor):
+        mc = None
+        mh = mc
+        if visitor.has_perm('registry.view_patient'):
             rxs = owner.prescription_set.filter()
             mc = owner.conditions.all()
             mh = MedicalHistory.objects.filter(patient=owner).all()
@@ -713,7 +633,7 @@ def mc_add(request, patient_uuid):
 
 @require_http_methods(['GET', 'PATCH', 'DELETE'])
 @login_required(login_url=reverse_lazy('registry:login'))
-def rx_op(request, pk):
+def rx_op(request, pk=None, patient_uuid=None):
     if request.method == 'GET':
         return rx_view(request, pk)
     elif request.method == 'PATCH':
@@ -822,8 +742,20 @@ def transfer_create(request):
     return ajax_failure()
 
 
-@require_http_methods(['POST'])
+@require_http_methods(['GET', 'POST', 'DELETE'])
+@require_http_methods_not_none(['GET', 'DELETE'], 'uuid')
 @login_required(login_url=reverse_lazy('registry:login'))
+def msg(request, uuid=None):
+    if is_safe_request(request.method):
+        return msg_view(request, uuid)
+    elif request.method == 'POST':
+        return msg_create(request)
+    else:
+        read_request_body_to(request, request.method)
+        if request.method == 'DELETE':
+            return msg_delete(request, uuid)
+
+
 @ajax_request
 def msg_create(request):
     form = MessageCreation(request.POST)
@@ -841,20 +773,8 @@ def msg_create(request):
     return ajax_success(id=message.uuid, sender=str(sender), timestamp=message.date.isoformat())
 
 
-@require_http_methods(['GET', 'DELETE'])
-@login_required(login_url=reverse_lazy('registry:login'))
-def msg(request, uuid):
-    if is_safe_request(request.method):
-        return view_msg(request, uuid)
-    else:
-        read_request_body_to(request, request.method)
-        if request.method == 'DELETE':
-            return delete_msg(request, uuid)
-
-
-# TODO Combine msg, create_msg and delete_msg and get UUIDs from Request Data
 @ajax_request
-def delete_msg(request, uuid):
+def msg_delete(request, uuid):
     failures = []
 
     try:
@@ -882,10 +802,21 @@ def delete_msg(request, uuid):
 
 
 @ajax_request
-def view_msg(request, uuid):
+def msg_view(request, uuid):
     msg = Message.objects.get(uuid=uuid)
     return ajax_success(sender={'name': str(msg.sender), 'uuid': msg.sender.uuid}, content=msg.content, date=msg.date,
                         title=msg.title)
+
+
+@require_http_methods(['GET', 'POST', 'PATCH'])
+@login_required(login_url=reverse_lazy('registry:login'))
+def appt(request):
+    if request.method == 'GET':
+        pass
+    elif request.method == 'POST':
+        pass
+    elif request.method == 'PATCH':
+        pass
 
 
 @require_http_methods(['GET'])

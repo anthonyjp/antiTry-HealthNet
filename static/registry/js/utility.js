@@ -30,8 +30,46 @@ registry.utility = (function() {
         });
     }
 
+    function getCookie(name) {
+        if (!_.isNil(Cookies))
+            return Cookies.get(name);
+        else {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+
+                cookieValue = _.chain(cookies).map(function (cookie) {
+                    cookie = $.trim(cookie);
+                    return {'name': cookie.substring(0, name.length), 'uri': cookie.substring(name.length + 1)};
+                }).remove(function (cookie) {
+                    return cookie.name !== name;
+                }).head().value();
+            }
+
+            return cookieValue;
+        }
+    }
+
+    function csrf() {
+        return getCookie('csrftoken');
+    }
+
+    function csrfSafeMethod(method) {
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader('X-CSRFToken', csrf());
+            }
+        }
+    });
+
     return {
         'hookDatepicker': datepickerHook,
-        'hookTimepicker': timepickerHook
+        'hookTimepicker': timepickerHook,
+        'getCsrf': csrf,
+        'getCookie': getCookie
     }
 })();

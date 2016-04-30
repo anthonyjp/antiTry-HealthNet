@@ -8,8 +8,7 @@ registry.forms['user'] = (function(){
         do such things. Seriously. <3 AJAX.
      */
     var hooked = false;
-    var csrf = $('[name="csrfmiddlewaretoken"]').val();
-
+    var csrf = registry.utility.getCsrf();
     var originals = {};
     var changed = {};
 
@@ -210,9 +209,19 @@ $(document).ready(function(){
         return true;
     });
 
+    var checkAll = $("#checkAll");
+    checkAll.change(function () {
+        $("#msg-checkbox").prop('checked', $(this).prop("checked"));
+    });
 
-    $("#checkAll").change(function () {
-        $("input:checkbox").prop('checked', $(this).prop("checked"));
+    checkAll.on('msg:uncheck', function () {
+        if (checkAll.is(':checked'))
+            checkAll.click();
+    });
+
+    $('#msg-checkbox').change(function () {
+        if (!$(this).is(':checked'))
+            checkAll.trigger('msg:uncheck');
     });
 
     var inbox = $("#inbox");
@@ -221,6 +230,39 @@ $(document).ready(function(){
 	{
 		searchTable($(this).val());
 	});
+
+    var messageOpenHandler = function () {
+        //  Hide all tab content
+
+        var selected_tab = $(this).parent('tr').attr("href");
+        var uuid = $(this).parent('tr').data('message-id');
+
+        $.ajax({
+            url: 'msg/' + uuid,
+            type: 'GET',
+            data: {},
+            success: function (response) {
+
+                var data = response;
+
+                var sender = data.sender["name"];
+                var date = moment(data["date"]).format('MMMM Do YYYY [at] h:mm:ss a');
+                var title = data["title"];
+                var content = registry.escapeHtml(data["content"]).replace(/(?:\r\n|\r|\n)/g, '<br />');
+
+                $("#message_sender").text(sender);
+                $("#message_date").text(date);
+                $("#message_title").text(title);
+                $("#message_content").html(content);
+
+                $(".tab").hide();
+                //  Show the selected tab content
+                $(selected_tab).fadeIn();
+            }
+        });
+
+        return true;
+    };
 
     $("#newMessage").click(function () {
 
@@ -254,7 +296,7 @@ $(document).ready(function(){
                                 var time = moment(resp.timestamp).format('MMMM D, YYYY, h:mm a');
                                 time = time.replace(/ am/g, ' a.m.').replace(/ pm/g, ' p.m.');
                                 inbox.find('tbody').prepend(sprintf(
-                                    '<tr data-message-id="%s" class="inbox-row" href="#tab7">' +
+                                    '<tr data-message-id="%s" class="inbox-row" href="#tab7" id="TEMP-MESSAGE-ID-FOR-CLICK">' +
                                     '<td class="inboxBody check-box-wrapper">' +
                                     '<input id="msg-checkbox" type="checkbox"/>' +
                                     '</td>' +
@@ -262,6 +304,10 @@ $(document).ready(function(){
                                     '<td class="inboxBody">%s</td>' +
                                     '<td class="inboxBody">%s</td>' +
                                     '</tr>', resp.id, resp.sender, title, time));
+
+                                var t = $('#TEMP-MESSAGE-ID-FOR-CLICK');
+                                t.find('td').not('.check-box-wrapper').click(messageOpenHandler);
+                                t.attr('id', null);
 
                             }
 
@@ -278,38 +324,8 @@ $(document).ready(function(){
         });
     });
 
-    inbox.find("td").not('.check-box-wrapper').click(function () {
-        //  Hide all tab content
 
-        var selected_tab = $(this).parent('tr').attr("href");
-        var uuid = $(this).parent('tr').data('message-id');
-
-        $.ajax({
-            url: 'msg/' + uuid,
-            type: 'GET',
-            data: {},
-            success: function (response) {
-
-                var data = response;
-
-                var sender = data.sender["name"];
-                var date = moment(data["date"]).format('MMMM Do YYYY [at] h:mm:ss a');
-                var title = data["title"];
-                var content = registry.escapeHtml(data["content"]).replace(/(?:\r\n|\r|\n)/g, '<br />');
-
-                $("#message_sender").text(sender);
-                $("#message_date").text(date);
-                $("#message_title").text(title);
-                $("#message_content").html(content);
-
-                $(".tab").hide();
-                //  Show the selected tab content
-                $(selected_tab).fadeIn();
-            }
-        });
-
-        return true;
-    });
+    inbox.find("td").not('.check-box-wrapper').click(messageOpenHandler);
 
     $("#id-delete-msg").click(function () {
         var mIds = [];
@@ -324,6 +340,8 @@ $(document).ready(function(){
             _.each(messages, function (mId) {
                 $('.inbox-row[data-message-id=\'' + mId + '\']').remove();
             });
+
+            checkAll.trigger('msg:uncheck');
         };
 
         $.ajax({

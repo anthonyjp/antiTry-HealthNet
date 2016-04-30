@@ -29,11 +29,9 @@ urlpatterns = [
     url(r'^user$', views.list_user, name='list_user'),
     url(r'^mc/(?P<patient_uuid>.*)$', views.mc_add, name='mc_add'),
 
-    url(r'^log$', views.log_actions, name='logs'),
-
     # User Related URLs
-    url(r'^user/create$', views.user_create, name='user_create'),
     url(uuid_url(r'^user/(?P<uuid>{uuid})$'), views.user, name='user'),
+    url(r'^user', views.user, name='user_create'),
     url(uuid_url(r'^user/(?P<patient_uuid>{uuid})/rx$'), views.rx_create, name='rx_create'),
     url(uuid_url(r'^user/(?P<patient_uuid>{uuid})/rx/(?P<pk>[0-9]+)'), views.rx_delete, name='rx_delete'),
     url(uuid_url(r'^verify/(?P<uuid>{uuid})$'), views.user_verify, name='verify'),
@@ -47,8 +45,8 @@ urlpatterns = [
     url(r'^rx/create/(?P<patient_uuid>.*)$', views.rx_create, name='rx_create'),
 
     # Message Related URLs
-    url(r'^msg$', views.msg_create, name='msg_create'),
     url(uuid_url(r'^msg/(?P<uuid>{uuid})$'), views.msg, name='msg'),
+    url(r'^msg$', views.msg, name='msg_create'),
 
     url(r'^logs/(?P<start>\d{4}-\d{2}-\d{2})/(?P<end>\d{4}-\d{2}-\d{2})$', views.logs, name='logs')
 
