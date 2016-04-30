@@ -55,7 +55,7 @@
                                                       src="{% static "registry/img/logo.png" %}"/></div>
                             <ul>
                                 <li>
-                                    <a href="">
+                                    <a href="{% url 'registry:user' p.uuid %}">
                                         <p id="patientName">{{ p.first_name }} {{ p.middle_initial }} {{ p.last_name }}</p>
                                     </a>
                                 </li>
