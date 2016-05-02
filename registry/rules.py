@@ -28,16 +28,19 @@ def is_admit(patient):
 def is_doctor_of(doctor, patient):
     provider = doctor.providers.filter(pk=patient.uuid).exists()
     if patient.admission_status is not None:
-        transfer_doctor = (patient.admission_status.doctor.uuid == doctor.uuid)
+        transfer_doctor = (patient.admission_status.hospital.provider_to == doctor)
     else:
         transfer_doctor = False
     return provider or transfer_doctor
 
 @predicate
 def is_nurse_for(nurse, patient):
-    # check only appts that
-    appt_list = patient.appointment_set.filter(Q(is_future=False) | Q(is_today=True))
-    return nurse.hospital == patient.pref_hospital or appt_list.filter(location=nurse.hospital).exists()
+    admit_hospital = False
+    if patient.admission_status is not None:
+        if patient.admission_status.hospital == nurse.hospital:
+            admit_hospital = True
+    has_appt = patient.appointment_set.filter(location=nurse.hospital).exists()
+    return admit_hospital or has_appt
 
 @predicate
 def has_appointment(user, patient):
