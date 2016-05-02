@@ -14,6 +14,7 @@ For linux:
 
     run.sh
 
+Test test Test
 Then simply go to `127.0.0.1:8000` and your app will be running! The scripts will make sure everything is set up properly assuming you
 have python3 setup properly (as 'python'). The script will also create a Super User with the credentials:
 
