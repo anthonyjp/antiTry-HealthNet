@@ -2,6 +2,8 @@
 {% load crispy_forms_tags %}
 {% load staticfiles %}
 {% load sass_tags %}
+{% load static %}
+{% load registry_tags %}
 
 {% block user_cssimport %}
     <link rel="stylesheet" href="{% static 'pikaday/css/pikaday.css' %}"/>
@@ -14,6 +16,7 @@
     <li><a href="#tab4" rel="tab4" class="hn-tab">Add Doctor</a></li>
     <li><a href="#tab5" rel="tab5" class="hn-tab">Add Nurse</a></li>
     <li><a href="{% url 'registry:register' %}" class="hn-tab">Add Patient</a></li>
+    <li><a href="#tab10" rel="tab3" class="hn-tab">Request Transfers</a></li>
 {% endblock %}
 {% block userContent %}
      <div id="tab2" class="tab">
@@ -64,6 +67,69 @@
     </div>
     <div id="tab5" class="tab">
         {% include "registry/components/nurse_registration.html" %}
+    </div>
+
+    <div id="tab10" class="tab">
+        <table id="patient">
+            <thead>
+            <tr>
+                <th id="theader" colspan="3">
+                    <div class="patientHead">
+                        <p id="patientTitle">Request Transfers
+                        <p>
+                        <div id="patientSearch" class="patientHead">Search:
+                            <input id="patientDischargeSearchBar" type="text" placeholder="Search for Patient..">
+                        </div>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th id="theader">
+                    <div class="patientHead">
+                        Patient
+                    </div>
+                </th>
+                <th id="theader">
+                    <div class="patientHead">
+                        Current Transfer Infomation
+                    </div>
+                </th>
+                <th id="theader">
+                    <div class="patientHead">
+                        Transfer Request
+                    </div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for p in patients_transfer %}
+                {% if  p.is_admitted %}
+                    <tr>
+                        <td class="patientBody">
+                            <div>
+                                <ul>
+                                    <li>
+                                        <a href="{% url 'registry:user' p.uuid %}">
+                                            <p id="patientName">{{ p.first_name }} {{ p.middle_initial }} {{ p.last_name }}</p>
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </td>
+                        <td class="patientBody">
+                            <li><p>Admission Status: {{ p.admission_status }}</p></li>
+                        </td>
+                        <td class="patientBody">
+                            <a href="{% url 'registry:transfer_create' p.uuid %}">
+                                <button>Transfer</button>
+                            </a>
+                        </td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock %}
 

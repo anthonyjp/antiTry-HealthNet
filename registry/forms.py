@@ -712,9 +712,10 @@ class PatientTransferForm(models.ModelForm):
         if rules.test_rule('is_doctor', user):
             self.fields['doctor'].queryset = Doctor.objects.filter(uuid=user.uuid)
             self.fields['hospital'].queryset = user.hospitals.all()
-        elif rules.test_rule('is_admin', user):
-            self.fields['hospital'].queryset = Hospital.objects.filter(admin_to=user)
-            self.fields['doctor'].queryset = Doctor.objects.filter(provider_to=user.hospital)
+        elif rules.test_rule('is_administrator', user):
+            self.fields['doctor'].queryset = Doctor.objects.filter(hospitals__name__exact=user.hospital.name)
+            self.fields['hospital'].queryset = Hospital.objects.filter(name=user.hospital.name)
+
 
     class Meta:
         model = AdmissionInfo

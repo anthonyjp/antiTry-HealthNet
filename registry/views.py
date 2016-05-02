@@ -126,6 +126,7 @@ def home(request):
         admin_form = AdminRegistrationForm()
         doc_form = DoctorRegistrationForm()
         nurse_form = NurseRegistrationForm()
+        patients_transfer = Patient.objects.filter(admission_status__isnull=False)
         return render(request,
                       'registry/users/user_admin.html',
                       {'hn_owner': hn_user,
@@ -136,6 +137,7 @@ def home(request):
                        'inbox': inbox,
                        'logs': logs,
                        'form': form,
+                       'patients_transfer': patients_transfer,
                        }, context_instance=RequestContext(request))
 
 
@@ -232,7 +234,7 @@ def transfer(request, patient_uuid):
     # next_location is where it goes if you cancel
     next_location = None
     error = ""
-    if rules.test_rule('is_doctor', user) or rules.test_rule('is_administer', user):
+    if rules.test_rule('is_doctor', user) or rules.test_rule('is_administrator', user):
         if request.method == "POST":
             form = PatientTransferForm(request.POST, user=user)
             if form.is_valid():
@@ -256,6 +258,7 @@ def transfer(request, patient_uuid):
 
             if 'next' in request.GET:
                 next_location = request.GET['next']
+
         return {'form': form, 'next_url': next_location, 'patient': patient, 'error': error}
     return HttpResponseNotFound(
         '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
