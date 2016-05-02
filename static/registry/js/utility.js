@@ -66,10 +66,25 @@ registry.utility = (function() {
         }
     });
 
+    function stopEventBehavior(event) {
+        event.preventDefault ? event.preventDefault() : event.returnValue = false;
+    }
+
+    function processNextTick(fn) {
+        if (_.isFunction(fn))
+            setTimeout(fn, 0);  // TODO Poor performance in loops
+    }
+
+    window.processNextTick = processNextTick;
+
     return {
         'hookDatepicker': datepickerHook,
         'hookTimepicker': timepickerHook,
-        'getCsrf': csrf,
+        'getCsrf': registry.getCsrf = csrf,
+        'stopEventBehavior': registry.stopEventBehavior = stopEventBehavior,
         'getCookie': getCookie
     }
 })();
+
+Object.preventExtensions(registry);
+Object.preventExtensions(registry.utility);

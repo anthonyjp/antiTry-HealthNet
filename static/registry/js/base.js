@@ -11,7 +11,7 @@ registry = (function () {
         if (has(key))
             return;
 
-        var layers = _.split(key, '.');
+        var layers = _.toPath(key);
         var obj = registry;
         var i = 0;
 
@@ -28,7 +28,7 @@ registry = (function () {
     }
 
     function has(key) {
-        var layers = _.split(key, '.');
+        var layers = _.toPath(key);
         var obj = registry;
         var i = 0;
 
@@ -169,7 +169,11 @@ registry = (function () {
     }
 
     function getCsrf(tree) {
-        return $(tree).find('[name="csrfmiddlewaretoken"]').val();
+        return registry['utility']['getCsrf']();
+    }
+
+    function stopEventBehavior(event) {
+        registry['utility']['stopEventBehavior'](event);
     }
 
     return {
@@ -180,7 +184,8 @@ registry = (function () {
         'setActiveMenuItem': setActiveMenuitem,
         'initUserSearch': initUserSearch,
         'escapeHtml': escapeHtml,
-        'getCsrf': getCsrf
+        'getCsrf': getCsrf,
+        'stopEventBehavior': stopEventBehavior
     }
 })();
 
@@ -190,12 +195,14 @@ registry.module('forms');
 registry.module('auth');
 registry.module('data');
 
-Object.preventExtensions(registry);
-
 Object.size = function (obj) {
     var size = 0, key;
     for (key in obj) {
         if (obj.hasOwnProperty(key)) size++;
     }
     return size;
+};
+
+Array.prototype.copy = function () {
+    return this.slice(0);
 };

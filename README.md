@@ -50,7 +50,7 @@ requirements, in the terminal run:
 
     pip install -r requirements.txt
 
-This will run through the requirements file and ensure the requirements are met, in not they are then installed. Once that is done you have set up the development environment!
+This will run through the requirements file and ensure the requirements are met, in not they are then installed. Once that is done you have set up the development environment! 
 
 Congrats!
 
@@ -58,7 +58,7 @@ Congrats!
 #### Deployment
 ---
 
-Deploying HealthNet is a bit of a challenge becuase of the mix we have regarding static files and databases. Ideally we want to include only the functionally required portions of the app, that would be the app directories, private_static, static, templates and so on while ignoring the gitignore, bower.json, database, git-to-svn script, .idea folder and so on.
+Deploying HealthNet is a bit of a challenge becuase of the mix we have regarding static files and databases. Ideally we want to include only the functionally required portions of the app, that would be the app directories, private_static, static, templates and so on while ignoring the gitignore, bower.json, database, git-to-svn script, .idea folder and so on. 
 
 Fortunately, this is done for us using [setuptools!](http://pythonhosted.org/setuptools/) Once you have configured everything properly and gone through the [django deployment checklist](https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/), all that is required is to run
 
@@ -77,7 +77,7 @@ This will run few a few steps:
     4. Retrieve EXCLUDES and filter patterns out of INCLUDES
 5. Package all includes into a file named APPNAME-VERSION.zip
 
-Steps 3 and 4 can be skipped by adding the `--no-migrate` flag.
+Steps 3 and 4 can be skipped by adding the `--no-migrate` flag. 
 
 This will create a new `dist` directory containing the packaged app. Then it can be extracted anywhere.
 

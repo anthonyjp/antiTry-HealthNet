@@ -5,6 +5,16 @@ from django.db.models import Q
 from registry.models import Patient, Doctor, Nurse, Administrator, User, Appointment, Hospital
 
 
+@predicate
+def always_true(*args, **kwargs):
+    return True
+
+
+@predicate
+def always_false(*args, **kwargs):
+    return False
+
+
 # Define All Predicates
 def is_user(user_type):
     @predicate
@@ -24,6 +34,7 @@ is_administrator = is_user(Administrator)
 def is_admit(patient):
     return patient.is_admitted()
 
+
 @predicate
 def is_doctor_of(doctor, patient):
     provider = doctor.providers.filter(pk=patient.uuid).exists()
@@ -33,6 +44,7 @@ def is_doctor_of(doctor, patient):
         transfer_doctor = False
     return provider or transfer_doctor
 
+
 @predicate
 def is_nurse_for(nurse, patient):
     admit_hospital = False
@@ -41,6 +53,7 @@ def is_nurse_for(nurse, patient):
             admit_hospital = True
     has_appt = patient.appointment_set.filter(location=nurse.hospital).exists()
     return admit_hospital or has_appt
+
 
 @predicate
 def has_appointment(user, patient):
@@ -93,6 +106,12 @@ rules.add_perm('registry.discharge', is_doctor)
 
 rules.add_perm('registry.transfer_request', is_doctor | is_administrator)
 
+rules.add_perm('registry.user.view.personal', always_true)
+rules.add_perm('registry.user.edit.personal', is_self)
+rules.add_perm('registry.user.view.medical', is_self | is_doctor | is_nurse)
+rules.add_perm('registry.user.edit.medical', is_self | is_doctor | is_nurse)
+rules.add_perm('registry.user.view.insurance', is_self | is_doctor | is_administrator)
+rules.add_perm('registry.user.edit.insurance', is_self | is_administrator)
 rules.add_perm('registry.view_patient', is_doctor | is_nurse)
 rules.add_perm('registry.edit_patient', (is_patient & is_self) | is_nurse_check | is_doctor)
 

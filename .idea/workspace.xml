@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2c481091-0e1c-4f9a-b572-33a14b532b6e" name="Default" comment="More Patient Viewing Changes&#10;&#10;base_user.html:&#10;more permissions added so that a doctor/nurse has the hospital that a patient belongs to can edit the medical information of patient&#10;&#10;prescription_list.html:&#10;removed the tab format&#10;It's now just tab content &#10;Added more rules&#10;&#10;rules.py:&#10;more patient viewing rules&#10;&#10;user_patient.html:&#10;better use of prescription_list">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/HealthNet.iml" afterPath="$PROJECT_DIR$/.idea/HealthNet.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/registry/rules.py" afterPath="$PROJECT_DIR$/registry/rules.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/template/registry/base/base_user.html" afterPath="$PROJECT_DIR$/template/registry/base/base_user.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/template/registry/components/prescription_list.html" afterPath="$PROJECT_DIR$/template/registry/components/prescription_list.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/template/registry/users/user_patient.html" afterPath="$PROJECT_DIR$/template/registry/users/user_patient.html" />
-    </list>
-    <list id="575ad12e-fc51-4387-8fe9-8205024f9dd6" name="New changelist" comment="New changelist">
+    <list default="true" id="2c481091-0e1c-4f9a-b572-33a14b532b6e" name="Default" comment="New Developer Dependencies:&#10;CoffeeScript - A Compile-to-JS language that provides a lot syntactic sugar with regards to javascript constructs and allows powerful, expressive language while still being supported by browsers by compiling down to js. Also includes class and inheritance support.&#10;&#10;INSTALL CoffeeScript USING 'npm install -g coffee-script'&#10;&#10;django-static-precompiler - Provides pre-compilation utilities for various languages like SASS and CoffeeScript without any bothersome native dependencies. Necessary to use coffeescript.&#10;&#10;settings.py:&#10;- Setup architecture for installing coffeescript and django-static-precompiler to work with out static files environment.&#10;&#10;widgets.py:&#10;- Small cleanups for inconsistencies and odd results&#10;&#10;rules.py:&#10;- Add basic always_true and always_false predicates that should be expected in a rules environment&#10;- Add basic, proper, permissions for viewing and editing personal, medical and insurance information of a user &#10;- Did not remove code that is in obsolescence until we are sure those rules/[erms are no longer needed.&#10;&#10;views.py:&#10;- Rewrite some REST views to properly use new AJAX utilities&#10;&#10;base_user.coffee and base_user_classes.coffee:&#10;- Reimplement base_user.js in CoffeeScript with a whole new permissions system that is both asynchronous and makes sense.&#10;- New JS Authenticator and Revertable Changes based system.&#10;- Now is asynchronous using the new processNextTick global provided by utility, making use of setTimeout. This should be replaced.&#10;- Many small optimization to jQuery selectors and DOM manipulation&#10;&#10;measurements.coffee:&#10;- Reimplements measurements.js in coffeescript with small optimizations to caching.&#10;- In the process, resolved numerous issues that caused weird bugs in the form.&#10;&#10;base.js:&#10;- Obsolesced certain registry base actions in favor of the actions added in Utility. Now delegates to registry.utility and registry.utility with attempt to override registry base functions. &#10;- registry is now extensible up until after utility is initialized&#10;- Add processNextTick&#10;- Add stopEventBehavior&#10;- Delegate processNextTick, stopEventBehavior and csrf to registry.utility analogs&#10;&#10;utility.js:&#10;- Add stopEventBehavior which provides IE compliant way to prevent Events from doing their default behavior (like a click on an &lt;a&gt; tag changing location).&#10;- Add processNextTick which provides a universal way to have actions be held off until the next possible available tick of the VM. This acts similarly to process.nextTick from node.js.&#10;- Add processNextTick to window globals&#10;- Override base registry functions (csrf and stopEventBehavior, etc.) and make them aliases for utility functions.&#10;- Move 'preventExtensions' call for base registry to after utility is instantiated&#10;&#10;templates in general:&#10;- Mostly converting any script imports to coffeescript imports if necessary. Must use the 'compile' filter from compile_tags.&#10;&#10;bower.json:&#10;- Cleanup unused and likely to not be used dependencies&#10;- Timesheet, Charts, Chance&#10;&#10;README update for coffeescript acknowledgement&#10;requirements.txt not includes django-static-precompiler">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/registry/coffee/base_user.coffee" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/registry/coffee/base_user_classes.coffee" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/registry/coffee/measurements.coffee" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/.name" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/HealthNet.iml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/encodings.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/webResources.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/static/registry/js/base_user.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/static/registry/js/measurements.js" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/HealthNet/settings.py" afterPath="$PROJECT_DIR$/HealthNet/settings.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bower.json" afterPath="$PROJECT_DIR$/bower.json" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/registry/rules.py" afterPath="$PROJECT_DIR$/registry/rules.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/registry/utility/widgets.py" afterPath="$PROJECT_DIR$/registry/utility/widgets.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/registry/views.py" afterPath="$PROJECT_DIR$/registry/views.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/requirements.txt" afterPath="$PROJECT_DIR$/requirements.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/static/registry/js/base.js" afterPath="$PROJECT_DIR$/static/registry/js/base.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/static/registry/js/utility.js" afterPath="$PROJECT_DIR$/static/registry/js/utility.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/template/registry/base/base.html" afterPath="$PROJECT_DIR$/template/registry/base/base.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/template/registry/base/base_user.html" afterPath="$PROJECT_DIR$/template/registry/base/base_user.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/template/registry/register.html" afterPath="$PROJECT_DIR$/template/registry/register.html" />
     </list>
+    <list id="575ad12e-fc51-4387-8fe9-8205024f9dd6" name="New changelist" comment="New changelist" />
     <ignored path="HealthNet.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
@@ -25,9 +40,10 @@
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/HealthNet$svn_to_git.coverage" NAME="svn-to-git RUN Coverage Results" MODIFIED="1456356179680" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/HealthNet$svn2git_CLEAN.coverage" NAME="svn2git CLEAN Coverage Results" MODIFIED="1456355485377" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/HealthNet$svn_mirror.coverage" NAME="svn-mirror Coverage Results" MODIFIED="1455946668293" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/HealthNet$svn_to_git.coverage" NAME="svn-to-git RUN Coverage Results" MODIFIED="1456356179680" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/HealthNet$strings.coverage" NAME="strings Coverage Results" MODIFIED="1460872251202" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/registry/utility" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -53,57 +69,106 @@
     <favorites_list name="HealthNet" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="user_patient.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/template/registry/users/user_patient.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.65384614">
-              <caret line="1" column="56" selection-start-line="1" selection-start-column="56" selection-end-line="1" selection-end-column="56" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="base_user.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/template/registry/base/base_user.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.65384614">
-              <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="56" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="rules.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/registry/rules.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="0" column="53" selection-start-line="0" selection-start-column="53" selection-end-line="0" selection-end-column="53" />
-              <folding>
-                <element signature="e#54#66#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="prescription_list.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/template/registry/components/prescription_list.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-3.2692308">
-              <caret line="5" column="56" selection-start-line="5" selection-start-column="56" selection-end-line="5" selection-end-column="56" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <splitter split-orientation="horizontal" split-proportion="0.4806421">
+      <split-first>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file leaf-file-name="base_user_classes.coffee" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/static/registry/coffee/base_user_classes.coffee">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.37172773">
+                  <caret line="96" column="0" selection-start-line="96" selection-start-column="0" selection-end-line="96" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="base.html" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/template/registry/base/base.html">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="21" column="89" selection-start-line="21" selection-start-column="89" selection-end-line="21" selection-end-column="89" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="widgets.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/registry/utility/widgets.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="45" column="103" selection-start-line="45" selection-start-column="103" selection-end-line="45" selection-end-column="103" />
+                  <folding>
+                    <element signature="e#0#15#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="register.html" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/template/registry/register.html">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="29" column="42" selection-start-line="29" selection-start-column="42" selection-end-line="29" selection-end-column="42" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/registry/views.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="9" column="21" selection-start-line="9" selection-start-column="21" selection-end-line="9" selection-end-column="21" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/registry/models.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.0">
+                  <caret line="39" column="27" selection-start-line="39" selection-start-column="27" selection-end-line="39" selection-end-column="27" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="base_user.html" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/template/registry/base/base_user.html">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="-0.65384614">
+                  <caret line="22" column="47" selection-start-line="22" selection-start-column="47" selection-end-line="22" selection-end-column="47" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="settings.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/HealthNet/settings.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state vertical-scroll-proportion="0.8900524">
+                  <caret line="180" column="0" selection-start-line="180" selection-start-column="0" selection-end-line="180" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JavaScript File" />
-        <option value="Python Script" />
         <option value="HTML File" />
+        <option value="Python Script" />
+        <option value="CoffeeScript File" />
       </list>
     </option>
   </component>
@@ -118,53 +183,57 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/svn-mirror.py" />
-        <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/system/form.py" />
-        <option value="$PROJECT_DIR$/system/models.py" />
-        <option value="$PROJECT_DIR$/registry/models.pyi" />
-        <option value="$PROJECT_DIR$/svn-to-git.py" />
-        <option value="$PROJECT_DIR$/git-to-svn.py" />
-        <option value="$PROJECT_DIR$/static/registry/js/dummy.js" />
-        <option value="$PROJECT_DIR$/requirements.txt" />
-        <option value="$PROJECT_DIR$/registry/models/misc_models.py" />
-        <option value="$PROJECT_DIR$/registry/models/options.py" />
-        <option value="$PROJECT_DIR$/registry/models/admission.py" />
-        <option value="$PROJECT_DIR$/registry/utility/models.py" />
-        <option value="$PROJECT_DIR$/template/registry/patient.html" />
-        <option value="$PROJECT_DIR$/template/registry/calender.html" />
         <option value="$PROJECT_DIR$/template/registry/calendar.html" />
         <option value="$PROJECT_DIR$/template/registry/alist.html" />
-        <option value="$PROJECT_DIR$/template/registry/login.html" />
         <option value="$PROJECT_DIR$/template/registry/log.html" />
         <option value="$PROJECT_DIR$/registry/tests.py" />
         <option value="$PROJECT_DIR$/setup.py" />
         <option value="$PROJECT_DIR$/MANIFEST.json" />
         <option value="$PROJECT_DIR$/package.json" />
-        <option value="$PROJECT_DIR$/static/registry/js/base_user.js" />
         <option value="$PROJECT_DIR$/HealthNet/urls.py" />
         <option value="$PROJECT_DIR$/template/registry/base.html" />
         <option value="$PROJECT_DIR$/registry/models/message_models.py" />
         <option value="$PROJECT_DIR$/registry/models/info_models.py" />
         <option value="$PROJECT_DIR$/registry/models/data_models.py" />
-        <option value="$PROJECT_DIR$/HealthNet/settings.py" />
         <option value="$PROJECT_DIR$/registry/models/user_models.py" />
-        <option value="$PROJECT_DIR$/registry/models.py" />
         <option value="$PROJECT_DIR$/template/registry/base/base_auth.html" />
-        <option value="$PROJECT_DIR$/registry/urls.py" />
         <option value="$PROJECT_DIR$/template/registry/data/appt_calendar.html" />
         <option value="$PROJECT_DIR$/template/registry/data/appt_delete.html" />
         <option value="$PROJECT_DIR$/template/registry/data/rx_delete.html" />
         <option value="$PROJECT_DIR$/registry/forms.py" />
         <option value="$PROJECT_DIR$/registry/admin.py" />
-        <option value="$PROJECT_DIR$/template/registry/users/user_doctor.html" />
-        <option value="$PROJECT_DIR$/registry/views.py" />
         <option value="$PROJECT_DIR$/.gitattributes" />
         <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/template/registry/base/base_user.html" />
+        <option value="$PROJECT_DIR$/run.cmd" />
+        <option value="$PROJECT_DIR$/registry/utility/viewutils.py" />
+        <option value="$PROJECT_DIR$/template/registry/users/user_admin.html" />
+        <option value="$PROJECT_DIR$/template/registry/landing.html" />
+        <option value="$PROJECT_DIR$/template/registry/login.html" />
         <option value="$PROJECT_DIR$/template/registry/users/user_patient.html" />
-        <option value="$PROJECT_DIR$/template/registry/components/prescription_list.html" />
+        <option value="$PROJECT_DIR$/template/registry/users/user_nurse.html" />
+        <option value="$PROJECT_DIR$/template/registry/users/user_doctor.html" />
+        <option value="$PROJECT_DIR$/static/registry/test.coffee" />
+        <option value="$PROJECT_DIR$/static/registry/coffee/test.coffee" />
+        <option value="$PROJECT_DIR$/static/registry/coffee/test2.coffee" />
+        <option value="$PROJECT_DIR$/registry/urls.py" />
         <option value="$PROJECT_DIR$/registry/rules.py" />
+        <option value="$PROJECT_DIR$/requirements.txt" />
+        <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/bower.json" />
+        <option value="$PROJECT_DIR$/static/registry/js/base_user.js" />
+        <option value="$PROJECT_DIR$/template/registry/base/base_user.html" />
+        <option value="$PROJECT_DIR$/HealthNet/settings.py" />
+        <option value="$PROJECT_DIR$/static/registry/coffee/base_user.coffee" />
+        <option value="$PROJECT_DIR$/template/registry/base/base.html" />
+        <option value="$PROJECT_DIR$/registry/views.py" />
+        <option value="$PROJECT_DIR$/static/registry/js/measurements.js" />
+        <option value="$PROJECT_DIR$/template/registry/register.html" />
+        <option value="$PROJECT_DIR$/static/registry/coffee/measurements.coffee" />
+        <option value="$PROJECT_DIR$/registry/utility/widgets.py" />
+        <option value="$PROJECT_DIR$/static/registry/js/base.js" />
+        <option value="$PROJECT_DIR$/static/registry/js/utility.js" />
+        <option value="$PROJECT_DIR$/registry/models.py" />
+        <option value="$PROJECT_DIR$/static/registry/coffee/base_user_classes.coffee" />
       </list>
     </option>
   </component>
@@ -176,8 +245,8 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1320" />
-    <option name="height" value="784" />
+    <option name="width" value="1382" />
+    <option name="height" value="744" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -223,8 +292,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -232,15 +301,9 @@
               <option name="myItemId" value="HealthNet" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
-          </PATH>
-          <PATH>
             <PATH_ELEMENT>
-              <option name="myItemId" value="HealthNet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="antiTry-HealthNet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -250,14 +313,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="antiTry-HealthNet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="template" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="registry" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -276,54 +331,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="registry" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="users" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="HealthNet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="antiTry-HealthNet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="template" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="registry" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="data" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="HealthNet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="antiTry-HealthNet" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="template" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="registry" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="components" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -402,6 +409,62 @@
               <option name="myItemId" value="static" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="registry" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="coffee" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="HealthNet" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="antiTry-HealthNet" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="static" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="compiled" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="registry" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="HealthNet" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="antiTry-HealthNet" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="static" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="compiled" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="registry" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="coffee" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -427,6 +490,24 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="registry" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="utility" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="HealthNet" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="antiTry-HealthNet" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="HealthNet" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -438,21 +519,21 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="js-jscs-nodeInterpreter" value="C:\Program Files\nodejs\node.exe" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.CoffeeScript" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="last_opened_file_path" value="C:/Ruby22-x64/lib/ruby/gems/2.2.0/gems/scss_lint-0.47.1/bin/scss-lint" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Matthew\PycharmProjects\antiTry-HealthNet\jspm_packages" />
+      <recent name="C:\Users\Matthew\PycharmProjects\antiTry-HealthNet\private_static" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Matthew\PycharmProjects\antiTry-HealthNet\template\registry\data" />
       <recent name="C:\Users\Matthew\PycharmProjects\antiTry-HealthNet\template\registry\base" />
       <recent name="C:\Users\Matthew\PycharmProjects\antiTry-HealthNet\template\registry\users" />
       <recent name="C:\Users\Matthew\PycharmProjects\antiTry-HealthNet\registry" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Matthew\PycharmProjects\antiTry-HealthNet\jspm_packages" />
-      <recent name="C:\Users\Matthew\PycharmProjects\antiTry-HealthNet\private_static" />
     </key>
   </component>
   <component name="RunManager" selected="Django server.HealthNet">
@@ -472,6 +553,17 @@
       <option name="SCRIPT_NAME" value="C:\Users\Matthew\PycharmProjects\HealthNet\git-to-svn.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="BashConfigurationType" factoryName="Bash">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="INTERPRETER_PATH" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <module name="" />
+      <envs />
       <method />
     </configuration>
     <configuration default="true" type="DjangoTestsConfigurationType" factoryName="Django tests">
@@ -694,10 +786,10 @@
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
-        <env name="DJANGO_SETTINGS_MODULE" value="HealthNet.settings" />
         <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="DJANGO_SETTINGS_MODULE" value="HealthNet.settings" />
       </envs>
-      <option name="SDK_HOME" value="C:\Users\Sherry\AppData\Local\Programs\Python\Python35-32\python.exe" />
+      <option name="SDK_HOME" value="C:\Users\Matthew\HealthNetEnv\Scripts\python.exe" />
       <option name="WORKING_DIRECTORY" value="" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -893,10 +985,22 @@
       <option name="project" value="LOCAL" />
       <updated>1459877961292</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Fix run script issues, add gitattributes&#10;">
+      <created>1461362352012</created>
+      <option name="number" value="00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1461362352012</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Add cookie-js as a dependency&#10;Fix navbar not highlighting logical selections&#10;Fix misuse of has_perm template tags&#10;Do not select any tab in navbar by default (modified in base.html)&#10;Javascript fixes (see diff)&#10;Move out view utilities to separate importable file&#10;Add is_self rule that was removed&#10;Skeleton implementations for REST-like appts&#10;URL changes">
+      <created>1462044941323</created>
+      <option name="number" value="00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1462044941323</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
-  <component name="TodoView">
+  <component name="TodoView" selected-index="4">
     <todo-panel id="selected-file">
       <is-autoscroll-to-source value="true" />
     </todo-panel>
@@ -906,28 +1010,28 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1320" height="784" extended-state="6" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <editor active="false" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19413629" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3265306" sideWeight="0.49670744" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21898928" sideWeight="0.5229794" order="11" side_tool="true" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32928678" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32810047" sideWeight="0.49670744" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21898928" sideWeight="0.4770206" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20196672" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3289689" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5155483" sideWeight="0.5030257" order="11" side_tool="true" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22610015" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5155483" sideWeight="0.4969743" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32954547" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20949264" sideWeight="0.52766395" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19152276" sideWeight="0.7996237" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2569558" sideWeight="0.4692623" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20980091" sideWeight="0.47789276" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33916083" sideWeight="0.4918033" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32312405" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39937106" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3986014" sideWeight="0.4897541" order="3" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -965,17 +1069,20 @@
     <MESSAGE value="Fix imports that pycharm broke in cleanup" />
     <MESSAGE value="Fix broken template references in views" />
     <MESSAGE value="We really need to stop committing migrations and workspace xmls if we can..." />
-    <option name="LAST_COMMIT_MESSAGE" value="We really need to stop committing migrations and workspace xmls if we can..." />
+    <MESSAGE value="Fix run script issues, add gitattributes&#10;" />
+    <MESSAGE value="Add cookie-js as a dependency&#10;Fix navbar not highlighting logical selections&#10;Fix misuse of has_perm template tags&#10;Do not select any tab in navbar by default (modified in base.html)&#10;Javascript fixes (see diff)&#10;Move out view utilities to separate importable file&#10;Add is_self rule that was removed&#10;Skeleton implementations for REST-like appts&#10;URL changes" />
+    <MESSAGE value="New Developer Dependencies:&#10;CoffeeScript - A Compile-to-JS language that provides a lot syntactic sugar with regards to javascript constructs and allows powerful, expressive language while still being supported by browsers by compiling down to js. Also includes class and inheritance support.&#10;&#10;INSTALL CoffeeScript USING 'npm install -g coffee-script'&#10;&#10;django-static-precompiler - Provides pre-compilation utilities for various languages like SASS and CoffeeScript without any bothersome native dependencies. Necessary to use coffeescript.&#10;&#10;settings.py:&#10;- Setup architecture for installing coffeescript and django-static-precompiler to work with out static files environment.&#10;&#10;widgets.py:&#10;- Small cleanups for inconsistencies and odd results&#10;&#10;rules.py:&#10;- Add basic always_true and always_false predicates that should be expected in a rules environment&#10;- Add basic, proper, permissions for viewing and editing personal, medical and insurance information of a user &#10;- Did not remove code that is in obsolescence until we are sure those rules/[erms are no longer needed.&#10;&#10;views.py:&#10;- Rewrite some REST views to properly use new AJAX utilities&#10;&#10;base_user.coffee and base_user_classes.coffee:&#10;- Reimplement base_user.js in CoffeeScript with a whole new permissions system that is both asynchronous and makes sense.&#10;- New JS Authenticator and Revertable Changes based system.&#10;- Now is asynchronous using the new processNextTick global provided by utility, making use of setTimeout. This should be replaced.&#10;- Many small optimization to jQuery selectors and DOM manipulation&#10;&#10;measurements.coffee:&#10;- Reimplements measurements.js in coffeescript with small optimizations to caching.&#10;- In the process, resolved numerous issues that caused weird bugs in the form.&#10;&#10;base.js:&#10;- Obsolesced certain registry base actions in favor of the actions added in Utility. Now delegates to registry.utility and registry.utility with attempt to override registry base functions. &#10;- registry is now extensible up until after utility is initialized&#10;- Add processNextTick&#10;- Add stopEventBehavior&#10;- Delegate processNextTick, stopEventBehavior and csrf to registry.utility analogs&#10;&#10;utility.js:&#10;- Add stopEventBehavior which provides IE compliant way to prevent Events from doing their default behavior (like a click on an &lt;a&gt; tag changing location).&#10;- Add processNextTick which provides a universal way to have actions be held off until the next possible available tick of the VM. This acts similarly to process.nextTick from node.js.&#10;- Add processNextTick to window globals&#10;- Override base registry functions (csrf and stopEventBehavior, etc.) and make them aliases for utility functions.&#10;- Move 'preventExtensions' call for base registry to after utility is instantiated&#10;&#10;templates in general:&#10;- Mostly converting any script imports to coffeescript imports if necessary. Must use the 'compile' filter from compile_tags.&#10;&#10;bower.json:&#10;- Cleanup unused and likely to not be used dependencies&#10;- Timesheet, Charts, Chance&#10;&#10;README update for coffeescript acknowledgement&#10;requirements.txt not includes django-static-precompiler" />
+    <option name="LAST_COMMIT_MESSAGE" value="New Developer Dependencies:&#10;CoffeeScript - A Compile-to-JS language that provides a lot syntactic sugar with regards to javascript constructs and allows powerful, expressive language while still being supported by browsers by compiling down to js. Also includes class and inheritance support.&#10;&#10;INSTALL CoffeeScript USING 'npm install -g coffee-script'&#10;&#10;django-static-precompiler - Provides pre-compilation utilities for various languages like SASS and CoffeeScript without any bothersome native dependencies. Necessary to use coffeescript.&#10;&#10;settings.py:&#10;- Setup architecture for installing coffeescript and django-static-precompiler to work with out static files environment.&#10;&#10;widgets.py:&#10;- Small cleanups for inconsistencies and odd results&#10;&#10;rules.py:&#10;- Add basic always_true and always_false predicates that should be expected in a rules environment&#10;- Add basic, proper, permissions for viewing and editing personal, medical and insurance information of a user &#10;- Did not remove code that is in obsolescence until we are sure those rules/[erms are no longer needed.&#10;&#10;views.py:&#10;- Rewrite some REST views to properly use new AJAX utilities&#10;&#10;base_user.coffee and base_user_classes.coffee:&#10;- Reimplement base_user.js in CoffeeScript with a whole new permissions system that is both asynchronous and makes sense.&#10;- New JS Authenticator and Revertable Changes based system.&#10;- Now is asynchronous using the new processNextTick global provided by utility, making use of setTimeout. This should be replaced.&#10;- Many small optimization to jQuery selectors and DOM manipulation&#10;&#10;measurements.coffee:&#10;- Reimplements measurements.js in coffeescript with small optimizations to caching.&#10;- In the process, resolved numerous issues that caused weird bugs in the form.&#10;&#10;base.js:&#10;- Obsolesced certain registry base actions in favor of the actions added in Utility. Now delegates to registry.utility and registry.utility with attempt to override registry base functions. &#10;- registry is now extensible up until after utility is initialized&#10;- Add processNextTick&#10;- Add stopEventBehavior&#10;- Delegate processNextTick, stopEventBehavior and csrf to registry.utility analogs&#10;&#10;utility.js:&#10;- Add stopEventBehavior which provides IE compliant way to prevent Events from doing their default behavior (like a click on an &lt;a&gt; tag changing location).&#10;- Add processNextTick which provides a universal way to have actions be held off until the next possible available tick of the VM. This acts similarly to process.nextTick from node.js.&#10;- Add processNextTick to window globals&#10;- Override base registry functions (csrf and stopEventBehavior, etc.) and make them aliases for utility functions.&#10;- Move 'preventExtensions' call for base registry to after utility is instantiated&#10;&#10;templates in general:&#10;- Mostly converting any script imports to coffeescript imports if necessary. Must use the 'compile' filter from compile_tags.&#10;&#10;bower.json:&#10;- Cleanup unused and likely to not be used dependencies&#10;- Timesheet, Charts, Chance&#10;&#10;README update for coffeescript acknowledgement&#10;requirements.txt not includes django-static-precompiler" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="6" />
+      <option name="time" value="13" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/template/registry/components/prescription_list.html">
+    <entry file="file://$PROJECT_DIR$/template/registry/base/base_user.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -983,336 +1090,369 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/static/registry/js/base.js">
+    <entry file="file://$PROJECT_DIR$/conditions.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
+    <entry file="file://$USER_HOME$/HealthNetEnv/Lib/site-packages/django/views/decorators/http.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="4" column="14" selection-start-line="4" selection-start-column="14" selection-end-line="4" selection-end-column="14" />
+          <caret line="25" column="58" selection-start-line="25" selection-start-column="58" selection-end-line="25" selection-end-column="58" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/logs/hn_activity.log">
+    <entry file="file://$USER_HOME$/.PyCharm50/system/python_stubs/-1093344958/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3327616">
+          <caret line="2801" column="8" selection-start-line="2801" selection-start-column="8" selection-end-line="2801" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python35-32/Lib/wsgiref/handlers.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="142" column="41" selection-start-line="142" selection-start-column="41" selection-end-line="142" selection-end-column="41" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/logs/hn_debug.log">
+    <entry file="file://$USER_HOME$/HealthNetEnv/Lib/site-packages/rules/predicates.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="153" column="0" selection-start-line="153" selection-start-column="0" selection-end-line="153" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/logs/hn_error.log">
+    <entry file="file://$USER_HOME$/HealthNetEnv/Lib/site-packages/rules/permissions.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/registry/migrations/__init__.py">
+    <entry file="file://$USER_HOME$/HealthNetEnv/Lib/site-packages/django/template/loader_tags.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="172" column="0" selection-start-line="172" selection-start-column="0" selection-end-line="172" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/registry/tests.py">
+    <entry file="file://$USER_HOME$/HealthNetEnv/Lib/site-packages/django/test/utils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="91" column="0" selection-start-line="91" selection-start-column="0" selection-end-line="91" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/HealthNet/urls.py">
+    <entry file="file://$USER_HOME$/HealthNetEnv/Lib/site-packages/django/shortcuts.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.33236152">
+          <caret line="88" column="0" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
+    <entry file="file://$USER_HOME$/HealthNetEnv/Lib/site-packages/django/template/loader.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="3" column="15" selection-start-line="3" selection-start-column="15" selection-end-line="3" selection-end-column="15" />
+        <state vertical-scroll-proportion="0.33236152">
+          <caret line="113" column="0" selection-start-line="113" selection-start-column="0" selection-end-line="113" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bower.json">
+    <entry file="file://$USER_HOME$/HealthNetEnv/Lib/site-packages/django/template/engine.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.3076923">
-          <caret line="2" column="22" selection-start-line="2" selection-start-column="22" selection-end-line="2" selection-end-column="22" />
+        <state vertical-scroll-proportion="0.33236152">
+          <caret line="243" column="0" selection-start-line="243" selection-start-column="0" selection-end-line="243" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/register.html">
+    <entry file="file://$USER_HOME$/HealthNetEnv/Lib/site-packages/django/template/base.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-13.576923">
-          <caret line="23" column="3" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="14" />
+        <state vertical-scroll-proportion="0.33236152">
+          <caret line="205" column="0" selection-start-line="205" selection-start-column="0" selection-end-line="205" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/static/registry/img/logo.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/registry/img/favicon/favicon.ico">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/registry/img/logo/Logo_Large_White.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/registry/css/_constants.scss">
+    <entry file="file://$USER_HOME$/HealthNetEnv/Lib/site-packages/django/template/library.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.33236152">
+          <caret line="200" column="0" selection-start-line="200" selection-start-column="0" selection-end-line="200" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/static/registry/css/base.scss">
+    <entry file="file://$USER_HOME$/HealthNetEnv/Lib/site-packages/django/contrib/auth/decorators.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="26" column="24" selection-start-line="26" selection-start-column="24" selection-end-line="26" selection-end-column="24" />
+        <state vertical-scroll-proportion="0.33236152">
+          <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/registry/utility/options.py">
+    <entry file="file://$USER_HOME$/HealthNetEnv/Lib/site-packages/rules/templatetags/rules.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="3.7046843">
-          <caret line="107" column="0" selection-start-line="107" selection-start-column="0" selection-end-line="107" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.6530612">
+          <caret line="18" column="0" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/static/registry/css/base_user.scss">
+    <entry file="file://$PROJECT_DIR$/registry/utility/viewutils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/data/appt_create.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.51182795">
-          <caret line="14" column="14" selection-start-line="14" selection-start-column="14" selection-end-line="14" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/registry/apps.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/registry/admin.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="17" column="36" selection-start-line="17" selection-start-column="36" selection-end-line="17" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/data/rx_delete.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33943427">
-          <caret line="12" column="35" selection-start-line="12" selection-start-column="35" selection-end-line="12" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/HealthNet/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="198" column="0" selection-start-line="198" selection-start-column="0" selection-end-line="198" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.02915952">
+          <caret line="8" column="4" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="4" />
           <folding>
-            <marker date="1461435710428" expanded="true" signature="0:308" placeholder="&quot;&quot;&quot;Django settings for HealthNet project....&quot;&quot;&quot;" />
+            <element signature="e#0#27#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/components/doctor_registration.html">
+    <entry file="file://$USER_HOME$/HealthNetEnv/Lib/site-packages/rules/rulesets.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/data/message_creation.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/data/mc_add.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5788337">
-          <caret line="21" column="19" selection-start-line="21" selection-start-column="19" selection-end-line="21" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/data/appt_delete.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-7.8461537">
-          <caret line="12" column="34" selection-start-line="12" selection-start-column="34" selection-end-line="12" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/data/appt_edit.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-5.230769">
-          <caret line="28" column="35" selection-start-line="28" selection-start-column="35" selection-end-line="28" selection-end-column="35" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/data/appt_view.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-22.884615">
-          <caret line="35" column="36" selection-start-line="35" selection-start-column="36" selection-end-line="35" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/components/calendar_nurse.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-11.923077">
-          <caret line="66" column="43" selection-start-line="62" selection-start-column="40" selection-end-line="66" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/components/calendar.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-10.461538">
-          <caret line="70" column="22" selection-start-line="70" selection-start-column="22" selection-end-line="70" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/registry/utility/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.03586498">
-          <caret line="42" column="0" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/data/rx_create.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.52678573">
-          <caret line="28" column="33" selection-start-line="28" selection-start-column="33" selection-end-line="28" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/registry/js/utility.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/registry/js/base_user.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.765823">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.5952381">
+          <caret line="40" column="4" selection-start-line="40" selection-start-column="4" selection-end-line="40" selection-end-column="4" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/template/registry/base/base_auth.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.64508927">
-          <caret line="17" column="10" selection-start-line="17" selection-start-column="10" selection-end-line="17" selection-end-column="10" />
+        <state vertical-scroll-proportion="-1.9615384">
+          <caret line="3" column="30" selection-start-line="3" selection-start-column="30" selection-end-line="3" selection-end-column="30" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/base/base.html">
+    <entry file="file://$PROJECT_DIR$/template/registry/landing.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.3076923">
-          <caret line="41" column="12" selection-start-line="41" selection-start-column="12" selection-end-line="41" selection-end-column="12" />
+        <state vertical-scroll-proportion="-2.6153846">
+          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/template/registry/login.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-3.2692308">
+          <caret line="5" column="63" selection-start-line="5" selection-start-column="63" selection-end-line="5" selection-end-column="63" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/template/registry/users/user_patient.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-3.2692308">
+          <caret line="5" column="28" selection-start-line="5" selection-start-column="28" selection-end-line="5" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/template/registry/users/user_nurse.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-2.6153846">
+          <caret line="5" column="28" selection-start-line="5" selection-start-column="28" selection-end-line="5" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/template/registry/users/user_doctor.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-3.2692308">
+          <caret line="5" column="28" selection-start-line="5" selection-start-column="28" selection-end-line="5" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/template/registry/users/user_admin.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.40221402">
+          <caret line="17" column="12" selection-start-line="17" selection-start-column="10" selection-end-line="17" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/HealthNet/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.20481928">
+          <caret line="4" column="9" selection-start-line="4" selection-start-column="9" selection-end-line="4" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/compiled/registry/coffee/base_user.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-3.2614555">
+          <caret line="7" column="36" selection-start-line="7" selection-start-column="36" selection-end-line="7" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/registry/rules.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="97" column="56" selection-start-line="97" selection-start-column="56" selection-end-line="97" selection-end-column="56" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/registry/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-19.192308">
-          <caret line="53" column="19" selection-start-line="53" selection-start-column="18" selection-end-line="53" selection-end-column="19" />
+        <state vertical-scroll-proportion="0.73315364">
+          <caret line="36" column="82" selection-start-line="36" selection-start-column="82" selection-end-line="36" selection-end-column="82" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/users/user_admin.html">
+    <entry file="file://$PROJECT_DIR$/static/compiled/registry/coffee/base_user_classes.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="2.2715516">
-          <caret line="62" column="8" selection-start-line="62" selection-start-column="8" selection-end-line="62" selection-end-column="68" />
+        <state vertical-scroll-proportion="-0.4090909">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/HealthNetEnv/Lib/site-packages/static_precompiler/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.37700534">
+          <caret line="208" column="0" selection-start-line="208" selection-start-column="0" selection-end-line="208" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider editor-type-id="MultiMarkdownFxPreviewEditor">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="split-provider[text-editor;MultiMarkdownPreviewEditor]">
+        <state split_layout="FIRST">
+          <first_editor vertical-scroll-proportion="0.0">
+            <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <folding />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/registry/forms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="236" column="8" selection-start-line="236" selection-start-column="8" selection-end-line="236" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bower.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-7.8461537">
+          <caret line="30" column="11" selection-start-line="30" selection-start-column="11" selection-end-line="30" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/HealthNetEnv/Lib/site-packages/static_precompiler/templatetags/compile_static.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.115625">
+          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/HealthNetEnv/Lib/site-packages/static_precompiler/compilers/coffeescript.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-1.1829897">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#9#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="19" column="12" selection-start-line="19" selection-start-column="12" selection-end-line="19" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/registry/js/logrender.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/registry/js/special_user_registration.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="4.4690723">
+          <caret line="102" column="33" selection-start-line="102" selection-start-column="33" selection-end-line="102" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/template/registry/register.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="29" column="42" selection-start-line="29" selection-start-column="42" selection-end-line="29" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/registry/utility/widgets.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="45" column="103" selection-start-line="45" selection-start-column="103" selection-end-line="45" selection-end-column="103" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/registry/coffee/base_user.coffee">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.40298507">
+          <caret line="90" column="11" selection-start-line="90" selection-start-column="8" selection-end-line="90" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/registry/coffee/measurements.coffee">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.25373134">
+          <caret line="4" column="19" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/template/registry/base/base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="21" column="89" selection-start-line="21" selection-start-column="89" selection-end-line="21" selection-end-column="89" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/registry/js/utility.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.8097015">
+          <caret line="89" column="43" selection-start-line="89" selection-start-column="43" selection-end-line="89" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/registry/js/base.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.74626863">
+          <caret line="196" column="0" selection-start-line="196" selection-start-column="0" selection-end-line="196" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/registry/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.625">
-          <caret line="137" column="56" selection-start-line="137" selection-start-column="56" selection-end-line="137" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/data/patient_discharge.html">
-      <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/data/patient_admit.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-8.5">
-          <caret line="13" column="64" selection-start-line="13" selection-start-column="64" selection-end-line="13" selection-end-column="64" />
+          <caret line="9" column="21" selection-start-line="9" selection-start-column="21" selection-end-line="9" selection-end-column="21" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/registry/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.09795918">
-          <caret line="296" column="23" selection-start-line="296" selection-start-column="23" selection-end-line="296" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/registry/forms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.38163266">
-          <caret line="657" column="46" selection-start-line="657" selection-start-column="8" selection-end-line="657" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/users/user_doctor.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-34.192307">
-          <caret line="158" column="51" selection-start-line="158" selection-start-column="49" selection-end-line="158" selection-end-column="51" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/users/user_nurse.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-37.923077">
-          <caret line="58" column="34" selection-start-line="58" selection-start-column="34" selection-end-line="58" selection-end-column="34" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="39" column="27" selection-start-line="39" selection-start-column="27" selection-end-line="39" selection-end-column="27" />
           <folding />
         </state>
       </provider>
@@ -1320,34 +1460,24 @@
     <entry file="file://$PROJECT_DIR$/template/registry/base/base_user.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-0.65384614">
-          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="56" />
+          <caret line="22" column="47" selection-start-line="22" selection-start-column="47" selection-end-line="22" selection-end-column="47" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/users/user_patient.html">
+    <entry file="file://$PROJECT_DIR$/HealthNet/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.65384614">
-          <caret line="1" column="56" selection-start-line="1" selection-start-column="56" selection-end-line="1" selection-end-column="56" />
+        <state vertical-scroll-proportion="0.8900524">
+          <caret line="180" column="0" selection-start-line="180" selection-start-column="0" selection-end-line="180" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/template/registry/components/prescription_list.html">
+    <entry file="file://$PROJECT_DIR$/static/registry/coffee/base_user_classes.coffee">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.2692308">
-          <caret line="5" column="56" selection-start-line="5" selection-start-column="56" selection-end-line="5" selection-end-column="56" />
+        <state vertical-scroll-proportion="0.37172773">
+          <caret line="96" column="0" selection-start-line="96" selection-start-column="0" selection-end-line="96" selection-end-column="0" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/registry/rules.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="53" selection-start-line="0" selection-start-column="53" selection-end-line="0" selection-end-column="53" />
-          <folding>
-            <element signature="e#54#66#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
