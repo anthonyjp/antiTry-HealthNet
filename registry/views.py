@@ -864,3 +864,72 @@ def logs(request, start, end):
         })
 
     return ajax_success(entries=result)
+
+
+import csv
+from django.http import HttpResponse
+
+
+def export_patient_info(request, patient_uuid):
+    """
+    This is the view for creating a CSV file of a patient medical information.
+    Written by Lisa Ni
+    :param request:
+    :param patient_uuid: the patient whose information is being exported
+    :return: the cvs file
+    """
+    patient = get_object_or_404(Patient, uuid=patient_uuid)
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=' + str(patient) + '_record_export.csv'
+
+    writer = csv.writer(response)
+
+    # Basic profile information
+    writer.writerow(['Name', str(patient)])
+    writer.writerow(['Date of Birthday', patient.date_of_birth])
+    writer.writerow(['Address', patient.address_line_one])
+    if patient.address_line_two is None:
+        writer.writerow(['', patient.address_line_two])
+    writer.writerow(['', patient.address_city + ', ' + patient.address_state + ' ' + patient.address_zipcode])
+
+    # Determine gender
+    if patient.gender == 0:
+        writer.writerow(['Gender', 'Male'])
+    else:
+        writer.writerow(['Gender', 'Female'])
+
+    # Determine blood type
+    if patient.blood_type == 0:
+        writer.writerow(['Blood Type', 'A'])
+    elif patient.blood_type == 1:
+        writer.writerow(['Blood Type', 'B'])
+    elif patient.blood_type == 2:
+        writer.writerow(['Blood Type', 'AB'])
+    elif patient.blood_type == 3:
+        writer.writerow(['Blood Type', 'O'])
+    elif patient.blood_type == 4:
+        writer.writerow(['Blood Type', 'Unknown'])
+
+    writer.writerow(['Height', patient.height])
+    writer.writerow(['Weight', patient.weight])
+
+    # All the medical conditions
+    writer.writerow(['Medical Conditions:'])
+    for p in patient.conditions.all():
+        writer.writerow(['', str(p)])
+
+    # All the prescriptions
+    writer.writerow(['Prescriptions:'])
+    for p in patient.prescription_set.all():
+        writer.writerow(['', str(p)])
+
+    # All the admits
+    if patient.admission_status is not None:
+        writer.writerow(['Admission Status: ', patient.admission_status])
+
+    writer.writerow(['Medical History:'])
+    for p in MedicalHistory.objects.filter(patient=patient).all():
+        writer.writerow(['', str(p)])
+
+    return response

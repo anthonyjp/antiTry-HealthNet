@@ -170,8 +170,8 @@ class AdmissionInfo(models.Model):
 
     def __str__(self):
         if self is not None:
-            # return "self.doctor, self.hospital, self.admission_time.start_time lol"
-            return "Admitted by %s to %s on %s" % \
+            # return "self.doctor, self.hospital, self.admission_time.start_time"
+            return "Admitted to %s to %s on %s" % \
                    (self.doctor, self.hospital, self.admission_time.start_time)
         else:
             return "None"
@@ -200,6 +200,7 @@ class Patient(User):
 
     def is_admitted(self):
         return self.admission_status is not None
+
 
 
 class Administrator(User):
@@ -280,6 +281,7 @@ class Appointment(models.Model):
     def is_today(self):
         now = datetime.now()
         return self.time.date() == now.date()
+
 
 class Note(models.Model):
     """

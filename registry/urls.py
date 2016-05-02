@@ -48,6 +48,10 @@ urlpatterns = [
     url(uuid_url(r'^msg/(?P<uuid>{uuid})$'), views.msg, name='msg'),
     url(r'^msg$', views.msg, name='msg_create'),
 
-    url(r'^logs/(?P<start>\d{4}-\d{2}-\d{2})/(?P<end>\d{4}-\d{2}-\d{2})$', views.logs, name='logs')
+    url(r'^logs/(?P<start>\d{4}-\d{2}-\d{2})/(?P<end>\d{4}-\d{2}-\d{2})$', views.logs, name='logs'),
+
+    # Get the patient export info
+    url(r'patientpdf/(?P<patient_uuid>.*)$', views.export_patient_info, name='export_patient_info'),
+
 
 ]

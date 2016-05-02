@@ -25,8 +25,8 @@
     <li><a href ="#tab2" rel="tab2" class="hn-tab">Medical</a></li>
     <li><a href ="#tab3" rel="tab3" class="hn-tab">Insurance</a></li>
     <li><a href="#tab5" id="appt-tab" rel="tab5" class="hn-tab">Appointments</a></li>
-    <li><a href="#tab10" id="appt-tab" rel="tab5" class="hn-tab">Export Information</a></li>
-    {#    <li><a href="#ta7" rel="tab7" class="hn-tab">Medical Tests</a></li>#}
+    <li><a href="{% url 'registry:export_patient_info' hn_owner.uuid %}" id="appt-tab" rel="tab5" class="hn-tab">
+        Export Information</a></li>
 
 {% endblock %}
 

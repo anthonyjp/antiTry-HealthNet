@@ -47,11 +47,13 @@
         </th>
     </tr>
 
-    <tr>
+
         {% for mh in medical_history %}
-            <td>{{ mh }}</td>
+            <tr>
+                <td>{{ mh }}</td>
+            </tr>
         {% endfor %}
-    </tr>
+
 </table>
 <br><br>
 <table id="prestable">
