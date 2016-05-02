@@ -113,7 +113,7 @@
 </table>
 <div id="presbuttons">
     {% if can_add %}
-        <a href="{% url 'registry:rx_create' patient.uuid %}">
+        <a href="{% url 'registry:rx_create' hn_owner.uuid %}">
             <button>Add Prescription</button>
         </a>
     {% endif %}

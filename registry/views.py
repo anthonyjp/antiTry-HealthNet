@@ -190,6 +190,12 @@ def register(request):
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/patient_admit.html')
 def patient_admit(request, patient_uuid):
+    """
+    The view for admitting a patient
+    :param request:
+    :param patient_uuid:  the patient getting admitted
+    :return:
+    """
     user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     patient = get_object_or_404(Patient, uuid=patient_uuid)
     # next_location is where it goes if you cancel
@@ -559,6 +565,13 @@ def view_user(request, uuid):
 
 @ajax_request
 def admit_user(request, uuid):
+    """
+    The admit user request
+    This is written in ajax format
+    :param request:
+    :param uuid: the patient being admitted
+    :return:
+    """
     admitter = User.objects.get_subclass(pk=request.user.hn_user.pk)
     admittee = User.objects.get_subclass(pk=get_object_or_404(User, uuid=uuid).pk)
 
@@ -649,15 +662,21 @@ def rx_op(request, pk=None, patient_uuid=None):
         return rx_delete(request, pk)
 
 
-@require_http_methods(['GET'])
+# @require_http_methods(['GET'])
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/rx_create.html')
 def rx_create(request, patient_uuid):
+    """
+    Prescription creation view
+    This is not in ajax form
+    Written by Lisa Ni
+    :param request:
+    :param patient_uuid: the patient who the prescription is getting assigned to
+    :return:
+    """
     error = ""
     p = User.objects.get_subclass(pk=request.user.hn_user.pk)
-
     # next_location is where it goes if you cancel
-    # EXCUSE ME
     next_location = None
 
     if rules.test_rule('is_doctor', p):
@@ -678,7 +697,8 @@ def rx_create(request, patient_uuid):
                     logger.action(request, LogAction.RX_CREATE, 'Prescribed by {0!r} to {1!r}', rx.doctor, rx.patient)
                     return redirect('registry:user', uuid=patient_uuid)
                 else:
-                    error = "Time Range is invalid"
+                    error = "Time Range is invalid. Start time cannot be in the past and the end time must be after" \
+                            " start time."
         else:
             form = PrescriptionCreation(uuid=patient_uuid)
 
@@ -689,6 +709,35 @@ def rx_create(request, patient_uuid):
     return HttpResponseNotFound(
             '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
 
+
+@login_required(login_url=reverse_lazy('registry:login'))
+@render_to('registry/data/rx_delete.html')
+def rx_delete(request, pk):
+    """
+    Prescription deletion view
+    I understand that it's not ajax format, but it works.
+    Written by Lisa Ni
+    :param request:
+    :param pk: the id of the prescription
+    :return:
+    """
+    rx = get_object_or_404(Prescription, id=pk)
+    hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
+
+    if not hn_user.has_perm('registry.rx', rx.patient) or rx.doctor.uuid != hn_user.uuid:
+        return HttpResponseNotFound(
+            '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+
+    if request.method == 'POST':
+        form = DeletePresForm(request.POST, instance=rx)
+        if form.is_valid():
+            rx.delete()
+            return redirect('registry:home')
+    else:
+        form = DeletePresForm(instance=rx)
+
+    template_vars = {'form': form}
+    return template_vars
 
 def rx_view(request, pk):
     return Http404()
@@ -705,6 +754,7 @@ def rx_update(request, pk):
         return {'error': 'Forbidden'}
 
 
+"""
 @render_to('registry/data/rx_delete.html')
 @ajax_request
 def rx_delete(request, pk):
@@ -714,10 +764,11 @@ def rx_delete(request, pk):
     if not hn_user.has_perm('registry.rx', rx.patient) or rx.doctor.uuid != hn_user.uuid:
         return {'error': 'Forbidden'}
 
+
     rx.delete()
 
     return {}
-
+"""
 
 @require_http_methods(['POST'])
 @login_required(login_url=reverse_lazy('registry:login'))

@@ -32,17 +32,19 @@ urlpatterns = [
     # User Related URLs
     url(uuid_url(r'^user/(?P<uuid>{uuid})$'), views.user, name='user'),
     url(r'^user', views.user, name='user_create'),
-    url(uuid_url(r'^user/(?P<patient_uuid>{uuid})/rx$'), views.rx_create, name='rx_create'),
-    url(uuid_url(r'^user/(?P<patient_uuid>{uuid})/rx/(?P<pk>[0-9]+)'), views.rx_delete, name='rx_delete'),
+    # url(uuid_url(r'^user/(?P<patient_uuid>{uuid})/rx$'), views.rx_create, name='rx_create'),
+    # url(uuid_url(r'^user/(?P<patient_uuid>{uuid})/rx/(?P<pk>[0-9]+)'), views.rx_delete, name='rx_delete'),
     url(uuid_url(r'^verify/(?P<uuid>{uuid})$'), views.user_verify, name='verify'),
 
     # Transfer Related URLs
     # url(r'^transfer$', views.transfer_create, name='transfer_create'),
     # url(r'^transfer/(?P<pk>[0-9]+)$', views.transfers, name='transfer'),
 
+
     # RX Related URLs
-    url(r'^rx/(?P<pk>[0-9]+)$', views.rx_op, name='rx'),
+    #url(r'^rx/(?P<pk>[0-9]+)$', views.rx_op, name='rx'),
     url(r'^rx/create/(?P<patient_uuid>.*)$', views.rx_create, name='rx_create'),
+    url(r'^rx/delete/(?P<pk>[0-9]+)$', views.rx_delete, name='rx_delete'),
 
     # Message Related URLs
     url(uuid_url(r'^msg/(?P<uuid>{uuid})$'), views.msg, name='msg'),
