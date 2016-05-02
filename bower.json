@@ -22,8 +22,6 @@
   ],
   "dependencies": {
     "jquery": "^2.2.0",
-    "Chart.js": "^1.0.2",
-    "timesheet.js": "https://github.com/sbstjn/timesheet.js.git",
     "bootstrap": "^3.3.6",
     "lodash": "^4.5.1",
     "pikaday": "^1.4.0",
@@ -31,7 +29,6 @@
     "fullcalendar": "^2.6.1",
     "jt.timepicker": "jquery-timepicker-jt#^1.8.9",
     "sprintf": "^1.0.3",
-    "chance": "^1.0.0",
     "vex": "^2.3.3",
     "selectize": "^0.12.1",
     "parsleyjs": "^2.3.7",

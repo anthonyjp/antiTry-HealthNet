@@ -148,7 +148,8 @@ STATICFILES_FINDERS = {
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'djangobower.finders.BowerFinder',
-    'sass_processor.finders.CssFinder'
+    'sass_processor.finders.CssFinder',
+    'static_precompiler.finders.StaticPrecompilerFinder',
 }
 
 BOWER_INSTALLED_APPS = {
@@ -172,8 +173,11 @@ STATICFILES_DIRS = [
 
 SASS_PROCESSOR_ENABLED = True
 SASS_PROCESSOR_ROOT = STATICFILES_DIRS[2]
-SASS_PROCESSOR_INCLUDE_DIRS = STATICFILES_DIRS
+SASS_PROCESSOR_INCLUDE_DIRS = STATICFILES_DIRS[:]
 del SASS_PROCESSOR_INCLUDE_DIRS[2]
+
+STATIC_PRECOMPILER_ROOT = STATICFILES_DIRS[2]
+STATIC_PRECOMPILER_OUTPUT_DIR = ''
 
 # AXES SETTINGS - Do not change without permission
 AXES_LOGIN_FAILURE_LIMIT = 3

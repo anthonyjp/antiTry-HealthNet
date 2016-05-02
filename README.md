@@ -39,8 +39,9 @@ In the process you will be installing [bower](http://bower.io/) for managing fro
 In the terminal in pycharm (after setting up virtualenv if you opted for that) run,
 
     npm install -g bower
+    npm install -g coffee-script
 
-This will install Bower. Once that is done you can run
+This will install Bower and CoffeeScript. Once that is done you can run
 
     bower install
 

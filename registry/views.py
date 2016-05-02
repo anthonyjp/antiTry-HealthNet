@@ -589,9 +589,9 @@ def admit_user(request, uuid):
 
             logger.action(request, LogAction.PA_ADMIT, '{0!r} admitted by {1!r} to {2!s}', admittee, admitter,
                           admission.hospital)
-            return {'success': True}
+            return ajax_success()
 
-    return {'success': False}
+    return ajax_failure()
 
 
 @ajax_request
@@ -599,7 +599,7 @@ def update_user(request, uuid):
     try:
         user = User.objects.get_subclass(pk=uuid)
     except User.DoesNotExist:
-        return {'error': 'User does not exit'}
+        return ajax_failure(error='User does not exist')
 
     successes = []
     failures = []
@@ -611,7 +611,7 @@ def update_user(request, uuid):
             failures.append(key)
 
     user.save()
-    return {'successes': successes, 'failures': failures}
+    return ajax_success(successes=successes, failures=failures)
 
 
 @require_http_methods(['GET'])
@@ -620,12 +620,16 @@ def user_verify(request, uuid):
     hn_visitor = User.objects.get_subclass(pk=request.user.hn_user.pk)
     hn_owner = get_user_or_404(uuid)
 
-    resp = {'can_edit': hn_visitor.has_perm('registry.edit_patient', hn_owner) if rules.test_rule('is_patient',
-                                                                                                  hn_owner) else hn_visitor.uuid == hn_owner.uuid}
-    if resp['can_edit']:
-        resp['user_id'] = uuid
+    perms = {
+        'view.personal': hn_visitor.has_perm('registry.user.view.personal', hn_owner),
+        'view.medical': hn_visitor.has_perm('registry.user.view.medical', hn_owner),
+        'view.insurance': hn_visitor.has_perm('registry.user.view.insurance', hn_owner),
+        'edit.personal': hn_visitor.has_perm('registry.user.edit.personal', hn_owner),
+        'edit.medical': hn_visitor.has_perm('registry.user.edit.medical', hn_owner),
+        'edit.insurance': hn_visitor.has_perm('registry.user.edit.insurance', hn_owner)
+    }
 
-    return ajax_success(**resp)
+    return ajax_success(perms=perms, user_id=uuid)
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -662,14 +666,14 @@ def rx_op(request, pk=None, patient_uuid=None):
         return rx_delete(request, pk)
 
 
-# @require_http_methods(['GET'])
+@require_http_methods(['GET'])
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/rx_create.html')
 def rx_create(request, patient_uuid):
     """
     Prescription creation view
     This is not in ajax form
-    Written by Lisa Ni
+    Written by Lisa Ni--
     :param request:
     :param patient_uuid: the patient who the prescription is getting assigned to
     :return:
@@ -749,9 +753,9 @@ def rx_update(request, pk):
     hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
 
     if hn_user.has_perm('registry.rx', rx.patient):
-        return {}
+        return ajax_success()
     else:
-        return {'error': 'Forbidden'}
+        return ajax_failure(error='Forbidden')
 
 
 """
@@ -762,12 +766,12 @@ def rx_delete(request, pk):
     hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
 
     if not hn_user.has_perm('registry.rx', rx.patient) or rx.doctor.uuid != hn_user.uuid:
-        return {'error': 'Forbidden'}
+        return ajax_failure(error='Forbidden')
 
 
     rx.delete()
 
-    return {}
+    return ajax_success()
 """
 
 @require_http_methods(['POST'])

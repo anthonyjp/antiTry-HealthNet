@@ -13,7 +13,8 @@ class HeightWidget(widgets.MultiWidget):
             widgets.Select(choices=Units.choices(), attrs={'class': 'hn-measurement unit-select height'}),
             widgets.NumberInput(attrs={'customary': True, 'class': 'hn-measurement height', 'min': 0, 'max': 7}),
             widgets.NumberInput(attrs={'customary': True, 'class': 'hn-measurement height', 'min': 0, 'max': 11}),
-            widgets.NumberInput(attrs={'metric': True, 'class': 'hn-measurement height', 'min': 20, 'max': 280})
+            widgets.NumberInput(
+                attrs={'metric': True, 'class': 'hn-measurement height', 'value': 20, 'min': 20, 'max': 280})
         )
 
         super(HeightWidget, self).__init__(_widgets, attrs)
@@ -42,7 +43,7 @@ class WeightWidget(widgets.MultiWidget):
     def __init__(self, attrs=None):
         _widgets = (
             widgets.Select(choices=Units.choices(), attrs={'class': 'hn-measurement unit-select weight'}),
-            widgets.NumberInput(attrs={'customary': True, 'class': 'hn-measurement weight', 'min': 1})
+            widgets.NumberInput(attrs={'customary': True, 'class': 'hn-measurement weight', 'value': 80, 'min': 1})
         )
 
         self.name = ''

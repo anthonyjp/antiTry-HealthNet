@@ -4,6 +4,7 @@
 {% load staticfiles %}
 {% load sass_tags %}
 {% load registry_tags %}
+{% load compile_static %}
 {% load crispy_forms_tags %}
 
 {% block set-active %}Home|home|profile{% endblock %}
@@ -18,7 +19,9 @@
 {% block _base_jsimport %}
     <link rel="stylesheet" href="{% sass_src 'registry/css/calendar.scss' %}"/>
     <script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'registry/js/base_user.js' %}"></script>
+    {#    <script type="text/javascript" src="{% static 'registry/js/base_user.js' %}"></script>#}
+    <script type="text/javascript" src="{% static 'registry/coffee/base_user_classes.coffee'|compile %}"></script>
+    <script type="text/javascript" src="{% static 'registry/coffee/base_user.coffee'|compile %}"></script>
     {% block calendar_jsimport %}{% endblock %}
 {% endblock %}
 
@@ -75,43 +78,43 @@
             <div id="tab1" class="tab" style="display: block;">
                 <form id="form">
                     <label for="mi">First Name:</label>
-                    <input id="mi" data-parsley-required data-field="first_name"
+                    <input id="mi" data-parsley-required data-field="first_name" data-auth-type="personal"
                            class="editable" type="text" value="{{ hn_owner.first_name }}"/>
                     <br>
                     <label for="mi">Middle Initial:</label>
-                    <input id="mi" data-field="middle_initial"
+                    <input id="mi" data-field="middle_initial" data-auth-type="personal"
                            class="editable" type="text" value="{{ hn_owner.middle_initial }}"/>
                     <br>
                     <label for="mi">Last Name:</label>
-                    <input id="mi" data-field="last_name"
+                    <input id="mi" data-field="last_name" data-auth-type="personal"
                            class="editable" type="text" value="{{ hn_owner.last_name }}"/>
                     <br>
                     <label for="mi">Date of Birth:</label>
-                    <input id="mi" data-field="date_of_birth"
+                    <input id="mi" data-field="date_of_birth" data-auth-type="personal"
                            class="editable" type="text" value="{{ hn_owner.date_of_birth }}"/>
                     <br>
                     <label for="mi">Gender:</label>
-                    <input id="mi" data-field="gender"
+                    <input id="mi" data-field="gender" data-auth-type="personal"
                            class="editable" type="text" value="{% labelify hn_owner.gender 'gender' %}"/>
                     <br>
                     <label for="mi">Address line one:</label>
-                    <input id="mi" data-field="date_of_birth"
+                    <input id="mi" data-field="date_of_birth" data-auth-type="personal"
                            class="editable" type="text" value="{{ hn_owner.address_line_one }}"/>
                     <br>
                     <label for="mi">Address line two:</label>
-                    <input id="mi" data-field="date_of_birth"
+                    <input id="mi" data-field="date_of_birth" data-auth-type="personal"
                            class="editable" type="text" value="{{ hn_owner.address_line_two }}"/>
                     <br>
                     <label for="mi">City:</label>
-                    <input id="mi" data-field="date_of_birth"
+                    <input id="mi" data-field="date_of_birth" data-auth-type="personal"
                            class="editable" type="text" value="{{ hn_owner.address_city }}"/>
                     <br>
                     <label for="mi">State:</label>
-                    <input id="mi" data-field="date_of_birth"
+                    <input id="mi" data-field="date_of_birth" data-auth-type="personal"
                            class="editable" type="text" value="{{ hn_owner.address_state }}"/>
                     <br>
                     <label for="mi">ZipCode:</label>
-                    <input id="mi" data-field="date_of_birth"
+                    <input id="mi" data-field="date_of_birth" data-auth-type="personal"
                            class="editable" type="text" value="{{ hn_owner.address_zipcode }}"/>
                     <br>
                 </form>
