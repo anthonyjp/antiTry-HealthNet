@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'compat',
     'crispy_forms',
     'annoying',
+    'static_precompiler'
 ]
 
 MIDDLEWARE_CLASSES = [
