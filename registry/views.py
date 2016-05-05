@@ -927,6 +927,7 @@ def logs(request, start, end):
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def get_time(request):
+    hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     if not rules.test_rule('is_administrator', hn_user):
         return HttpResponseNotFound(
             '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')

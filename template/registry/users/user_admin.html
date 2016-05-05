@@ -11,12 +11,14 @@
 {% endblock %}
 
 {% block userLinks %}
-    <li><a href ="#tab2" rel="tab2" class="hn-tab">Logs/Stats</a></li>
+    <li><a href="#tab2" rel="tab2" class="hn-tab">Logs</a></li>
+    <li><a href="{% url 'registry:time' %}" rel="tab2" class="hn-tab">Stats</a></li>
     <li><a href="#tab3" rel="tab2" class="hn-tab">Add Admin</a></li>
     <li><a href="#tab4" rel="tab4" class="hn-tab">Add Doctor</a></li>
     <li><a href="#tab5" rel="tab5" class="hn-tab">Add Nurse</a></li>
     <li><a href="{% url 'registry:register' %}" class="hn-tab">Add Patient</a></li>
     <li><a href="#tab10" rel="tab3" class="hn-tab">Request Transfers</a></li>
+
 {% endblock %}
 {% block userContent %}
      <div id="tab2" class="tab">
