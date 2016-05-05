@@ -10,8 +10,6 @@
 {% block cssimport %}
     <link rel="stylesheet" href="{% static 'pikaday/css/pikaday.css' %}"/>
     <link rel="stylesheet" href="{% static 'jt.timepicker/jquery.timepicker.css' %}"/>
-    <link href="{% static 'fullcalendar/dist/fullcalendar.min.css' %}" rel="stylesheet" />
-	<link href="{% static 'fullcalendar/dist/fullcalendar.print.css' %}" rel="stylesheet" media="print" />
 {% endblock %}
 
 {% block jsimport %}
@@ -20,8 +18,6 @@
     <script type="text/javascript" src="{% static 'pikaday/plugins/pikaday.jquery.js' %}"></script>
     <script type="text/javascript" src="{% static 'jt.timepicker/jquery.timepicker.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'registry/js/measurements.js' %}"></script>
-    <script type="text/javascript" src="{% static 'registry/js/utility.js' %}"></script>
-    <script type="text/javascript" src="{% static 'fullcalendar/dist/fullcalendar.min.js' %}"></script>
 {% endblock %}
 
 {% block inner-content %}

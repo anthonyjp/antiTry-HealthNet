@@ -12,7 +12,6 @@ from django.forms import forms, models, fields, widgets
 
 import rules
 
-
 class PatientRegisterForm(models.ModelForm):
     """
     Name: PatientRegisterForm
@@ -798,3 +797,35 @@ class MessageCreation(models.ModelForm):
     class Meta:
         model = Message
         fields = 'receiver', 'content', 'title'
+
+
+class TimeFrame(forms.Form):
+    start = fields.DateField()
+    end = fields.DateField()
+
+    def __init__(self, *args, **kwargs):
+        super(TimeFrame, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal hn-form timeFrame'
+        self.helper.form_method = 'POST'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+
+        self.helper.layout = Layout(
+            Fieldset('Time Frame',
+                     Div(
+                         Div('start', css_class='col-lg-3'),
+                         css_class='row',
+                     ),
+                     Div(
+                         Div('end', css_class='col-lg-3'),
+                         css_class='row',
+                     ),
+                     ),
+            FormActions(
+                Submit('submit', 'Submit'),
+            )
+        )
+
+        self.fields['start'].widget.attrs['datepicker'] = True
+        self.fields['end'].widget.attrs['datepicker'] = True

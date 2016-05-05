@@ -113,7 +113,7 @@ def home(request):
 
     elif rules.test_rule('is_nurse', hn_user):
         # if they ever had or have an appointment at the nurse's hospital
-        patients_list = Patient.objects.filter(appointment__location=hn_user.hospital)
+        patients_list = Patient.objects.filter(appointment__location=hn_user.hospital).distinct()
         admitted_list = Patient.objects.filter(admission_status__isnull=False,
                                                admission_status__hospital=hn_user.hospital)
         return render(request,
@@ -324,10 +324,12 @@ def appt_create(request):
                     dlist = Appointment.objects.filter(
                         doctor__pk=appointment.doctor_id,
                         time__hour=appointment.time.hour,
+                        time__minute=appointment.time.minute,
                         time__day=appointment.time.day)
                     patientlist = Appointment.objects.filter(
                         patient__pk=appointment.patient_id,
                         time__hour=appointment.time.hour,
+                        time__minute=appointment.time.minute,
                         time__day=appointment.time.day)
                     if not (dlist.exists() or patientlist.exists()):
                         appointment.save()
@@ -891,6 +893,8 @@ def logs(request, start, end):
     if start_time > end_time:
         start_time, end_time = end_time, start_time
 
+    end_time += datetime.timedelta(days=1)
+
     log_level = int(request.GET['level']) if 'level' in request.GET and LogLevel.VERBOSE <= int(
         request.GET['level']) <= LogLevel.ERROR else LogLevel.INFO
 
@@ -919,6 +923,71 @@ def logs(request, start, end):
         })
 
     return ajax_success(entries=result)
+
+
+@login_required(login_url=reverse_lazy('registry:login'))
+def get_time(request):
+    if not rules.test_rule('is_administrator', hn_user):
+        return HttpResponseNotFound(
+            '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = TimeFrame(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            start = form.cleaned_data['start']
+            end = form.cleaned_data['end']
+            return stats(request, start, end)
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = TimeFrame()
+    show = True
+    return render(request, 'registry/components/admit_stats.html', {'show': show, 'form': form})
+
+
+@login_required(login_url=reverse_lazy('registry:login'))
+def stats(request, start, end):
+    hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
+
+    if not rules.test_rule('is_administrator', hn_user):
+        return HttpResponseNotFound(
+            '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+    start_time = start
+    end_time = end
+    admin = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    dCount = Doctor.objects.filter(hospitals=admin.hospital).count()
+    nCount = Nurse.objects.filter(hospital=admin.hospital).count()
+
+    pCount = Patient.objects.filter(admission_status__isnull=False, admission_status__hospital=admin.hospital).count()
+    admitCount = MedicalHistory.objects.filter(admission_details__hospital=admin.hospital,
+                                               admission_details__admission_time__start_time__gte=start_time).count()
+    rxCount = Prescription.objects.filter(doctor__hospitals=admin.hospital,
+                                          time_range__start_time__gte=start_time).count()
+    admits = MedicalHistory.objects.filter(admission_details__hospital=admin.hospital,
+                                           admission_details__admission_time__start_time__gte=start_time,
+                                           admission_details__admission_time__end_time__lte=end_time + datetime.timedelta(
+                                               days=1))
+    timeFrame = 0
+    for admit in admits:
+        delta = admit.admission_details.admission_time.end_time - admit.admission_details.admission_time.start_time
+        timeFrame += delta.days
+    if admitCount == 0:
+        admitAvg = 0
+    else:
+        admitAvg = timeFrame / admitCount
+    apptCount = Appointment.objects.filter(location=admin.hospital, time__gte=start_time,
+                                           time__lte=end_time + datetime.timedelta(days=1)).count()
+
+    template_vars = {'start_time': start_time, 'end_time': end_time, 'dCount': dCount, 'nCount': nCount,
+                     'pCount': pCount, 'admitCount': admitCount, 'rxCount': rxCount,
+                     'admitAvg': admitAvg, 'apptCount': apptCount}
+
+    return render(request, 'registry/components/admit_stats.html', template_vars)
+
+
+
 
 
 import csv
