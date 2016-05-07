@@ -2,7 +2,7 @@
 {% load sass_tags %}
 {% load registry_tags %}
 {% load crispy_forms_tags %}
-{% has_perm 'registry.medinfo' hn_visitor as can_add %}
+{% has_perm 'registry.prescriptions' hn_visitor hn_owner as can_add %}
 
 <form id="form">
     <label>Height:</label><input data-field="height" class="editable" type="text" value="{{ hn_owner.height }}"/><br>

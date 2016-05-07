@@ -39,7 +39,7 @@ def is_admit(patient):
 def is_doctor_of(doctor, patient):
     provider = doctor.providers.filter(pk=patient.uuid).exists()
     if patient.admission_status is not None:
-        transfer_doctor = (patient.admission_status.hospital.provider_to == doctor)
+        transfer_doctor = doctor.hospitals.filter(hospital=patient.admission_status.hospital).exists()
     else:
         transfer_doctor = False
     return provider or transfer_doctor
@@ -53,6 +53,15 @@ def is_nurse_for(nurse, patient):
             admit_hospital = True
     has_appt = patient.appointment_set.filter(location=nurse.hospital).exists()
     return admit_hospital or has_appt
+
+
+@predicate
+def is_admin_for(admin, patient):
+    admit_hospital = False
+    if patient.admission_status is not None:
+        if patient.admission_status.hospital == admin.hospital:
+            admit_hospital = True
+    return admit_hospital
 
 
 @predicate
@@ -83,9 +92,29 @@ def time_gt(time1, time2):
 def is_doctor_at(doctor, hospital):
     return doctor.hospitals.filter(self=hospital).exists()
 
+
+@predicate
+def an_profile(visitor, owner):
+    return is_nurse(owner) | is_administrator(owner)
+
+
+@predicate
+def can_med_edit(visitor, owner):
+    if not is_patient(owner):
+        return False
+    return is_doctor_check(visitor)
+
+
+@predicate
+def view_patient(visitor, owner):
+    return is_patient(owner)
+
 has_appointment_check = (is_doctor | is_nurse) & has_appointment
 is_doctor_check = is_doctor & is_doctor_of
 is_nurse_check = is_nurse & is_nurse_for
+is_admit_patient = is_patient & is_admit
+is_admin_check = is_administrator & is_admin_for
+
 # Define Permissions
 
 rules.add_perm('registry.is_admin_or_nurse', is_nurse | is_administrator)
@@ -100,7 +129,7 @@ rules.add_perm('registry.patient_admit', is_patient & is_admit)
 rules.add_perm('registry.patientinfo', is_patient)
 rules.add_perm('registry.medinfo', is_doctor | is_nurse)
 
-rules.add_perm('registry.prescriptions', is_doctor)
+rules.add_perm('registry.prescriptions', is_doctor_check)
 
 rules.add_perm('registry.discharge', is_doctor)
 
@@ -112,10 +141,18 @@ rules.add_perm('registry.user.view.medical', is_self | is_doctor | is_nurse)
 rules.add_perm('registry.user.edit.medical', is_self | is_doctor | is_nurse)
 rules.add_perm('registry.user.view.insurance', is_self | is_doctor | is_administrator)
 rules.add_perm('registry.user.edit.insurance', is_self | is_administrator)
-rules.add_perm('registry.view_patient', is_doctor | is_nurse)
+# rules.add_perm('registry.view_patient', is_doctor | is_nurse)
 rules.add_perm('registry.edit_patient', (is_patient & is_self) | is_nurse_check | is_doctor)
 
 rules.add_perm('registry.inbox', is_self)
+
+rules.add_perm('registry.view_patient.admin', is_admin_for)
+rules.add_perm('registry.view_patient.nurse', is_nurse_for)
+rules.add_perm('registry.view_patient.doctor', is_doctor_of)
+rules.add_perm('registry.view_patient.self', (is_patient & is_self))
+rules.add_perm('registry.view_patient',
+               view_patient & ((is_patient & is_self) | is_admin_check | is_nurse_check | is_doctor_check))
+rules.add_perm('registry.view_an', an_profile)
 
 # Define Rules
 
