@@ -97,8 +97,13 @@ def home(request):
 
         patients = Patient.objects.all()
         # the patients a doctor can discharge
-        patients_admitted = Patient.objects.filter(admission_status__isnull=False,
-                                                   admission_status__doctor_id=hn_user.uuid)
+        patients_list = Patient.objects.filter(provider=hn_user)
+        print(patients_list.count())
+        for hos in hn_user.hospitals.all():
+            patients_list = patients_list or Patient.objects.filter(admission_status__isnull=False,
+                                                                    admission_status__hospital=hos)
+            print(patients_list.count())
+        print(patients_list.count())
         patients_transfer = Patient.objects.filter(admission_status__isnull=False)
         return render(request,
                       'registry/users/user_doctor.html',
@@ -106,8 +111,7 @@ def home(request):
                        'hn_owner': hn_user,
                        'hn_visitor': hn_user,
                        'appointments': hn_user.appointment_set.all(),
-                       'doctors_patients': patients_admitted,
-                       'patients': patients,
+                       'doctors_patients': patients_list.distinct(),
                        'patients_transfer': patients_transfer,
                        }, context_instance=RequestContext(request))
 
