@@ -413,9 +413,9 @@ def appt_edit(request, pk):
                                                       initial_start_time == appointment.time):
                     logger.action(request, LogAction.APPT_EDIT, 'Appt {0!r} to meet with {1!r} edited by {2!r}',
                                   appointment.patient, appointment.doctor, user)
-                        appointment.save()
-                        return redirect('registry:home')
-                    else:
+                    appointment.save()
+                    return redirect('registry:home')
+                else:
                         error = "Appointment Edit Failure: Date/Time Conflicting"
             else:
                 error = "Appointment Error: That date and time has already happen."
