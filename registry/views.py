@@ -785,6 +785,8 @@ def rx_delete(request, pk):
         form = DeletePresForm(request.POST, instance=rx)
         if form.is_valid():
             patient = rx.patient
+            logger.action(request, LogAction.RX_DELETE, 'Deleting a prescription from {0!r} by {1!r}',
+                          rx.doctor, rx.patient)
             rx.delete()
             return redirect('registry:user', uuid=patient.uuid)
     else:
@@ -1008,7 +1010,7 @@ def stats(request, start, end):
     admin = User.objects.get_subclass(pk=request.user.hn_user.pk)
     dCount = Doctor.objects.filter(hospitals=admin.hospital).count()
     nCount = Nurse.objects.filter(hospital=admin.hospital).count()
-
+    aCount = Administrator.objects.filter(hospital=admin.hospital).count()
     pCount = Patient.objects.filter(admission_status__isnull=False, admission_status__hospital=admin.hospital).count()
     admitCount = MedicalHistory.objects.filter(admission_details__hospital=admin.hospital,
                                                admission_details__admission_time__start_time__gte=start_time).count()
@@ -1018,6 +1020,22 @@ def stats(request, start, end):
                                            admission_details__admission_time__start_time__gte=start_time,
                                            admission_details__admission_time__end_time__lte=end_time + datetime.timedelta(
                                                days=1))
+    emeAdmits = MedicalHistory.objects.filter(admission_details__hospital=admin.hospital,
+                                              admission_details__admission_time__start_time__gte=start_time,
+                                              admission_details__admission_time__end_time__lte=end_time + datetime.timedelta(
+                                                  days=1), admission_details__reason=0).count()
+    surAdmits = MedicalHistory.objects.filter(admission_details__hospital=admin.hospital,
+                                              admission_details__admission_time__start_time__gte=start_time,
+                                              admission_details__admission_time__end_time__lte=end_time + datetime.timedelta(
+                                                  days=1), admission_details__reason=1).count()
+    obsAdmits = MedicalHistory.objects.filter(admission_details__hospital=admin.hospital,
+                                              admission_details__admission_time__start_time__gte=start_time,
+                                              admission_details__admission_time__end_time__lte=end_time + datetime.timedelta(
+                                                  days=1), admission_details__reason=2).count()
+    unkAdmits = MedicalHistory.objects.filter(admission_details__hospital=admin.hospital,
+                                              admission_details__admission_time__start_time__gte=start_time,
+                                              admission_details__admission_time__end_time__lte=end_time + datetime.timedelta(
+                                                  days=1), admission_details__reason=3).count()
     timeFrame = 0
     for admit in admits:
         delta = admit.admission_details.admission_time.end_time - admit.admission_details.admission_time.start_time
@@ -1030,8 +1048,9 @@ def stats(request, start, end):
                                            time__lte=end_time + datetime.timedelta(days=1)).count()
 
     template_vars = {'start_time': start_time, 'end_time': end_time, 'dCount': dCount, 'nCount': nCount,
-                     'pCount': pCount, 'admitCount': admitCount, 'rxCount': rxCount,
-                     'admitAvg': admitAvg, 'apptCount': apptCount}
+                     'aCount': aCount, 'pCount': pCount, 'admitCount': admitCount, 'rxCount': rxCount,
+                     'admitAvg': admitAvg, 'emeAdmits': emeAdmits, 'obsAdmits': obsAdmits, 'surAdmits': surAdmits,
+                     'unkAdmits': unkAdmits, 'apptCount': apptCount}
 
     return render(request, 'registry/components/admit_stats.html', template_vars)
 
