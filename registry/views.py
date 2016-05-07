@@ -67,6 +67,11 @@ def login(request):
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def sign_out(request):
+    """
+    The view for logging out
+    :param request:
+    :return:
+    """
     if request.user:
         logout(request)
 
@@ -75,7 +80,12 @@ def sign_out(request):
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def home(request):
-
+    """
+    The view for viewing the home page.
+    For a logined in user, it will show the profile page of the logged in user
+    :param request:
+    :return:
+    """
     hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     form = MessageCreation(request.POST)
     inbox = hn_user.inbox.messages.filter(receiver=hn_user).order_by('-date')
@@ -94,16 +104,10 @@ def home(request):
                        }, context_instance=RequestContext(request))
 
     elif rules.test_rule('is_doctor', hn_user):
-
-        patients = Patient.objects.all()
-        # the patients a doctor can discharge
         patients_list = Patient.objects.filter(provider=hn_user)
-        print(patients_list.count())
         for hos in hn_user.hospitals.all():
             patients_list = patients_list or Patient.objects.filter(admission_status__isnull=False,
                                                                     admission_status__hospital=hos)
-            print(patients_list.count())
-        print(patients_list.count())
         patients_transfer = Patient.objects.filter(admission_status__isnull=False)
         return render(request,
                       'registry/users/user_doctor.html',
@@ -151,6 +155,11 @@ def home(request):
 
 @render_to('registry/register.html')
 def register(request):
+    """
+    The view for the register page
+    :param request:
+    :return:
+    """
     if request.method == "POST":
         form = PatientRegisterForm(request.POST)
         if form.is_valid():
@@ -243,6 +252,12 @@ def patient_admit(request, patient_uuid):
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/patient_transfer_request.html')
 def transfer(request, patient_uuid):
+    """
+    The view for a transfer request form
+    :param request:
+    :param patient_uuid:
+    :return:
+    """
     user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     patient = get_object_or_404(Patient, uuid=patient_uuid)
     # next_location is where it goes if you cancel
@@ -281,13 +296,13 @@ def transfer(request, patient_uuid):
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/patient_discharge.html')
 def patient_discharge(request, patient_uuid):
-    user = User.objects.get_subclass(pk=request.user.hn_user.pk)
-    if rules.test_rule('is_nurse', user) or rules.test_rule('is_patient', user):
+    hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    if rules.test_rule('is_nurse', hn_user) or rules.test_rule('is_patient', hn_user):
         return HttpResponseNotFound(
             '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     patient = get_object_or_404(Patient, uuid=patient_uuid)
-    if rules.test_rule('is_doctor', user):
-        if patient.admission_status.doctor.uuid != user.uuid:
+    if rules.test_rule('is_doctor', hn_user):
+        if patient.admission_status.doctor.uuid != hn_user.uuid:
             return HttpResponseNotFound(
                 '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     if request.method == 'POST':
@@ -296,7 +311,7 @@ def patient_discharge(request, patient_uuid):
             patient.admission_status.end_admission()
             patient.admission_status = None
 
-            logger.action(request, LogAction.PA_DISCHARGE, '{0!r} discharged by {1!r}', patient, user)
+            logger.action(request, LogAction.PA_DISCHARGE, '{0!r} discharged by {1!r}', patient, hn_user)
 
             patient.save()
             return redirect('registry:home')
@@ -368,6 +383,14 @@ def appt_create(request):
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/appt_edit.html')
 def appt_edit(request, pk):
+    """
+    The view for editing an appointment. The form only allows the editing of the hospital and date time
+    The possible errors that will occur will be an outdated time or appointment confliction
+    A successful edit is a logable event
+    :param request:
+    :param pk:
+    :return:
+    """
     user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     if rules.test_rule('is_administrator', user):
         return HttpResponseNotFound(
@@ -385,19 +408,15 @@ def appt_edit(request, pk):
             appt_list = Appointment.objects.filter(doctor__pk=appointment.doctor_id).filter(
                     time__hour=appointment.time.hour).filter(time__day=appointment.time.day)
             if rules.test_rule('time_gt', appointment.time, tz.now()):
-                if initial_doctor == appointment.doctor.uuid:
-                    if initial_start_time == appointment.time:
+
+                if not appt_list.exists() or (initial_doctor == appointment.doctor.uuid and
+                                                      initial_start_time == appointment.time):
+                    logger.action(request, LogAction.APPT_EDIT, 'Appt {0!r} to meet with {1!r} edited by {2!r}',
+                                  appointment.patient, appointment.doctor, user)
                         appointment.save()
                         return redirect('registry:home')
                     else:
-                        if not (appt_list.exists()):
-                            appointment.save()
-                            return redirect('registry:home')
-                else:
-                    if not (appt_list.exists()):
-                        appointment.save()
-                        return redirect('registry:home')
-                error = "Appointment Edit Failure: Date/Time Conflicting"
+                        error = "Appointment Edit Failure: Date/Time Conflicting"
             else:
                 error = "Appointment Error: That date and time has already happen."
     else:
@@ -408,6 +427,12 @@ def appt_edit(request, pk):
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/appt_view.html')
 def appt_view(request, pk):
+    """
+    The view for viewing an appointment.
+    This view is only used for appointments in the past.
+    :param request:
+    :param pk: appointment identifier
+    """
     appt = get_object_or_404(Appointment, pk=pk)
     user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     if rules.test_rule('is_doctor', user) and (appt.doctor.uuid != user.uuid):
@@ -428,23 +453,30 @@ def appt_view(request, pk):
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/appt_delete.html')
 def appt_delete(request, pk):
-    q = request.user.hn_user
-    p = User.objects.get_subclass(pk=q.pk)
-    if rules.test_rule('is_nurse', p):
+    """
+    The view for deleting an appointment.
+    The only users allowed to delete the appointment are the patient and doctor that the appointment
+    belongs to. This is a confirmation page.
+    A successful deletion is a logable event
+    :param request:
+    :param pk: appointment identifier
+    :return:
+    """
+    user = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    if rules.test_rule('is_nurse', user):
         return HttpResponseNotFound(
             '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     delete = get_object_or_404(Appointment, id=pk)
-    if rules.test_rule('is_patient', p):
-        if delete.patient.pk != p.pk:
-            return HttpResponseNotFound(
+    if (rules.test_rule('is_patient', user) and delete.patient.pk != user.pk) or \
+            (rules.test_rule('is_doctor', user) and delete.doctor.pk != user.pk):
+        return HttpResponseNotFound(
                 '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
-    if rules.test_rule('is_doctor', p):
-        if delete.doctor.pk != p.pk:
-            return HttpResponseNotFound(
-                '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+
     if request.method == 'POST':
         form = DeleteAppForm(request.POST, instance=delete)
         if form.is_valid():
+            logger.action(request, LogAction.APPT_DELETE, 'Appt {0!r} to meet with {1!r} deleted by {2!r}',
+                          delete.patient, delete.doctor, user)
             delete.delete()
             return redirect('registry:home')
 
@@ -490,14 +522,16 @@ def user_create(request):
 
 @ajax_request
 def admin_create(request):
-    form = AdminRegistrationForm(request.POST)
 
+    form = AdminRegistrationForm(request.POST)
+    user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     if form.is_valid():
         admin = form.save(commit=False)
         username = '{!s}'.format(admin)
         admin.auth_user = DjangoUser.objects.create_user(username, form.cleaned_data['email'],
                                                          form.cleaned_data['password'])
         admin.save()
+        logger.action(request, LogAction.ST_CREATE, 'Admin {0!r} created by {1!r}', admin, user, user)
         return ajax_success()
 
     return ajax_failure()
@@ -506,13 +540,14 @@ def admin_create(request):
 @ajax_request
 def doctor_create(request):
     form = DoctorRegistrationForm(request.POST)
-
+    user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     if form.is_valid():
         doc = form.save(commit=False)
         username = '{!s}'.format(doc)
         doc.auth_user = DjangoUser.objects.create_user(username, form.cleaned_data['email'],
                                                        form.cleaned_data['password'])
         doc.save()
+        logger.action(request, LogAction.ST_CREATE, 'Doctor {0!r} created by {1!r}', doc, user, user)
         return ajax_success()
     print(form.errors)
 
@@ -521,6 +556,13 @@ def doctor_create(request):
 
 @ajax_request
 def nurse_create(request):
+    """
+    Nurse creation view. It will display the form and also receive the form submission
+    Nurse creation is a loggable event
+    :param request:
+    :return:
+    """
+    user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     form = NurseRegistrationForm(request.POST)
 
     if form.is_valid():
@@ -529,6 +571,7 @@ def nurse_create(request):
         nurse.auth_user = DjangoUser.objects.create_user(username, form.cleaned_data['email'],
                                                          form.cleaned_data['password'])
         nurse.save()
+        logger.action(request, LogAction.ST_CREATE, 'Nurse {0!r} created by {1!r}', nurse, user, user)
         return ajax_success()
 
     return ajax_failure()
@@ -560,7 +603,7 @@ def view_user(request, uuid):
     if rules.test_rule('is_patient', owner):
         mc = None
         mh = mc
-        if visitor.has_perm('registry.view_patient'):
+        if visitor.has_perm('registry.edit_patient'):
             rxs = owner.prescription_set.filter()
             mc = owner.conditions.all()
             mh = MedicalHistory.objects.filter(patient=owner).all()
@@ -651,7 +694,7 @@ def mc_add(request, patient_uuid):
                 condition.save()
                 patient.conditions.add(condition)
                 patient.save()
-                return redirect('registry:home')
+                return redirect('registry:user', uuid=patient_uuid)
         else:
             form = MedicalConditionAdd()
 
@@ -672,7 +715,7 @@ def rx_op(request, pk=None, patient_uuid=None):
         return rx_delete(request, pk)
 
 
-@require_http_methods(['GET'])
+# @require_http_methods(['GET'])
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/rx_create.html')
 def rx_create(request, patient_uuid):
@@ -741,8 +784,9 @@ def rx_delete(request, pk):
     if request.method == 'POST':
         form = DeletePresForm(request.POST, instance=rx)
         if form.is_valid():
+            patient = rx.patient
             rx.delete()
-            return redirect('registry:home')
+            return redirect('registry:user', uuid=patient.uuid)
     else:
         form = DeletePresForm(instance=rx)
 

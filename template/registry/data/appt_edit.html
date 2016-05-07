@@ -1,4 +1,5 @@
 {% extends 'registry/base/base_auth.html' %}
+{% load rules %}
 {% load static %}
 {% load sass_tags %}
 {% load crispy_forms_tags %}
@@ -38,7 +39,8 @@
     {% if delete %}
         <a href="{% url 'registry:appt_delete' appt.pk %}"> Delete Appointment</a>
     {% endif %}
-   {% endblock %}
+
+{% endblock %}
 
 {% block customjs %}
     <script type="text/javascript">
