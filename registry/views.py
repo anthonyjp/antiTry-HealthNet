@@ -34,6 +34,9 @@ def index(request):
 
 @render_to('registry/about.html')
 def about(request):
+    """
+    The view for the about page
+    """
     def create_dev(name, role, desc, *links, img=static('registry/img/logo.png')):
         real_links = []
         for l in links:
@@ -42,16 +45,21 @@ def about(request):
         return {'name': name, 'role': role, 'desc': desc, 'img': img, 'links': real_links}
 
     return {'aboutus': [
-        create_dev('Matthew Crocco', 'Development Coordinator', 'Test', ('https://github.com/Matt529', 'Github')),
-        create_dev('Lisa Ni', 'Requirements Coordinator', 'Test'),
-        create_dev('Anthony Perez', 'Quality Assurance Coordinator', 'Test'),
-        create_dev('Alice Fischer', 'Team Coordinator', 'Test'),
-        create_dev('Kyle Scagnelli', 'Test Coordinator', 'Test')
+        create_dev('Matthew Crocco', 'Development Coordinator', ('https://github.com/Matt529', 'Github')),
+        create_dev('Lisa Ni', 'Requirements Coordinator'),
+        create_dev('Anthony Perez', 'Quality Assurance Coordinator'),
+        create_dev('Alice Fischer', 'Team Coordinator'),
+        create_dev('Kyle Scagnelli', 'Test Coordinator')
     ]}
 
 
 @render_to('registry/login.html')
 def login(request):
+    """
+    The view for the login page which displays the form for login
+    :param request:
+    :return:
+    """
     if request.method == "POST":
         form = LoginForm(request.POST)
         user = authenticate(username=request.POST['email'], password=request.POST['password'])
@@ -163,6 +171,7 @@ def register(request):
     The view for the register page
     When successfully registered, it will render back to the homepage
     with a message that says "You have successfully registered. You can now log in."
+    This is a logable event if the registration is successful.
     :param request:
     :return:
     """
@@ -210,6 +219,7 @@ def register(request):
 def patient_admit(request, patient_uuid):
     """
     The view for admitting a patient
+    This action is logable if successful admittance is made
     :param request:
     :param patient_uuid:  the patient getting admitted
     :return:
@@ -259,6 +269,7 @@ def patient_admit(request, patient_uuid):
 def transfer(request, patient_uuid):
     """
     The view for a transfer request form
+    A successful transfer is a logable event
     :param request:
     :param patient_uuid:
     :return:
@@ -301,6 +312,13 @@ def transfer(request, patient_uuid):
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/patient_discharge.html')
 def patient_discharge(request, patient_uuid):
+    """
+    The view for confirming a discharge of a patient
+    This is a logable event if successful
+    :param request:
+    :param patient_uuid: the patient to be discharged
+    :return:
+    """
     hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     if rules.test_rule('is_nurse', hn_user) or rules.test_rule('is_patient', hn_user):
         return HttpResponseNotFound(
@@ -331,6 +349,13 @@ def patient_discharge(request, patient_uuid):
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/appt_create.html')
 def appt_create(request):
+    """
+    The view for the creation of an appointment.
+    It will display the appointment creation form.
+    This is a logable event
+    :param request:
+    :return:
+    """
     user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     next_location = None
     error = ""
@@ -393,7 +418,7 @@ def appt_edit(request, pk):
     The possible errors that will occur will be an outdated time or appointment confliction
     A successful edit is a logable event
     :param request:
-    :param pk:
+    :param pk: the idnetifier of the appointment
     :return:
     """
     user = User.objects.get_subclass(pk=request.user.hn_user.pk)
@@ -527,7 +552,12 @@ def user_create(request):
 
 @ajax_request
 def admin_create(request):
-
+    """
+    The view for creating an admin
+    A successful registration will be logged.
+    :param request:
+    :return:
+    """
     form = AdminRegistrationForm(request.POST)
     user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     if form.is_valid():
@@ -544,6 +574,12 @@ def admin_create(request):
 
 @ajax_request
 def doctor_create(request):
+    """
+    The view for a doctor registration
+    A successful registration will be logged.
+    :param request:
+    :return:
+    """
     form = DoctorRegistrationForm(request.POST)
     user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     if form.is_valid():
@@ -563,7 +599,7 @@ def doctor_create(request):
 def nurse_create(request):
     """
     Nurse creation view. It will display the form and also receive the form submission
-    Nurse creation is a loggable event
+    Nurse creation is a logable event
     :param request:
     :return:
     """
@@ -586,6 +622,11 @@ def nurse_create(request):
 @login_required(login_url=reverse_lazy('registry:login'))
 @ajax_request
 def list_user(request):
+    """
+    The view for anything that needs to list users/get user information.
+    :param request:
+    :return:
+    """
     users = User.objects.all()
 
     res = [{'img': static('registry/img/logo.png'),
@@ -598,6 +639,12 @@ def list_user(request):
 
 @render_to("registry/base/base_user.html")
 def view_user(request, uuid):
+    """
+    The view for looking at another user's profile.
+    :param request:
+    :param uuid: the intended user's profile
+    :return:
+    """
     owner = User.objects.get_subclass(pk=uuid)
     visitor = User.objects.get_subclass(pk=request.user.hn_user.pk)
 
@@ -650,6 +697,12 @@ def admit_user(request, uuid):
 
 @ajax_request
 def update_user(request, uuid):
+    """
+    The view for updating a user
+    :param request:
+    :param uuid: the user being updated
+    :return:
+    """
     try:
         user = User.objects.get_subclass(pk=uuid)
     except User.DoesNotExist:
@@ -689,6 +742,12 @@ def user_verify(request, uuid):
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/mc_add.html')
 def mc_add(request, patient_uuid):
+    """
+    The view for adding a medical condition.
+    :param request:
+    :param patient_uuid: The identifier of the intended patient
+    :return:
+    """
     user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     patient = get_object_or_404(Patient, uuid=patient_uuid)
     if rules.test_rule('is_doctor', user) or rules.test_rule('is_nurse', user):
@@ -712,6 +771,13 @@ def mc_add(request, patient_uuid):
 @require_http_methods(['GET', 'PATCH', 'DELETE'])
 @login_required(login_url=reverse_lazy('registry:login'))
 def rx_op(request, pk=None, patient_uuid=None):
+    """
+    The view for deciding which prescription view to go to.
+    :param request:
+    :param pk: the prescription identifier
+    :param patient_uuid: the patient indentifier
+    :return:
+    """
     if request.method == 'GET':
         return rx_view(request, pk)
     elif request.method == 'PATCH':
@@ -841,6 +907,12 @@ def transfers(request, pk):
 @require_http_methods(['POST'])
 @login_required(login_url=reverse_lazy('registry:login'))
 def transfer_create(request):
+    """
+    The view for transferring a patient.
+    A successful and valid form submission will be logged.
+    :param request:
+    :return:
+    """
     transferer = User.objects.get_subclass(pk=request.user.hn_user.pk)
     transferee = get_user_or_404(request.POST['whom'])
 
@@ -865,6 +937,12 @@ def transfer_create(request):
 @require_http_methods_not_none(['GET', 'DELETE'], 'uuid')
 @login_required(login_url=reverse_lazy('registry:login'))
 def msg(request, uuid=None):
+    """
+    The view for determining what message related view the patient is requesting
+    :param request:
+    :param uuid: the identifer of the message
+    :return:
+    """
     if is_safe_request(request.method):
         return msg_view(request, uuid)
     elif request.method == 'POST':
@@ -877,6 +955,11 @@ def msg(request, uuid=None):
 
 @ajax_request
 def msg_create(request):
+    """
+    The view for creating a message
+    :param request:
+    :return:
+    """
     form = MessageCreation(request.POST)
 
     if not form.is_valid():
@@ -894,6 +977,12 @@ def msg_create(request):
 
 @ajax_request
 def msg_delete(request, uuid):
+    """
+    The view for deletion of a message
+    :param request:
+    :param uuid: the identifier of a message
+    :return:
+    """
     failures = []
 
     try:
@@ -922,6 +1011,12 @@ def msg_delete(request, uuid):
 
 @ajax_request
 def msg_view(request, uuid):
+    """
+    The view for viewing a message
+    :param request:
+    :param uuid: the message identifer
+    :return:
+    """
     msg = Message.objects.get(uuid=uuid)
     return ajax_success(sender={'name': str(msg.sender), 'uuid': msg.sender.uuid}, content=msg.content, date=msg.date,
                         title=msg.title)
@@ -930,6 +1025,11 @@ def msg_view(request, uuid):
 @require_http_methods(['GET', 'POST', 'PATCH'])
 @login_required(login_url=reverse_lazy('registry:login'))
 def appt(request):
+    """
+    The view for determinating which appt view the user is requesting
+    :param request:
+    :return:
+    """
     if request.method == 'GET':
         pass
     elif request.method == 'POST':
@@ -942,6 +1042,13 @@ def appt(request):
 @login_required(login_url=reverse_lazy('registry:login'))
 @ajax_request
 def logs(request, start, end):
+    """
+    The view for gathering logs
+    :param request:
+    :param start: the start date of the timerange
+    :param end: the end date of the timerange
+    :return:
+    """
     start_time = dateutil.parser.parse(start)
     end_time = dateutil.parser.parse(end)
 
@@ -982,6 +1089,11 @@ def logs(request, start, end):
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def get_time(request):
+    """
+    The view for getting a time range for stats
+    :param request:
+    :return:
+    """
     error = ""
     hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     if not rules.test_rule('is_administrator', hn_user):
@@ -1010,6 +1122,13 @@ def get_time(request):
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def stats(request, start, end):
+    """
+    The view for gathering stats from a time range
+    :param request:
+    :param start: the start date
+    :param end: the end date
+    :return:
+    """
     hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
 
     if not rules.test_rule('is_administrator', hn_user):

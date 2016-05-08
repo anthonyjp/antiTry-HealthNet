@@ -46,7 +46,6 @@
         {% has_perm 'registry.patient_admit' hn_owner as patient_info %}
         {% has_perm 'registry.view_patient.profile' hn_owner as patient_profile %}
         {% has_perm 'registry.medinfo' hn_visitor hn_owner as can_admit %}
-        {% has_perm %}
 
         {% if can_admit and not patient_info and pratient_profile %}
             <a href="{% url 'registry:patient_admit' hn_owner.uuid %}">
