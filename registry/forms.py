@@ -145,9 +145,9 @@ class PatientRegisterForm(models.ModelForm):
 @parsleyfy
 class AdminRegistrationForm(models.ModelForm):
     """
-    Name: PatientRegisterForm
+    Name: AdminRegisterForm
 
-    It's a patient registration form based on the Patient Model.
+    It's a administrator registration form based on the Administrator Model.
     """
     model = Administrator
     first_name = fields.CharField(max_length=25)
@@ -234,6 +234,11 @@ class AdminRegistrationForm(models.ModelForm):
 
 @parsleyfy
 class DoctorRegistrationForm(models.ModelForm):
+    """
+    Name: DoctorRegisterForm
+
+    It's a doctor registration form based on the Doctor Model.
+    """
     model = Doctor
     first_name = fields.CharField(max_length=25)
     last_name = fields.CharField(max_length=30)
@@ -318,6 +323,11 @@ class DoctorRegistrationForm(models.ModelForm):
 
 @parsleyfy
 class NurseRegistrationForm(models.ModelForm):
+    """
+    Name: NurseRegisterForm
+
+    It's a nurse registration form based on the Nurse Model.
+    """
     model = Nurse
     first_name = fields.CharField(max_length=25)
     last_name = fields.CharField(max_length=30)
@@ -402,7 +412,7 @@ class NurseRegistrationForm(models.ModelForm):
 
 class LoginForm(forms.Form):
     """
-    Name:   LoginForm
+    Name: LoginForm
 
     It's a form that allows users to log into the system
     """
@@ -619,7 +629,8 @@ class DeletePresForm(models.ModelForm):
     """
     Name: DeletePresForm
 
-    Deletion of Pres form
+    Deletion of prescription form.
+    It's a confirmation form.
     """
 
     class Meta:
@@ -673,6 +684,7 @@ class DischargeForm(models.ModelForm):
     Name: DischargeForm
 
     Discharge form
+    This is a confirmation of discharge form
     """
 
     class Meta:
@@ -809,6 +821,12 @@ class MessageCreation(models.ModelForm):
 
 
 class TimeFrame(forms.Form):
+    """
+    Name: TimeFrame
+
+    The form for submitting a time frame.
+    This is used for viewing the stats of a hospital.
+    """
     start = fields.DateField()
     end = fields.DateField()
 
