@@ -32,7 +32,6 @@
     Time: {{ appt.time }}<br>
     Hospital: {{ appt.location }}<br>
 
-
-    <a href="{% url 'registry:home' %}"> Go Back to Homepage</a>
+    <a class="btn btn-default" href={% url "registry:home" %}>Go Back to Homepage</a>
 
 {% endblock %}
