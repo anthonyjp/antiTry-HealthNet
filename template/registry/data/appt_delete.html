@@ -10,6 +10,6 @@ Do you want to delete this item?
 <form method="POST" class="post-form">{% csrf_token %}
         {{ form.as_p }}
     <button type="submit">Confirm</button>
-    <a href="{% url 'registry:home' %}">Cancel</a>
+    <a class="btn btn-default" href={% url "registry:index" %}>Cancel</a>
     </form>
 {% endblock %}

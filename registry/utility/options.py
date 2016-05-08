@@ -40,6 +40,7 @@ class LogAction(enum.Enum):
     GENERIC = 18
     USER_REGISTER = 19
     USER_LOGIN = 20
+    PA_INFO = 21
 
     labels = {
         APPT_CREATE: "APPT NEW",
@@ -62,7 +63,8 @@ class LogAction(enum.Enum):
         GENERIC: '---',
         USER_REGISTER: 'REGISTER',
         USER_LOGIN: 'LOGIN',
-        PAGE_ACCESS: 'ACCESS'
+        PAGE_ACCESS: 'ACCESS',
+        PA_INFO: 'INFO EXPORT'
     }
 
     @classmethod

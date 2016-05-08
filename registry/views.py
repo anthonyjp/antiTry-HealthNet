@@ -421,7 +421,7 @@ def appt_edit(request, pk):
                 error = "Appointment Error: That date and time has already happen."
     else:
         form = AppointmentEditForm(instance=appt, appt_id=pk)
-    return {'form': form, 'appt': initial_appointment, 'error': error}
+    return {'form': form, 'appt': initial_appointment, 'error': error, 'hn_visitor': user, 'hn_owner': appt.patient}
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -1088,6 +1088,8 @@ def seq_check(request, patient_uuid):
         if form.is_valid():
             answer = form.cleaned_data['security_answer']
             if answer == hn_visitor.security_answer:
+                logger.action(request, LogAction.PA_INFO, 'Medical information of {0!r} exported by {1!r}',
+                              patient, hn_visitor)
                 return export_patient_info(request, patient_uuid)
             else:
                 error = "Incorrect answer"
