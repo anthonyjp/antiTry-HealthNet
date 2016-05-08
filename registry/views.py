@@ -6,6 +6,7 @@ from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as django_login
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
@@ -58,8 +59,10 @@ def login(request):
             if user.is_active:
                 django_login(request, user)
                 logger.action(request, LogAction.USER_LOGIN, '{name} has logged in!', name=str(user.hn_user))
+                messages.add_message(request, messages.SUCCESS, 'Successfully Logged In.')
                 return redirect(to=reverse('registry:home'))
     else:
+        # messages.add_message(request, messages.ERROR, 'Invalid Email or Password. Please Try Again.')
         form = LoginForm()
     return {'form': form}
 
@@ -73,7 +76,7 @@ def sign_out(request):
     """
     if request.user:
         logout(request)
-
+        messages.add_message(request, messages.SUCCESS, 'Successfully Logged Out.')
     return redirect(to=reverse('registry:index'))
 
 
@@ -115,6 +118,7 @@ def home(request):
                        'hn_visitor': hn_user,
                        'appointments': hn_user.appointment_set.all(),
                        'doctors_patients': patients_list.distinct(),
+                       'inbox': inbox,
                        'patients_transfer': patients_transfer,
                        }, context_instance=RequestContext(request))
 
@@ -127,6 +131,7 @@ def home(request):
                       'registry/users/user_nurse.html',
                       {'form': form,
                        'hn_owner': hn_user,
+                       'inbox': inbox,
                        'appointments': hn_user.hospital.appointment_set.all(),
                        'admitted': admitted_list,
                        'patients': patients_list,
@@ -194,8 +199,8 @@ def register(request):
             patient.save()
 
             logger.action(request, LogAction.USER_REGISTER, 'Registered new user: {0!r}', patient)
-
-            return redirect('registry:register_success')
+            messages.add_message(request, messages.SUCCESS, 'Successfully Registered.')
+            return redirect('registry:index')
     else:
         form = PatientRegisterForm()
     return {'form': form}
@@ -883,7 +888,7 @@ def msg_create(request):
     message.receiver.inbox.messages.add(message)
 
     message.save()
-
+    messages.add_message(request, messages.SUCCESS, 'Message Sent.')
     return ajax_success(id=message.uuid, sender=str(sender), timestamp=message.date.isoformat())
 
 

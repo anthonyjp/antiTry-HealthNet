@@ -26,6 +26,7 @@
 {% endblock %}
 
 {% block content %}
+    {% include "registry/components/message_display.html" %}
     {% has_perm 'registry.inbox' hn_owner hn_visitor as has_inbox %}
 <div id="left">
     <ul class="profile">

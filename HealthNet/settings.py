@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'axes',
     'debug_toolbar',
+    'parsley',
     # 'hijack',
     'compat',
     'crispy_forms',

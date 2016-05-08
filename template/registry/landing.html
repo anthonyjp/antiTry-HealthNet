@@ -2,8 +2,6 @@
 {% load static %}
 {% load sass_tags %}
 
-
-
 {% block title %}HealthNet{% endblock %}
 
 {% block cssimport %}
@@ -11,6 +9,7 @@
 {% endblock %}
 
 {% block content %}
+    {% include "registry/components/message_display.html" %}
     <h1>Welcome to HealthNet</h1>
     <div id="buttons">
         <a href="{% url 'registry:login' %}"><button>Log In</button></a>

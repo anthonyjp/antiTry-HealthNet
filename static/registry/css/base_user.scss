@@ -33,6 +33,25 @@ li{
   list-style: none;
 }
 
+/*------- System Messages -------*/
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+
+}
+
+#sysMessage {
+  display: block;
+  //animation: fadeOut 5s forwards;
+  //animation-delay: 3s;
+}
+
+/*------- End System Messages -------*/
 /*------- Tab Links -------*/
 li.active a, li.active a:hover {
   background: #fff;
@@ -265,6 +284,10 @@ input#id_title {
 
 #check {
   width: 2%;
+}
+
+#fieldExplain {
+  color: #cb7775;
 }
 
 /*-------- End Right Panel --------*/

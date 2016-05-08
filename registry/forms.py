@@ -3,6 +3,8 @@ from .models import *
 from .utility.options import *
 from .utility.widgets import HeightField, WeightField, DateTimeMultiField
 
+from parsley.decorators import parsleyfy
+
 from crispy_forms.bootstrap import *
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import *
@@ -12,6 +14,8 @@ from django.forms import forms, models, fields, widgets
 
 import rules
 
+
+@parsleyfy
 class PatientRegisterForm(models.ModelForm):
     """
     Name: PatientRegisterForm
@@ -56,7 +60,7 @@ class PatientRegisterForm(models.ModelForm):
                                  css_class='row',
                          ),
                          Div(
-                             Div('address_line_one', css_class='col-lg-5'),
+                             Div('address_line_one', css_class='col-lg-12'),
                              css_class='row',
                          ),
                          Div(
@@ -70,8 +74,8 @@ class PatientRegisterForm(models.ModelForm):
                              css_class='row',
                          ),
                          Div(
-                                 Div('email', css_class='col-lg-5'),
-                                 Div('password', css_class='col-md-5'),
+                             Div('email', css_class='col-lg-6'),
+                             Div('password', css_class='col-md-6'),
                                  css_class='row',
                          ),
                          Div(
@@ -83,7 +87,7 @@ class PatientRegisterForm(models.ModelForm):
                          'insurance',
                          Div(
                                  Div('security_question', css_class='col-lg-4'),
-                                 Div('security_answer', css_class='col-md-4'),
+                             Div('security_answer', css_class='col-md-6'),
                                  css_class='row',
                          ),
                          'pref_hospital',
@@ -138,6 +142,7 @@ class PatientRegisterForm(models.ModelForm):
         }
 
 
+@parsleyfy
 class AdminRegistrationForm(models.ModelForm):
     """
     Name: PatientRegisterForm
@@ -153,6 +158,7 @@ class AdminRegistrationForm(models.ModelForm):
     def __init__(self, *args, **kwargs):
         super(AdminRegistrationForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.attrs = {'data-validate': 'parsley'}
         self.helper.form_class = 'form-horizontal hn-form register'
         self.helper.form_method = 'POST'
         self.helper.form_action = 'register'
@@ -226,6 +232,7 @@ class AdminRegistrationForm(models.ModelForm):
         }
 
 
+@parsleyfy
 class DoctorRegistrationForm(models.ModelForm):
     model = Doctor
     first_name = fields.CharField(max_length=25)
@@ -236,6 +243,7 @@ class DoctorRegistrationForm(models.ModelForm):
     def __init__(self, *args, **kwargs):
         super(DoctorRegistrationForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.attrs = {'data-validate': 'parsley'}
         self.helper.form_class = 'form-horizontal hn-form register'
         self.helper.form_method = 'POST'
         self.helper.form_action = 'register'
@@ -308,6 +316,7 @@ class DoctorRegistrationForm(models.ModelForm):
         }
 
 
+@parsleyfy
 class NurseRegistrationForm(models.ModelForm):
     model = Nurse
     first_name = fields.CharField(max_length=25)

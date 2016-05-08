@@ -1,0 +1,46 @@
+{}
+<div id="tab10" class="tab">
+    <table id="logsTable">
+        <thead>
+        <tr>
+            <th>
+                <div class="logHead">Timestamp</div>
+            </th>
+            <th>
+                <div class="logHead">Where</div>
+            </th>
+            <th>
+                <div class="logHead">Level</div>
+            </th>
+            <th>
+                <div class="logHead">Action</div>
+            </th>
+            <th>
+                <div class="logHead">Message</div>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for l in logs %}
+            <tr>
+                <td>
+                    <div>{{ l.timestamp }}</div>
+                </td>
+                <td>
+                    <div>{{ l.where }}</div>
+                </td>
+                <td>
+                    <div>{{ l.level }}</div>
+                </td>
+                <td>
+                    <div>{{ l.action }}</div>
+                </td>
+                <td>
+                    <div>{{ l.message }}</div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{}

@@ -50,7 +50,7 @@ registry.module('forms.user') unless registry.has('forms.user')
          .click(-> $(@).prop('readonly', false))
          .blur(-> $(@).prop('readonly', true))
          .change(->
-            if $(@).val() is not original[@]
+           if $(@).val() is not originals[@]
                changes.push(new Change(@, $(@).val(), originals[@], createReversion(), perm))
          )
          .removeClass('no-input')
@@ -157,7 +157,7 @@ registry.module('forms.user') unless registry.has('forms.user')
       form.css("display", "block")
       form.find('span.help-inline').remove()
 
-      vex.dialog.buttons.YES.yext = 'Submit'
+     vex.dialog.buttons.YES.text = 'Send'
       vex.dialog.open
          message: form
          callback: (data) ->
@@ -212,6 +212,11 @@ registry.module('forms.user') unless registry.has('forms.user')
             messages: mIds
          success: (resp) -> msgHandler(mIds, resp.fails)
    )
+
+  $("#Dismiss").click(->
+    $('#sysMessage')[0].style.display = 'none'
+  )
+
 
    # TODO This may be re-worked, the constant fade is annoying
    buttonButtonsPresButtonsHandler = (evt) ->

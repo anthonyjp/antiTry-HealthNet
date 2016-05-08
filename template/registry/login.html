@@ -14,5 +14,9 @@
 {% endblock %}
 
 {% block inner-content %}
+    {% include "registry/components/message_display.html" %}
     {% crispy form form.helper %}
+    <div>
+        <span id="fieldExplain">* - Required Field</span>
+    </div>
 {% endblock %}
