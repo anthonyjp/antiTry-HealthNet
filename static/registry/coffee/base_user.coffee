@@ -213,9 +213,9 @@ registry.module('forms.user') unless registry.has('forms.user')
          success: (resp) -> msgHandler(mIds, resp.fails)
    )
 
-  $("#Dismiss").click(->
+   $("#Dismiss").click(->
     $('#sysMessage')[0].style.display = 'none'
-  )
+   )
 
 
    # TODO This may be re-worked, the constant fade is annoying

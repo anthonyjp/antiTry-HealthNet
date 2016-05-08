@@ -74,7 +74,7 @@ $(document).ready(function () {
         var pwd = doctorForm.find('input#id_password').val();
         var secq = doctorForm.find('#id_security_question').find(':selected').val();
         var seca = doctorForm.find('input#id_security_answer').val();
-        var hospital = doctorForm.find('#id_hospitals').find(':selected').val();
+        var hospital = doctorForm.find('#id_hospitals').val();
 
 
         $.ajax({

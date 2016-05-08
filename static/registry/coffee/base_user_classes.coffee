@@ -95,11 +95,10 @@ class Authenticator
          successes = []
          failures = (c for c in changes when c not in possibleChanges)
 
-         changeData = (new () -> @[$(c.target).date('field')] = c.new for c in possibleChanges $ @)
-         changeData = {}
-         dataToChange = {}
-         changeData[$(c.target).data('field')] = c.new for c in possibleChanges
-         dataToChange[$(c.target).data('field')] = c for c in possibleChanges
+
+         dataToChange = (new () -> @[$(c.target).date('field')] = c for c in possibleChanges; @)
+         changeData = (new () -> @[$(c.target).date('field')] = c.new for c in possibleChanges; @)
+
          $.ajax
             context: @
             url: "/user/#{@uuid}"
