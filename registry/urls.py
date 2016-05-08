@@ -53,7 +53,7 @@ urlpatterns = [
     url(r'^logs/(?P<start>\d{4}-\d{2}-\d{2})/(?P<end>\d{4}-\d{2}-\d{2})$', views.logs, name='logs'),
     url(r'^stats$', views.get_time, name='time'),
     # Get the patient export info
-    url(r'patientpdf/(?P<patient_uuid>.*)$', views.export_patient_info, name='export_patient_info'),
+    url(r'patientpdf/(?P<patient_uuid>.*)$', views.seq_check, name='export_patient_info'),
 
 
 ]

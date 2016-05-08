@@ -43,9 +43,16 @@
         {% endif %}
 
         {% has_perm 'registry.patient_admit' hn_owner as patient_info %}
-        {% if patient_info %}
-                Admitted<br>
-            Hospital: {{ hn_owner.admission_status.hospital }}<br>
+        {% has_perm 'registry.view_patient.profile' hn_owner as patient_profile %}
+        {% has_perm 'registry.medinfo' hn_visitor hn_owner as can_admit %}
+
+        {% if can_admit and not patient_info and pratient_profile %}
+            <a href="{% url 'registry:patient_admit' hn_owner.uuid %}">
+                <button>Admit Patient</button>
+            </a>
+        {% elif patient and patient_info %}
+            Admitted<br>
+            Hospital: {{ hn_owner.admission_status.hospital }}
         {% endif %}
 
         {% has_perm 'registry.view_an' hn_visitor hn_owner as a_n_staff %}
@@ -64,8 +71,10 @@
 
             {% if patient %}
                 <li><a href="#tab2" rel="tab2" class="hn-tab">Medical</a></li>
+                <li><a href="{% url 'registry:export_patient_info' hn_owner.uuid %}"
+                       id="appt-tab" rel="tab5" class="hn-tab">
+                    Export Information</a></li>
             {% endif %}
-
 
             {% if has_inbox %}
                 <li><a href="#tab6" rel="tab6" class="hn-tab">Inbox</a></li>

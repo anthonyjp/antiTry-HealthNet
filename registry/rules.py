@@ -32,7 +32,7 @@ is_administrator = is_user(Administrator)
 
 @predicate
 def is_admit(patient):
-    return patient.is_admitted()
+    return patient.admission_status is not None
 
 
 @predicate
@@ -127,11 +127,11 @@ rules.add_perm('registry.rx', is_doctor_check)
 
 rules.add_perm('registry.patient_admit', is_patient & is_admit)
 rules.add_perm('registry.patientinfo', is_patient)
-rules.add_perm('registry.medinfo', is_doctor | is_nurse)
+rules.add_perm('registry.medinfo', (is_doctor | is_nurse) & is_patient)
 
 rules.add_perm('registry.prescriptions', is_doctor_check)
 
-rules.add_perm('registry.discharge', is_doctor)
+rules.add_perm('registry.discharge', is_doctor_check)
 
 rules.add_perm('registry.transfer_request', is_doctor | is_administrator)
 
@@ -150,8 +150,14 @@ rules.add_perm('registry.view_patient.admin', is_admin_for)
 rules.add_perm('registry.view_patient.nurse', is_nurse_for)
 rules.add_perm('registry.view_patient.doctor', is_doctor_of)
 rules.add_perm('registry.view_patient.self', (is_patient & is_self))
+
+# Has a direct relationship with the patient
 rules.add_perm('registry.view_patient',
                view_patient & ((is_patient & is_self) | is_admin_check | is_nurse_check | is_doctor_check))
+# Can either view their own patient profile page or has general permissions to see patient page
+rules.add_perm('registry.view_patient.profile',
+               view_patient & ((is_patient & is_self) | is_administrator | is_nurse | is_doctor))
+
 rules.add_perm('registry.view_an', an_profile)
 
 # Define Rules
@@ -164,3 +170,4 @@ rules.add_rule('is_administrator', is_administrator)
 
 rules.add_rule('can_view_patient', has_appointment_check | is_doctor_check | (is_patient & is_self))
 rules.add_rule('time_gt', time_gt)
+rules.add_rule('has_relationship', (is_patient & is_self) | is_doctor_check | is_nurse_check | is_admin_for)

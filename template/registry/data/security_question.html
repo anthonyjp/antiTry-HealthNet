@@ -1,0 +1,28 @@
+{% extends 'registry/base/base_auth.html' %}
+{% load static %}
+{% load sass_tags %}
+{% load crispy_forms_tags %}
+
+{% block title %}HealthNet | Patient Information Exporting{% endblock %}
+{% block inner-title %}Patient Information Exporting{% endblock %}
+{% block set-active %}__NONE__{% endblock %}
+
+{% block jsimport %}
+    <script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'registry/js/utility.js' %}"></script>
+{% endblock %}
+
+{% block inner-content %}
+    <p>Patient: {{ patient }}</p><br>
+    <p id="error">{{ error }}</p><br>
+    <p id="error">Privacy Warning: The information contained in this transmission may contain privileged
+        and confidential information, including patient information which may be protected by federal and
+        state privacy laws. It is intended only for the use of authorized medical staff and administrators and
+        the patient whose information is being transmitted. If you are not one of these intended recipients,
+        you are hereby notified that any review, dissemination, distribution, or duplication of this communication
+        is strictly prohibited. If you are not the intended recipient, please exit this site and send an email to
+        the staff of the website (and whose contact information can be seen on the About page) about how you have
+        reached this page. <br>
+    </p><br>
+    {% crispy form form.helper %}
+{% endblock %}

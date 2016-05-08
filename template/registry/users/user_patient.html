@@ -31,29 +31,22 @@
 {% endblock %}
 
 {% block userContent %}
-            <div id="tab2" class="tab">
-                {% include "registry/components/prescription_list.html" %}
-            </div>
+    <div id="tab2" class="tab">
+        {% include "registry/components/prescription_list.html" %}
+    </div>
 
-            <div id="tab3" class="tab">
-                <form id="form">
-                    <label>Insurance:</label><input data-field="insurance" class="editable" type="text"
+    <div id="tab3" class="tab">
+        <form id="form">
+            <label>Insurance:</label><input data-field="insurance" class="editable" type="text"
                                                     value="{{ hn_owner.insurance }}"/><br>
-                </form>
-            </div>
+        </form>
+    </div>
 
 
 
     <div id="tab5" class="tab">
-                <div class="container calendar">
-                    <div id="calendar"></div>
-                </div>
-            </div>
-
-    <div id="tab10" class="tab">
-        <div>
-            Export information will be added here
+        <div class="container calendar">
+            <div id="calendar"></div>
         </div>
     </div>
-
 {% endblock %}

@@ -31,7 +31,6 @@ def index(request):
     else:
         return {}
 
-
 @render_to('registry/about.html')
 def about(request):
     def create_dev(name, role, desc, *links, img=static('registry/img/logo.png')):
@@ -157,6 +156,8 @@ def home(request):
 def register(request):
     """
     The view for the register page
+    When successfully registered, it will render back to the homepage
+    with a message that says "You have successfully registered. You can now log in."
     :param request:
     :return:
     """
@@ -194,11 +195,10 @@ def register(request):
 
             logger.action(request, LogAction.USER_REGISTER, 'Registered new user: {0!r}', patient)
 
-            return redirect('registry:index')
+            return redirect('registry:register_success')
     else:
         form = PatientRegisterForm()
     return {'form': form}
-
 
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/patient_admit.html')
@@ -1060,6 +1060,36 @@ def stats(request, start, end):
 
 import csv
 from django.http import HttpResponse
+
+
+@login_required(login_url=reverse_lazy('registry:login'))
+@render_to('registry/data/security_question.html')
+def seq_check(request, patient_uuid):
+    """
+    The view for answering a security question before moving onto exporting information
+    :param request:
+    :param patient_uuid: the patient who's information will get exported
+    :return:
+    """
+    patient = get_object_or_404(Patient, uuid=patient_uuid)
+    hn_visitor = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    error = ""
+    if not rules.test_rule('has_relationship', hn_visitor, patient):
+        return HttpResponseNotFound(
+            '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
+
+    if request.method == 'POST':
+        form = SecurityValidation(request.POST)
+        if form.is_valid():
+            answer = form.cleaned_data['security_answer']
+            if answer == hn_visitor.security_answer:
+                return export_patient_info(request, patient_uuid)
+            else:
+                error = "Incorrect answer"
+    else:
+        form = SecurityValidation()
+    template_vars = {'form': form, 'error': error, 'patient': patient_uuid}
+    return template_vars
 
 
 def export_patient_info(request, patient_uuid):

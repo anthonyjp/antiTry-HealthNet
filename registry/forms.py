@@ -829,3 +829,38 @@ class TimeFrame(forms.Form):
 
         self.fields['start'].widget.attrs['datepicker'] = True
         self.fields['end'].widget.attrs['datepicker'] = True
+
+
+class SecurityValidation(forms.Form):
+    """
+    Name: SecurityValidation
+
+    Security Validation form
+    The user is asked provide the answer to their security question
+    """
+    security_answer = fields.CharField(max_length=100)
+
+    def __init__(self, *args, **kwargs):
+        super(SecurityValidation, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal hn-form securityQuestion'
+        self.helper.form_method = 'POST'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+
+        self.helper.layout = Layout(
+            Fieldset('Security Question Validation',
+                     HTML('<p>What is your mother`s first name?</p>'),
+                     Div(
+                         Div('security_answer', css_class='col-lg-3'),
+                         css_class='row',
+                     ),
+                     ),
+            FormActions(
+                Submit('submit', 'Submit'),
+                HTML(
+                    '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
+                    '{% url "registry:home" %}{% endif %}>Cancel</a>'
+                )
+            )
+        )
