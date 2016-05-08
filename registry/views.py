@@ -977,6 +977,7 @@ def logs(request, start, end):
 
 @login_required(login_url=reverse_lazy('registry:login'))
 def get_time(request):
+    error = ""
     hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     if not rules.test_rule('is_administrator', hn_user):
         return HttpResponseNotFound(
@@ -989,13 +990,17 @@ def get_time(request):
         if form.is_valid():
             start = form.cleaned_data['start']
             end = form.cleaned_data['end']
-            return stats(request, start, end)
+
+            if start > end:
+                error = "Time Range is invalid. End time must be after start time."
+            else:
+                return stats(request, start, end)
 
     # if a GET (or any other method) we'll create a blank form
     else:
         form = TimeFrame()
     show = True
-    return render(request, 'registry/components/admit_stats.html', {'show': show, 'form': form})
+    return render(request, 'registry/components/admit_stats.html', {'show': show, 'form': form, 'error': error})
 
 
 @login_required(login_url=reverse_lazy('registry:login'))
