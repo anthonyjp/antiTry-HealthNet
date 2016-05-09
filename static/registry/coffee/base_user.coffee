@@ -175,9 +175,10 @@ registry.module('forms.user') unless registry.has('forms.user')
                   title: registry.escapeHtml(title)
                success: (resp) ->
                   vex.close()
-                 vex.dialog.alert
-                   message: 'Message Sent.'
-                   className: 'vex-theme-bottom-right-corner'
+                  vex.dialog.buttons.YES.text = 'OK'
+                  vex.dialog.alert
+                     message: 'Message Sent.'
+                     className: 'vex-theme-bottom-right-corner'
                   return unless resp.success && registry.forms.user.isAuthUser(receiver)
 
                   tmpId = 'TEMP-MESSAGE-ID-FOR-CLICK'
