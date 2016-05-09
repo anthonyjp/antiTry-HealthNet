@@ -48,10 +48,10 @@ def about(request):
 
     return {'aboutus': [
         create_dev('Matthew Crocco', 'Development Coordinator', ('https://github.com/Matt529', 'Github')),
-        create_dev('Lisa Ni', 'Requirements Coordinator'),
-        create_dev('Anthony Perez', 'Quality Assurance Coordinator'),
-        create_dev('Alice Fischer', 'Team Coordinator'),
-        create_dev('Kyle Scagnelli', 'Test Coordinator')
+        create_dev('Lisa Ni', 'Requirements Coordinator', 'Contact Information'),
+        create_dev('Anthony Perez', 'Quality Assurance Coordinator', 'Contact Information'),
+        create_dev('Alice Fischer', 'Team Coordinator', 'Contact Information'),
+        create_dev('Kyle Scagnelli', 'Test Coordinator', 'Contact Information')
     ]}
 
 
@@ -376,12 +376,12 @@ def appt_create(request):
                         doctor__pk=appointment.doctor_id,
                         time__hour=appointment.time.hour,
                         time__minute=appointment.time.minute,
-                        time__day=appointment.time.day)
+                        time__day=appointment.time.day, time__month=appointment.time.month)
                     patientlist = Appointment.objects.filter(
                         patient__pk=appointment.patient_id,
                         time__hour=appointment.time.hour,
                         time__minute=appointment.time.minute,
-                        time__day=appointment.time.day)
+                        time__day=appointment.time.day, time__month=appointment.time.month)
                     if not (dlist.exists() or patientlist.exists()):
                         appointment.save()
 
@@ -437,8 +437,10 @@ def appt_edit(request, pk):
         form = AppointmentEditForm(request.POST, instance=appt, appt_id=pk)
         if form.is_valid():
             appointment = form.save(commit=False)
-            appt_list = Appointment.objects.filter(doctor__pk=appointment.doctor_id).filter(
-                    time__hour=appointment.time.hour).filter(time__day=appointment.time.day)
+            appt_list = Appointment.objects.filter(doctor__pk=appointment.doctor_id,
+                                                   time__hour=appointment.time.hour,
+                                                   time__minute=appointment.time.minute,
+                                                   time__day=appointment.time.day, time__month=appointment.time.month)
             if rules.test_rule('time_gt', appointment.time, tz.now()):
 
                 if not appt_list.exists() or (initial_doctor == appointment.doctor.uuid and
