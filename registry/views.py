@@ -652,7 +652,7 @@ def view_user(request, uuid):
     if rules.test_rule('is_patient', owner):
         mc = None
         mh = mc
-        if visitor.has_perm('registry.edit_patient'):
+        if visitor.has_perm('registry.edit_patient', owner):
             rxs = owner.prescription_set.filter()
             mc = owner.conditions.all()
             mh = MedicalHistory.objects.filter(patient=owner).all()

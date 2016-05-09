@@ -3,7 +3,7 @@
 {% load registry_tags %}
 {% load crispy_forms_tags %}
 {% has_perm 'registry.prescriptions' hn_visitor hn_owner as can_add %}
-
+{% has_perm 'registry.medcon' hn_visitor hn_owner as can_mc %}
 <form id="form">
     <label>Height:</label><input data-field="height" class="editable" type="text" value="{{ hn_owner.height }}"/><br>
     <label>Weight:</label><input data-field="weight" class="editable" type="text" value="{{ hn_owner.weight }}"/><br>
@@ -26,7 +26,7 @@
         </tr>
     {% endfor %}
 
-    {% if can_add %}
+    {% if can_mc %}
         <tr>
             <td>
                 <a href="{% url 'registry:mc_add' hn_owner.uuid %}">

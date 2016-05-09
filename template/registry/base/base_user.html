@@ -30,10 +30,9 @@
     {% include "registry/components/message_display.html" %}
 
     {% has_perm 'registry.inbox' hn_owner hn_visitor as has_inbox %}
-    {% has_perm 'registry.patient_admit' hn_owner as patient_info %}
-    {% has_perm 'registry.view_patient.profile' hn_owner as patient_profile %}
+    {% has_perm 'registry.patient_admit' hn_visitor hn_owner as patient_info %}
+    {% has_perm 'registry.view_patient.profile' hn_visitor hn_owner as patient_profile %}
     {% has_perm 'registry.view_patient' hn_visitor hn_owner as patient %}
-    {% has_perm 'registry.medinfo' hn_visitor hn_owner as can_admit %}
 <div id="left">
     <ul class="profile">
         <li>
@@ -49,12 +48,11 @@
             Preferred Hospital: {{ hn_owner.pref_hospital }}<br>
         {% endif %}
 
-
-        {% if can_admit and not patient_info and pratient_profile %}
+        {% if patient_info and patient_profile %}
             <a href="{% url 'registry:patient_admit' hn_owner.uuid %}">
                 <button>Admit Patient</button>
             </a>
-        {% elif patient and patient_info %}
+        {% elif patient %}
             Admitted<br>
             Hospital: {{ hn_owner.admission_status.hospital }}
         {% endif %}

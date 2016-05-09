@@ -48,6 +48,8 @@ def is_doctor_of(doctor, patient):
 @predicate
 def is_nurse_for(nurse, patient):
     admit_hospital = False
+    if not is_patient(patient):
+        return False
     if patient.admission_status is not None:
         if patient.admission_status.hospital == nurse.hospital:
             admit_hospital = True
@@ -58,6 +60,8 @@ def is_nurse_for(nurse, patient):
 @predicate
 def is_admin_for(admin, patient):
     admit_hospital = False
+    if not is_patient(patient):
+        return False
     if patient.admission_status is not None:
         if patient.admission_status.hospital == admin.hospital:
             admit_hospital = True
@@ -109,6 +113,16 @@ def can_med_edit(visitor, owner):
 def view_patient(visitor, owner):
     return is_patient(owner)
 
+
+@predicate
+def has_admit_perm(visitor, owner):
+    if not is_patient(owner) or owner.admission_status is not None:
+        return False
+    if not is_doctor(visitor) and not is_nurse(visitor):
+        return False
+    return True
+
+
 has_appointment_check = (is_doctor | is_nurse) & has_appointment
 is_doctor_check = is_doctor & is_doctor_of
 is_nurse_check = is_nurse & is_nurse_for
@@ -125,11 +139,12 @@ rules.add_perm('registry.cancel_appointment', is_patient | is_doctor)
 
 rules.add_perm('registry.rx', is_doctor_check)
 
-rules.add_perm('registry.patient_admit', is_patient & is_admit)
+rules.add_perm('registry.patient_admit', has_admit_perm)
 rules.add_perm('registry.patientinfo', is_patient)
 rules.add_perm('registry.medinfo', (is_doctor | is_nurse) & is_patient)
 
 rules.add_perm('registry.prescriptions', is_doctor_check)
+rules.add_perm('registry.medcon', is_nurse_check)
 
 rules.add_perm('registry.discharge', is_doctor_check)
 
@@ -142,7 +157,7 @@ rules.add_perm('registry.user.edit.medical', is_self | is_doctor | is_nurse)
 rules.add_perm('registry.user.view.insurance', is_self | is_doctor | is_administrator)
 rules.add_perm('registry.user.edit.insurance', is_self | is_administrator)
 # rules.add_perm('registry.view_patient', is_doctor | is_nurse)
-rules.add_perm('registry.edit_patient', (is_patient & is_self) | is_nurse_check | is_doctor)
+rules.add_perm('registry.edit_patient', (is_patient & is_self) | is_nurse_check | is_doctor_check)
 
 rules.add_perm('registry.inbox', is_self)
 
