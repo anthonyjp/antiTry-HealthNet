@@ -372,16 +372,8 @@ def appt_create(request):
                         location_found = True
                         break
                 if location_found:
-                    dlist = Appointment.objects.filter(
-                        doctor__pk=appointment.doctor_id,
-                        time__hour=appointment.time.hour,
-                        time__minute=appointment.time.minute,
-                        time__day=appointment.time.day, time__month=appointment.time.month)
-                    patientlist = Appointment.objects.filter(
-                        patient__pk=appointment.patient_id,
-                        time__hour=appointment.time.hour,
-                        time__minute=appointment.time.minute,
-                        time__day=appointment.time.day, time__month=appointment.time.month)
+                    dlist = Appointment.objects.filter(doctor__pk=appointment.doctor_id, time=appointment.time)
+                    patientlist = Appointment.objects.filter(patient__pk=appointment.patient_id, time=appointment.time)
                     if not (dlist.exists() or patientlist.exists()):
                         appointment.save()
 
@@ -438,9 +430,7 @@ def appt_edit(request, pk):
         if form.is_valid():
             appointment = form.save(commit=False)
             appt_list = Appointment.objects.filter(doctor__pk=appointment.doctor_id,
-                                                   time__hour=appointment.time.hour,
-                                                   time__minute=appointment.time.minute,
-                                                   time__day=appointment.time.day, time__month=appointment.time.month)
+                                                   time=appointment.time)
             if rules.test_rule('time_gt', appointment.time, tz.now()):
 
                 if not appt_list.exists() or (initial_doctor == appointment.doctor.uuid and
