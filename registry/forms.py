@@ -865,6 +865,7 @@ class ExportForm(forms.Form):
     export_type = fields.ChoiceField(choices=ExportOption.choices(), initial=ExportOption.CSV)
 
     def __init__(self, *args, **kwargs):
+        question = kwargs.pop('secq', 'No Security Question')
         super(ExportForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form securityQuestion'
@@ -889,7 +890,7 @@ class ExportForm(forms.Form):
             )
         )
 
-        self.fields['security_answer'].label = kwargs.get('secq', 'No Security Question')
+        self.fields['security_answer'].label = question
 
 
 class MedicalTestUploadForm(forms.Form):
