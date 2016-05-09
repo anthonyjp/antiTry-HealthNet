@@ -294,7 +294,7 @@ class Note(models.Model):
 
 
 class Attachment(models.Model):
-    file = models.FileField(upload_to="testimg")
+    file = models.FileField(upload_to="attachments")
     note = models.ForeignKey(to=Note, on_delete=models.CASCADE)
 
 
@@ -317,6 +317,7 @@ class MedicalTest(MedicalData):
     timestamp = models.DateTimeField()
     results = models.OneToOneField(to=Note, related_name='test_note', on_delete=models.SET_NULL, null=True)
     sign_off_user = models.ForeignKey(to=Doctor, on_delete=models.SET_NULL, null=True)
+    released = models.BooleanField(default=False)
 
 
 class MedicalHistory(MedicalData):
@@ -343,7 +344,7 @@ class Contact(models.Model):
     objects = InheritanceManager()
 
     def __str__(self):
-        return "%s : %s : %s" % (str(self.contact_user) if self.contact_name else self.contact_name, self.contact_email,
+        return "%s : %s : %s" % (str(self.contact_user) if self.contact_user else self.contact_name, self.contact_email,
                                  self.contact_primary)
 
 

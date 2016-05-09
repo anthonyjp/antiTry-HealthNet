@@ -148,7 +148,7 @@ rules.add_perm('registry.patientinfo', is_patient)
 rules.add_perm('registry.medinfo', (is_doctor | is_nurse) & is_patient)
 
 rules.add_perm('registry.prescriptions', is_doctor_check)
-rules.add_perm('registry.medcon', is_nurse_check)
+rules.add_perm('registry.medcon', is_doctor_check | is_nurse_check)
 
 rules.add_perm('registry.discharge', is_doctor_check)
 

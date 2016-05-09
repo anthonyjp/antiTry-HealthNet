@@ -178,6 +178,15 @@ registry = (function () {
         registry['utility']['stopEventBehavior'](event);
     }
 
+    function fulfillNotifs(notifString) {
+        var bits = _.trim(notifString).split(',');
+
+        _.each(bits, function (element) {
+            var args = _.trim(element).split(':');
+            $.notify(args[0], args.length >= 1 ? args[1] : 'success');
+        });
+    }
+
     return {
         'NO_MENUITEM': NONE_CHOICE,
         'has': has,
@@ -187,7 +196,8 @@ registry = (function () {
         'initUserSearch': initUserSearch,
         'escapeHtml': escapeHtml,
         'getCsrf': getCsrf,
-        'stopEventBehavior': stopEventBehavior
+        'stopEventBehavior': stopEventBehavior,
+        'fulfillNotifications': fulfillNotifs
     }
 })();
 

@@ -1,10 +1,16 @@
 {% extends 'registry/base/base.html' %}
 {% load sass_tags %}
+{% load staticfiles %}
+{% load compile_static %}
 
 {% block set-active %}__NONE__{% endblock %}
 
 {% block _base_cssimport %}
     <link rel="stylesheet" href="{% sass_src 'registry/css/base_auth.scss' %}"/>
+{% endblock %}
+
+{% block __base_js_import %}
+    <script type="text/javascript" src="{% static 'registry/coffee/measurements.coffee'|compile %}"></script>
 {% endblock %}
 
 {% block content %}

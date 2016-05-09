@@ -9,8 +9,8 @@ from crispy_forms.bootstrap import *
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import *
 from django.core.urlresolvers import reverse_lazy
-from localflavor.us.forms import USPhoneNumberField
-from django.forms import forms, models, fields, widgets
+from localflavor.us.forms import USPhoneNumberField, USZipCodeField, USStateSelect
+from django.forms import forms, models, fields, widgets, Textarea
 
 import rules
 from multiupload.fields import MultiFileField
@@ -411,6 +411,7 @@ class NurseRegistrationForm(models.ModelForm):
         }
 
 
+@parsleyfy
 class LoginForm(forms.Form):
     """
     Name: LoginForm
@@ -441,6 +442,7 @@ class LoginForm(forms.Form):
         )
 
 
+@parsleyfy
 class HospitalRegisterForm(models.ModelForm):
     """
     Name:   HospitalRegisterForm
@@ -453,6 +455,7 @@ class HospitalRegisterForm(models.ModelForm):
         fields = ('name', 'address', 'state', 'zipcode', 'identifiers')
 
 
+@parsleyfy
 class AppointmentSchedulingForm(models.ModelForm):
     """
     Name:   AppointmentSchedulingForm
@@ -503,6 +506,7 @@ class AppointmentSchedulingForm(models.ModelForm):
         fields = ('time', 'doctor', 'patient', 'location')
 
 
+@parsleyfy
 class AppointmentEditForm(models.ModelForm):
     """
     Name:   AppointmentSchedulingForm
@@ -561,6 +565,7 @@ class DeleteAppForm(models.ModelForm):
         fields = []
 
 
+@parsleyfy
 class PrescriptionCreation(models.ModelForm):
     """
     Name: PrescriptionCreation
@@ -639,6 +644,7 @@ class DeletePresForm(models.ModelForm):
         fields = []
 
 
+@parsleyfy
 class PatientAdmitForm(models.ModelForm):
     """
     Name: PatientAdmitForm
@@ -680,6 +686,7 @@ class PatientAdmitForm(models.ModelForm):
         exclude = ['patient', 'admitted_by', 'admission_time']
 
 
+@parsleyfy
 class DischargeForm(models.ModelForm):
     """
     Name: DischargeForm
@@ -693,6 +700,7 @@ class DischargeForm(models.ModelForm):
         fields = []
 
 
+@parsleyfy
 class PatientTransferForm(models.ModelForm):
     """
     Name: PatientTransferForm
@@ -860,6 +868,7 @@ class TimeFrame(forms.Form):
         self.fields['end'].widget.attrs['datepicker'] = True
 
 
+@parsleyfy
 class ExportForm(forms.Form):
     security_answer = fields.CharField(max_length=100)
     export_type = fields.ChoiceField(choices=ExportOption.choices(), initial=ExportOption.CSV)
@@ -893,8 +902,9 @@ class ExportForm(forms.Form):
         self.fields['security_answer'].label = question
 
 
-class MedicalTestUploadForm(forms.Form):
-    content = fields.CharField(max_length=5000)
+@parsleyfy
+class MedicalTestUploadForm(models.ModelForm):
+    content = fields.CharField(max_length=5000, widget=Textarea)
     attachments = MultiFileField(min_num=1)
 
     def __init__(self, *args, **kwargs):
@@ -902,19 +912,16 @@ class MedicalTestUploadForm(forms.Form):
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form securityQuestion'
         self.helper.form_method = 'POST'
+        self.helper.form_id = 'test-upload-form'
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
 
         self.helper.layout = Layout(
-            Fieldset('Security Question Validation',
-                     HTML('Export Type: '),
-                     'export_type',
-                     HTML('<p>What is your mother`s first name?</p>'),
-                     Div(
-                         Div('security_answer', css_class='col-lg-3'),
-                         css_class='row',
-                     ),
-                     ),
+            Fieldset('Test Upload',
+                     'patient',
+                     'attachments',
+                     'content',
+                     'released'),
             FormActions(
                 Submit('submit', 'Submit'),
                 HTML(
@@ -923,3 +930,7 @@ class MedicalTestUploadForm(forms.Form):
                 )
             )
         )
+
+    class Meta:
+        model = MedicalTest
+        fields = ('patient', 'released')

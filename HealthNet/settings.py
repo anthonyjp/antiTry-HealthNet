@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '1&!+0x75m@)f+-lqdwg3(=p2n=16m0o6j+!wa)8h75+_wut3kz'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -164,7 +164,8 @@ BOWER_INSTALLED_APPS = {
     'pikaday',
 }
 
-MEDIA_ROOT = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR)
 STATIC_ROOT = os.path.join(BASE_DIR, 'private_static')

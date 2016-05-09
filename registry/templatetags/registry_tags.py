@@ -1,6 +1,7 @@
 from django import template
 from django.utils.safestring import mark_safe
 from django_enumfield.enum import Enum
+from ..models import User
 from ..utility.strings import camelcase_to_slug, camelcase_to_snakecase
 
 import inspect
@@ -74,6 +75,15 @@ def loggify(value):
 
 @register.filter
 def naify(value, replace=None):
-    print(replace, replace is None, replace is not None, 'm/a', 'N/A' if replace is None else replace)
     return str(value) if (not isinstance(value, str) or value and value.lower() != 'none') else \
         ('N/A' if replace is None else str(replace))
+
+
+@register.filter
+def superify(value):
+    try:
+        user = User.objects.get_subclass(pk=value.pk)
+    except User.DoesNotExist:
+        return str(value)
+
+    return str(user)

@@ -1,0 +1,6 @@
+{% extends "registry/base/base_auth.html" %}
+{% load crispy_forms_tags %}
+
+{% block inner-content %}
+    {% crispy form form.helper %}
+{% endblock %}

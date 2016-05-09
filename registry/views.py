@@ -13,7 +13,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseNotFound, Http404, QueryDict
 from django.shortcuts import redirect, get_object_or_404, render
 from easy_pdf.rendering import render_to_pdf, render_to_pdf_response
-from ipware.ip import get_real_ip
+from ipware.ip import get_real_ip, get_ip
 
 from .forms import *
 from .models import *
@@ -25,7 +25,13 @@ logger = HNLogger()
 
 @render_to('registry/landing.html')
 def index(request):
-    logger.info(request, repr(request.user.hn_user) if request.user.is_authenticated() else str(get_real_ip(request)),
+    anonymous = get_real_ip(request)
+    if anonymous is None:
+        anonymous = get_ip(request)
+    if anonymous is None:
+        anonymous = "Anonymous"
+
+    logger.info(request, repr(request.user.hn_user) if request.user.is_authenticated() else str(anonymous),
                 action=LogAction.PAGE_ACCESS)
 
     if request.user.is_authenticated():
@@ -107,6 +113,7 @@ def home(request):
 
     if rules.test_rule('is_patient', hn_user):
         medical_history = MedicalHistory.objects.filter(patient=hn_user).all()
+        medical_tests = MedicalTest.objects.filter(patient=hn_user).all()
         return render(request,
                       'registry/users/user_patient.html',
                       {'form': form,
@@ -116,6 +123,7 @@ def home(request):
                        'appointments': hn_user.appointment_set.all(),
                        'medical_conditions': hn_user.conditions.all(),
                        'medical_history': medical_history,
+                       'medical_tests': medical_tests,
                        }, context_instance=RequestContext(request))
 
     elif rules.test_rule('is_doctor', hn_user):
@@ -127,6 +135,7 @@ def home(request):
         return render(request,
                       'registry/users/user_doctor.html',
                       {'form': form,
+                       'test_upload_form': MedicalTestUploadForm(),
                        'hn_owner': hn_user,
                        'hn_visitor': hn_user,
                        'appointments': hn_user.appointment_set.all(),
@@ -200,17 +209,22 @@ def register(request):
                     contact_email=form.cleaned_data['contact_email']
             )
 
-            try:
-                user = User.objects.get(auth_user__email=form.cleaned_data['contact_email'])
-            except User.DoesNotExist:
-                user = None
-
-            if user is not None:
-                contact.contact_user = user
-
             contact.save()
             patient.contact_set.add(contact)
             patient.save()
+
+            try:
+                user = User.objects.get(auth_user__email=contact.contact_email)
+            except User.DoesNotExist:
+                user = None
+
+            print(user)
+            if user is not None:
+                print("Not Null")
+                contact.contact_user = user
+
+            contact.save()
+
 
             logger.action(request, LogAction.USER_REGISTER, 'Registered new user: {0!r}', patient)
             messages.add_message(request, messages.SUCCESS, 'Successfully Registered.')
@@ -655,7 +669,12 @@ def view_user(request, uuid):
             rxs = owner.prescription_set.filter()
             mc = owner.conditions.all()
             mh = MedicalHistory.objects.filter(patient=owner).all()
-        return {"hn_owner": owner, "hn_visitor": visitor, 'rxs': rxs, 'medical_conditions': mc, 'medical_history': mh}
+            if rules.test_rule('is_doctor', visitor):
+                mt = MedicalTest.objects.filter(patient=owner).order_by('-timestamp').all()
+            else:
+                mt = MedicalTest.objects.filter(patient=owner, released=True).order_by('-timestamp').all()
+        return {"hn_owner": owner, "hn_visitor": visitor, 'rxs': rxs, 'medical_conditions': mc, 'medical_history': mh,
+                'medical_tests': mt}
     return {"hn_owner": owner, "hn_visitor": visitor}
 
 
@@ -1345,3 +1364,63 @@ def patient_export_pdf(request, uuid):
     response.write(pdf)
 
     return response
+
+
+@require_http_methods(['GET', 'POST', 'PUT'])
+@require_http_methods_not_none(['GET', 'POST', 'PUT'], 'uuid')
+@login_required(login_url=reverse_lazy('registry:login'))
+def medical_tests(request, uuid):
+    if request.method == 'GET':
+        return medical_tests_create(request, uuid)
+    elif request.method == 'POST':
+        return medical_tests_create(request, uuid)
+    elif request.method == 'PUT':
+        read_request_body_to(request, 'PUT')
+        return medical_tests_update(request, uuid)
+
+
+@render_to('registry/data/medical_test_upload.html')
+def medical_tests_create(request, uuid):
+    creator = get_user_or_404(request.user.hn_user.pk)
+
+    if request.method == 'POST':
+        form = MedicalTestUploadForm(request.POST, files=request.FILES)
+        if form.is_valid():
+            patient = form.cleaned_data['patient']
+            result_note = Note.objects.create(author=creator, timestamp=tz.now(), content=form.cleaned_data['content'])
+            result_note.save()
+
+            for a in form.cleaned_data['attachments']:
+                result_note.attachment_set.add(Attachment.objects.create(file=a, note=result_note))
+
+            result_note.save()
+
+            test = MedicalTest.objects.create(timestamp=tz.now(), results=result_note, sign_off_user=creator,
+                                              patient=patient)
+            test.notes.add(result_note)
+
+            test.save()
+
+            return redirect('registry:home')
+        else:
+            print(form.errors)
+    else:
+        form = MedicalTestUploadForm()
+
+    return {'form': form}
+
+
+@ajax_request
+def medical_tests_update(request, uuid):
+    patient = get_user_or_404(uuid)
+    print(request.PUT)
+    id = int(request.PUT['test-id'])
+
+    test = MedicalTest.objects.filter(pk=id, patient=patient)
+    if test.exists():
+        test = test.first()
+        test.released = True
+        test.save()
+        return ajax_success()
+
+    return ajax_failure()

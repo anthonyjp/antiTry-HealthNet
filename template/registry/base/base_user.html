@@ -54,13 +54,20 @@
                 <button>Admit Patient</button>
             </a>
         {% elif nonmed %}
-            Admitted<br>
-            Hospital: {{ hn_owner.admission_status.hospital }}
+            {% if hn_owner.is_admitted %}
+                Currently Admitted
+                Hospital: {{ hn_owner.admission_status.hospital }}
+            {% else %}Not Admitted{% endif %}<br>
         {% endif %}
 
         {% has_perm 'registry.view_an' hn_visitor hn_owner as a_n_staff %}
         {% if a_n_staff %}
             Hospital: {{ hn_owner.hospital }}<br>
+        {% endif %}
+
+        {% if has_inbox %}
+            <a class="btn btn-primary" style="width: 100%; font-size:80%;" onclick="registry.forms.user.updateUser();">Submit
+                Changes to Profile</a>
         {% endif %}
     </ul>
 </div>
@@ -173,7 +180,7 @@
                     {% for m in inbox %}
                         <tr data-message-id="{{ m.uuid }}" class="inbox-row" href="#tab7">
                             <td class="inboxBody check-box-wrapper"><input id="msg-checkbox" type="checkbox"/></td>
-                            <td class="inboxBody">{{ m.sender }}</td>
+                            <td class="inboxBody">{{ m.sender | superify }}</td>
                             <td class="inboxBody">{{ m.title }}</td>
                             <td class="inboxBody">{{ m.date }}</td>
                         </tr>

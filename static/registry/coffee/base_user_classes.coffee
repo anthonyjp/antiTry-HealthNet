@@ -90,14 +90,15 @@ class Authenticator
       @uuid is uuid
 
    commitChanges: (changes, cb) =>
-      @use((perms) =>
+      @use((err, perms) =>
+         console.dir(perms)
          possibleChanges = (c for c in changes when not c.perm? or c.perm in perms)
          successes = []
          failures = (c for c in changes when c not in possibleChanges)
 
 
-         dataToChange = (new () -> @[$(c.target).date('field')] = c for c in possibleChanges; @)
-         changeData = (new () -> @[$(c.target).date('field')] = c.new for c in possibleChanges; @)
+         dataToChange = (new () -> @[$(c.target).data('field')] = c for c in possibleChanges; @)
+         changeData = (new () -> @[$(c.target).data('field')] = c.new for c in possibleChanges; @)
 
          $.ajax
             context: @
@@ -110,8 +111,8 @@ class Authenticator
                console.log("resp: ");
                console.dir(resp);
 
-               successes.push((dataToChange[f] for f in resp.successes))
-               failures.push((dataToChange[f] for f in resp.failures))
+               successes.push(dataToChange[f] for f in resp.successes)
+               failures.push(dataToChange[f] for f in resp.failures)
 
                cb(null, successes, failures)
             failure: (resp) ->

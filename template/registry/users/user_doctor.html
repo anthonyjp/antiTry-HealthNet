@@ -26,7 +26,9 @@
     <li><a href="#tab2" rel="tab2" class="hn-tab">Patients</a></li>
     <li><a href="#tab5" id="appt-tab" rel="tab3" class="hn-tab">Appointments</a></li>
     <li><a href="#tab10" rel="tab3" class="hn-tab">Request Transfers</a></li>
-
+    {% if has_inbox %}
+        <li><a href="{% url 'registry:tests' hn_visitor.uuid %}" rel="tab4" class="hn-tab">Upload Tests</a></li>
+    {% endif %}
 {% endblock %}
 {% block userContent %}
 

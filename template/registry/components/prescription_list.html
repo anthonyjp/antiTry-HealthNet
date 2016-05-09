@@ -11,71 +11,99 @@
                                      value="{% labelify hn_owner.blood_type 'blood' %}"/><br>
 </form>
 
-<table>
+<table class="hn-table">
+    <thead>
     <tr>
-        <th id="theader" colspan="3">
+        <th id="theader" colspan="2">
             <div>
-                <p id="patientTitle">Medical Conditions</p>
+                <p class="hn-table-header" id="patientTitle">Medical Conditions</p>
             </div>
         </th>
     </tr>
-
+    </thead>
+    <tbody>
     {% for mc in medical_conditions %}
         <tr>
-            <td>{{ mc }}</td>
+            <td>{{ mc.name }}</td>
+            <td>{{ mc.desc }}</td>
         </tr>
     {% endfor %}
-
-    {% if can_mc %}
-        <tr>
-            <td>
-                <a href="{% url 'registry:mc_add' hn_owner.uuid %}">
-                    <button>Add Medical Condition</button>
-                </a>
-            </td>
-        </tr>
-    {% endif %}
-
+    </tbody>
 </table>
+{% if can_mc %}
+    <a href="{% url 'registry:mc_add' hn_owner.uuid %}">
+        <button>Add Medical Condition</button>
+    </a>
+{% endif %}
 <br><br>
-<table>
+<table class="hn-table">
     <tr>
-        <th id="theader" colspan="3">
+        <th class="hn-table-header" id="theader" colspan="4">
             <div>
                 <p id="patientTitle">Medical History</p>
             </div>
         </th>
     </tr>
-
-
+    <tr>
+        <th class="hn-table-header" colspan="1">
+            Admitted By
+        </th>
+        <th class="hn-table-header" colspan="1">
+            Admitted To
+        </th>
+        <th class="hn-table-header" colspan="1">
+            Reason
+        </th>
+        <th class="hn-table-header" colspan="1">
+            Duration of Stay
+        </th>
+    </tr>
+    </thead>
+    <tbody>
         {% for mh in medical_history %}
+            {% with mh.admission_details as admission %}
             <tr>
-                <td>{{ mh }}</td>
+                <td>{{ admission.doctor|stringify }}</td>
+                <td>{{ admission.hospital|stringify }}</td>
+                <td>{% labelify admission.reason "AdmitOptions" %}</td>
+                <td>{{ admission.admission_time.start_time|date:'F j, Y P' }}
+                    - {{ admission.admission_time.end_time|date:'F j, Y P' }}<br/> {{ admission.admission_time.duration.days }}
+                    days
+                </td>
             </tr>
+            {% endwith %}
         {% endfor %}
-
+    </tbody>
 </table>
 <br><br>
-<table id="prestable">
+<table class="hn-table" id="prestable">
     <thead>
     <tr>
-        <th>
-            <div class="presHead">Prescription</div>
+        <th class="hn-table-header" colspan="{% if can_add %}7{% else %}6{% endif %}">
+            <div class="presHead">Prescriptions</div>
         </th>
-        <th>
+    </tr>
+    <tr>
+        <th class="hn-table-header" colspan="1">
+            <div class="presHead">Signer</div>
+        </th>
+        <th class="hn-table-header" colspan="1">
+            <div class="presHead">Drug</div>
+        </th>
+        <th class="hn-table-header" colspan="1">
             <div class="presHead">Count</div>
         </th>
-        <th>
+        <th class="hn-table-header" colspan="1">
             <div class="presHead">Amount</div>
         </th>
-        <th>
+        <th class="hn-table-header" colspan="1">
             <div class="presHead">Refills</div>
         </th>
-        <th>
+        <th class="hn-table-header" colspan="1">
             <div class="presHead">End Date</div>
         </th>
         {% if can_add %}
-            <th>
+            <th class="hn-table-header" colspan="1">
                 <div class="presHead">Delete</div>
             </th>
         {% endif %}
@@ -84,6 +112,9 @@
     <tbody>
     {% for rx in rxs %}
         <tr>
+            <td>
+                <div>{{ rx.doctor|stringify }}</div>
+            </td>
             <td>
                 <div>{{ rx.drug }}</div>
             </td>
@@ -118,3 +149,38 @@
         </a>
     {% endif %}
 </div>
+{% test_rule 'is_doctor' hn_visitor as visiting_doctor %}
+<h3>{% if not visiting_doctor %}Released {% endif %}Medical Tests</h3>
+{% if medical_tests %}
+
+    {% for test in medical_tests %}
+        <div>
+            <div class="panel-group">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" href="#medical-test-{{ forloop.counter }}">Medical Test conducted
+                            by {{ test.sign_off_user|stringify }} for {{ test.patient|stringify }} on
+                            {{ test.timestamp|date:'F j, Y \a\t P' }}{% if test.released %} -- RELEASED{% endif %}</a>
+                    </h4>
+                </div>
+                <div id="medical-test-{{ forloop.counter }}" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        {% with test.results as res %}
+                            {% for img in res.attachment_set.all %}
+                                <img src="{{ img.file.url }}"/>
+                            {% endfor %}
+                            <h4>{{ res.timestamp }} by {{ res.author }}</h4>
+                            <p>{{ res.content }}</p>
+                        {% endwith %}
+                    </div>
+                    <div class="panel-footer">
+                        {% if visiting_doctor and not test.released %}
+                            <a id="release-test-btn" data-test-id="{{ test.pk }}" class="btn-primary btn">Release Test
+                                to {{ test.patient|stringify }}</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}

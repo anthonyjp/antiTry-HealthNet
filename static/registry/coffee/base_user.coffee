@@ -20,12 +20,17 @@ registry.module('forms.user') unless registry.has('forms.user')
       changes = []
 
    handleFailedChanges = (changes) ->
-      c.revert() for c in changes
+      console.dir(changes)
+      c.revert() for c in changes[0]
+      return
 
    handleConfirmedChanges = (changes) ->
-      originals[c.target] = c.new for c in changes
+      console.dir(changes)
+      originals[c.target] = c.new for c in changes[0]
+      return
 
    commitChanges = ->
+      console.dir(changes)
       return if changes.length == 0
 
       vex.dialog.confirm
@@ -50,7 +55,8 @@ registry.module('forms.user') unless registry.has('forms.user')
          .click(-> $(@).prop('readonly', false))
          .blur(-> $(@).prop('readonly', true))
          .change(->
-           if $(@).val() is not originals[@]
+            console.dir("CHANGED: #{$(@)}")
+            if $(@).val() != originals[@]
                changes.push(new Change(@, $(@).val(), originals[@], createReversion(), perm))
          )
          .removeClass('no-input')
@@ -71,7 +77,8 @@ registry.module('forms.user') unless registry.has('forms.user')
    return {
       hook: hookPermissions
       isAuthUser: (uuid) -> if auth? then auth.checkUser(uuid) else no
-      updateUser: commitChanges
+      updateUser: commitChanges,
+      getOwnerUuid: -> if auth? then auth.uuid else null
    })(jQuery))
 
 (($, _) -> $ ->
@@ -79,6 +86,15 @@ registry.module('forms.user') unless registry.has('forms.user')
    tabLinkListItems = tabLinks.find('li')
    innerTabLinks = $("#innertab-links")
    innerTabLinksListItems = innerTabLinks.find('li')
+
+   showSuccessDialog = (msg) ->
+      $.notify(msg)
+
+   showWarningDialog = (msg) ->
+      $.notify(msg, 'warn')
+
+   showFailureDialog = (msg) ->
+      $.notify(msg, "error")
 
    # Top Level Tab Click Handling
    tabLinkListItems.click((event) ->
@@ -175,10 +191,7 @@ registry.module('forms.user') unless registry.has('forms.user')
                   title: registry.escapeHtml(title)
                success: (resp) ->
                   vex.close()
-                  vex.dialog.buttons.YES.text = 'OK'
-                  vex.dialog.alert
-                     message: 'Message Sent.'
-                     className: 'vex-theme-bottom-right-corner'
+                  showSuccessDialog('Message Sent.')
                   return unless resp.success && registry.forms.user.isAuthUser(receiver)
 
                   tmpId = 'TEMP-MESSAGE-ID-FOR-CLICK'
@@ -255,5 +268,22 @@ registry.module('forms.user') unless registry.has('forms.user')
    $('#presbuttons').click(buttonButtonsPresButtonsHandler)
    $('#button').click(buttonButtonsPresButtonsHandler)
 
+   $('#release-test-btn').click(->
+      self = $(@)
+      id = self.data('test-id')
+
+      $.ajax(
+         url: "/user/#{registry.forms.user.getOwnerUuid()}/test"
+         type: 'PUT'
+         data:
+            "test-id": id
+         success: ->
+            showSuccessDialog('Successfully released test!')
+            self.remove()
+         failure: ->
+            showFailureDialog("Could not release test!")
+      )
+   )
+
    # TODO Replace with update button
-   $(window).bind('beforeunload', registry.forms.user.updateUser))(jQuery, _)
+   $(window).bind('beforeunload', -> registry.forms.user.updateUser()))(jQuery, _)

@@ -29,16 +29,10 @@ urlpatterns = [
     url(r'^mc/(?P<patient_uuid>.*)$', views.mc_add, name='mc_add'),
 
     # User Related URLs
+    url(uuid_url(r'^user/(?P<uuid>{uuid})/test'), views.medical_tests, name="tests"),
     url(uuid_url(r'^user/(?P<uuid>{uuid})$'), views.user, name='user'),
     url(r'^user', views.user, name='user_create'),
-    # url(uuid_url(r'^user/(?P<patient_uuid>{uuid})/rx$'), views.rx_create, name='rx_create'),
-    # url(uuid_url(r'^user/(?P<patient_uuid>{uuid})/rx/(?P<pk>[0-9]+)'), views.rx_delete, name='rx_delete'),
     url(uuid_url(r'^verify/(?P<uuid>{uuid})$'), views.user_verify, name='verify'),
-
-    # Transfer Related URLs
-    # url(r'^transfer$', views.transfer_create, name='transfer_create'),
-    # url(r'^transfer/(?P<pk>[0-9]+)$', views.transfers, name='transfer'),
-
 
     # RX Related URLs
     #url(r'^rx/(?P<pk>[0-9]+)$', views.rx_op, name='rx'),
@@ -52,7 +46,5 @@ urlpatterns = [
     url(r'^logs/(?P<start>\d{4}-\d{2}-\d{2})/(?P<end>\d{4}-\d{2}-\d{2})$', views.logs, name='logs'),
     url(r'^stats$', views.get_time, name='time'),
     # Get the patient export info
-    url(r'patientpdf/(?P<patient_uuid>.*)$', views.seq_check, name='export_patient_info'),
-
-
+    url(uuid_url(r'^export/(?P<patient_uuid>{uuid})$'), views.seq_check, name='export_patient_info'),
 ]
