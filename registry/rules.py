@@ -94,7 +94,7 @@ def time_gt(time1, time2):
 
 @predicate
 def is_doctor_at(doctor, hospital):
-    return doctor.hospitals.filter(self=hospital).exists()
+    return hospital.provider_to.filter(uuid=doctor.uuid).exists()
 
 
 @predicate
@@ -166,8 +166,11 @@ rules.add_perm('registry.view_patient.nurse', is_nurse_for)
 rules.add_perm('registry.view_patient.doctor', is_doctor_of)
 rules.add_perm('registry.view_patient.self', (is_patient & is_self))
 
-# Has a direct relationship with the patient
+# Has a direct relationship with the patient but not the admin
 rules.add_perm('registry.view_patient',
+               view_patient & ((is_patient & is_self) | is_nurse_check | is_doctor_check))
+# Has a direct relationship with the patient
+rules.add_perm('registry.nonmed_patient',
                view_patient & ((is_patient & is_self) | is_admin_check | is_nurse_check | is_doctor_check))
 # Can either view their own patient profile page or has general permissions to see patient page
 rules.add_perm('registry.view_patient.profile',

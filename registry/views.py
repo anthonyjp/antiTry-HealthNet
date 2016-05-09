@@ -289,20 +289,20 @@ def transfer(request, patient_uuid):
             form = PatientTransferForm(request.POST, user=user)
             if form.is_valid():
                 transfer_request = form.save(commit=False)
-                if rules.test_rule('is_doctor_at', transfer_request.doctor, transfer_request.hospital):
-                    transfer_request.admitted_by = user.__str__()
-                    transfer_request.admisison_time.start_time = tz.now()
-                    transfer_request.save()
-                    patient.admission_status.save()
-                    patient.admission_status.end_admission()
-                    patient.admission_status = transfer_request
-                    patient.save()
 
-                    logger.action(request, LogAction.PA_TRANSFER_REQUEST,
+                transfer_request.admitted_by = user.__str__()
+                timerange = TimeRange.objects.create()
+                timerange.start_time = tz.now()
+                transfer_request.admission_time = timerange
+                transfer_request.save()
+                patient.admission_status.save()
+                patient.admission_status.end_admission()
+                patient.admission_status = transfer_request
+                patient.save()
+
+                logger.action(request, LogAction.PA_TRANSFER_REQUEST,
                                   'Transfer {0!r} to {1!s} by {2!r}', patient, transfer_request.hospital, user)
-                    return redirect('registry:home')
-                else:
-                    error = transfer_request.doctor + " does not work at " + transfer_request.hospital
+                return redirect('registry:home')
         else:
             form = PatientTransferForm(user=user)
 

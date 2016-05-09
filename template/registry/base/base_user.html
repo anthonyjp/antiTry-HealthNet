@@ -33,6 +33,7 @@
     {% has_perm 'registry.patient_admit' hn_visitor hn_owner as patient_info %}
     {% has_perm 'registry.view_patient.profile' hn_visitor hn_owner as patient_profile %}
     {% has_perm 'registry.view_patient' hn_visitor hn_owner as patient %}
+    {% has_perm 'registry.nonmed_patient' hn_visitor hn_owner as nonmed %}
 <div id="left">
     <ul class="profile">
         <li>
@@ -43,7 +44,7 @@
         <li><p id="leftDOB">{{ hn_owner.date_of_birth }}</p></li>
 
 
-        {% if patient %}
+        {% if nonmed %}
             Primary Provider: {{ hn_owner.provider }}<br>
             Preferred Hospital: {{ hn_owner.pref_hospital }}<br>
         {% endif %}
@@ -73,6 +74,8 @@
 
             {% if patient and not has_inbox %}
                 <li><a href="#tab2" rel="tab2" class="hn-tab">Medical</a></li>
+            {% endif %}
+            {% if nonmed and not has_inbox %}
                 <li><a href="{% url 'registry:export_patient_info' hn_owner.uuid %}"
                        id="appt-tab" rel="tab5" class="hn-tab">
                     Export Information</a></li>
