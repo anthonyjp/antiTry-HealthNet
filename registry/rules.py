@@ -37,9 +37,13 @@ def is_admit(patient):
 
 @predicate
 def is_doctor_of(doctor, patient):
-    provider = doctor.providers.filter(pk=patient.uuid).exists()
+    if patient.provider is not None:
+        provider = patient.provider.uuid == doctor.uuid
+    else:
+        provider = False
+    # doctor.providers.filter(uuid=patient.uuid).exists()
     if patient.admission_status is not None:
-        transfer_doctor = patient.admission_status.hospital.provider_to.filter(pk=doctor.pk).exists()
+        transfer_doctor = patient.admission_status.hospital.provider_to.filter(uuid=doctor.uuid).exists()
     else:
         transfer_doctor = False
     return provider or transfer_doctor
@@ -183,6 +187,7 @@ rules.add_perm('registry.view_an', an_profile)
 rules.add_rule('is_self', is_self)
 rules.add_rule('is_patient', is_patient)
 rules.add_rule('is_doctor', is_doctor)
+rules.add_rule('is_doctor_check', is_doctor_check)
 rules.add_rule('is_nurse', is_nurse)
 rules.add_rule('is_administrator', is_administrator)
 

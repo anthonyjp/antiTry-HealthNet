@@ -327,7 +327,7 @@ def patient_discharge(request, patient_uuid):
     hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     patient = get_object_or_404(Patient, uuid=patient_uuid)
     if not rules.test_rule('is_doctor_check', hn_user, patient):
-            return HttpResponseNotFound(
+        return HttpResponseNotFound(
                 '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
     if request.method == 'POST':
         form = DischargeForm(request.POST, instance=patient.admission_status)
