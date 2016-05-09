@@ -221,6 +221,30 @@ registry.module('forms.user') unless registry.has('forms.user')
     $('#sysMessage')[0].style.display = 'none'
    )
 
+   $('#patientSearchBar').keyup ->
+      searchTable $(this).val()
+   return
+
+   searchTable = (inputVal) ->
+      table = $('#patient')
+      table.find('tr').each (index, row) ->
+         allCells = $(row).find('td')
+         if allCells.length > 0
+            found = false
+            allCells.each (index, td) ->
+               regExp = new RegExp(inputVal, 'i')
+               if regExp.test($(td).text())
+                  found = true
+                  return false
+               return
+            if found == true
+               $(row).show()
+            else
+               $(row).hide()
+         #$('#patient').append(notfound);
+         return
+      return
+
    # TODO This may be re-worked, the constant fade is annoying
    buttonButtonsPresButtonsHandler = (evt) ->
       $('.tab').hide()

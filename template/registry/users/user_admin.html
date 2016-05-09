@@ -6,6 +6,7 @@
 {% load registry_tags %}
 
 {% block user_cssimport %}
+    <link rel="stylesheet" href="{% sass_src 'registry/css/admin.scss' %}"/>
     <link rel="stylesheet" href="{% static 'pikaday/css/pikaday.css' %}"/>
     <link rel="stylesheet" href="{% sass_src 'registry/css/logrender.scss' %}"/>
 {% endblock %}

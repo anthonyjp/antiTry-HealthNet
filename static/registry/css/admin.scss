@@ -1,0 +1,49 @@
+@import "constants";
+@import "base_user";
+
+.patientHead {
+  background-color: #AEBEB4;
+  text-align: center;
+  color: white;
+  font-family: $healthnet-standard-font;
+  font-size: 17px;
+}
+
+.patientBody {
+  background-color: #e3eee7;
+  border: 1px solid white;
+  text-align: center;
+}
+
+#patientPic {
+  float: left;
+  margin-right: 1%;
+}
+
+#patientAvatar {
+  height: 50px;
+}
+
+#patientName {
+  font-weight: bold;
+  padding-top: .15%;
+  margin-left: -33%;
+}
+
+#patientTitle {
+  float: left;
+  margin-left: 45%;
+}
+
+#patientSearchBar {
+  color: black;
+  padding-left: .25%;
+}
+
+#patientSearch {
+  padding-right: .3%;
+  text-align: right;
+  font-size: 12px;
+  padding-top: .2%;
+  padding-bottom: .2%;
+}
