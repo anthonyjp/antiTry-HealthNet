@@ -53,7 +53,7 @@
             <a href="{% url 'registry:patient_admit' hn_owner.uuid %}">
                 <button>Admit Patient</button>
             </a>
-        {% elif patient %}
+        {% elif nonmed %}
             Admitted<br>
             Hospital: {{ hn_owner.admission_status.hospital }}
         {% endif %}
