@@ -216,6 +216,17 @@ def create_admit_dict(reason=0, admission_time=None, hospital=None, doctor='John
     }
 
 
+def create_message_dict(uuid=uuid.uuid4, receiver=None, sender=None, title="Testing", date=datetime.now,
+                        content="testing"):
+    return {
+        'uuid': uuid,
+        'receiver': receiver,
+        'sender': sender,
+        'title': title,
+        'date': date,
+        'content': content,
+    }
+
 class RegistrationTest(TestCase):
     """
     All cases involving Patient registration and Staff Registration (Nurse or Doc)
@@ -365,7 +376,7 @@ class Information(TestCase):
     """
     # success case
     def test_user_update_info_success(self):
-
+        # c.patch(reverse(user))
         pass
 
     # failure cases
@@ -430,7 +441,8 @@ class Prescription(TestCase):
     # *** Deleting Prescriptions *** #
     # success case
     def test_doc_del_rx_success(self):
-# c.delete(reverse('registry:rx_create'), data=)
+        # c.delete(reverse('registry:rx_create'), data=)
+        pass
 
 
 # Not sure how to test this function as there is no view or model for it. Only an html confirmation page
@@ -480,15 +492,17 @@ class PrivateMessage(TestCase):
     # *** Send Private Messages *** #
     # success cases
     def test_user_send_pm_success(self):
-        pass
+        c.post(reverse('registry:msg_create'),
+               data=create_message_dict(receiver=Patient.objects.get(email="test@test.com")
+                                        , sender=Doctor.objects.get(email="doc@doc.com")))
+        self.assertTrue(Message.objects.get(content="testing").exists())
 
     # failure cases #
     # patient fails
     def test_user_send_pm_fail_dne(self):
-        pass
-
-    def test_user_send_pm_fail_incomplete(self):
-        pass
+        c.post(reverse('registry:msg_create'), data=create_message_dict(sender=Patient.objects.
+                                                                        get(email="test@test.com"), content="blah"))
+        self.assertFalse(Message.objects.get(content="blah").exists())
 
     # cancel test; will be done manually
     def test_user_send_pm_fail_cancel(self):
@@ -502,14 +516,24 @@ class PrivateMessage(TestCase):
 
 
 class MedicalResults(TestCase):
+    def setUp(self):
+        note = Note(author="Kyle Scagnelli", timestamp=datetime.now, content="test!", images=None)
+        results = MedicalData(patient=Patient.objects.get(email="test@test.com"), notes=note)
+        results.save()
+        fail = Note(author="Kyle Scagnelli", timestamp=None, content="Fail!", images=None)
+        results2 = MedicalData(patient=Patient.objects.get(email="test@test.com"), notes=fail)
+        results2.save()
+
     # *** Upload *** #
     # success case
     def test_doc_upload_med_res_success(self):
-        pass
+        c.post(reverse('registry:med_res'), data=MedicalData.objects.get(content="test!"))
+        self.assertTrue(MedicalData.objects.get(content="test!").exsists())
 
     # failure cases
     def test_doc_upload_med_res_fail_incomplete(self):
-        pass
+        c.post(reverse('registry:med_res'), data=MedicalData.objects.get(content="Fail!"))
+        self.assertFalse(MedicalData.objects.get(content="Fail!").exsists())
 
     # *** Release *** #
     # success case

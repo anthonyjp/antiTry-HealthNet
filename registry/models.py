@@ -179,7 +179,7 @@ class AdmissionInfo(models.Model):
 
 class Patient(User):
     """
-    A patient account that extends User and has multiple fields for the medical infomation and personal information
+    A patient account that extends User and has multiple fields for the medical information and personal information
     of a patient.
     """
     height = models.PositiveIntegerField()
@@ -296,7 +296,7 @@ class Note(models.Model):
 
 class MedicalData(models.Model):
     """
-    The medical data object which belongs to one patient, it contains the patient nd the notes.
+    The medical data object which belongs to one patient, it contains the patient and the notes.
     The creation of this is like the doctor uploading a test
     """
     patient = models.ForeignKey(to=Patient, related_name='medical_info', on_delete=models.SET_NULL, null=True)
