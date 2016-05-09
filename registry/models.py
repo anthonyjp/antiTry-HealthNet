@@ -7,7 +7,7 @@ from annoying import fields
 
 from django.contrib.auth.models import User as DjangoUser
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 from localflavor.us.models import PhoneNumberField
@@ -288,10 +288,14 @@ class Note(models.Model):
     A note object which consists of the author, timestamp of when it was created, the content as a text field,
     and images allowed in
     """
-    author = models.TextField()
+    author = models.ForeignKey(to=User, on_delete=models.CASCADE)
     timestamp = models.DateTimeField()
     content = models.TextField()
-    images = SeparatedValuesField()
+
+
+class Attachment(models.Model):
+    file = models.FileField(upload_to="testimg")
+    note = models.ForeignKey(to=Note, on_delete=models.CASCADE)
 
 
 class MedicalData(models.Model):
@@ -391,3 +395,9 @@ def init_user_inbox(sender, **kwargs):
 
     print('Creating inbox for', inst)
     Inbox.objects.create(user=inst)
+
+
+@receiver(post_delete, sender=User)
+def delete_auth_user(sender, **kwargs):
+    inst = kwargs.get('instance')
+    inst.auth_user.delete()

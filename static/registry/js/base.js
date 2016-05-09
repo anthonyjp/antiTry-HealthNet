@@ -122,14 +122,16 @@ registry = (function () {
             return sprintf(html, escape(data.img), escape(data.profileUrl), escape(data.name), escape(data.type));
         };
 
+        console.log("Initializing user search...");
         $.ajax({
             url: '/user',
-            type: 'GET',
+            type: 'OPTIONS',
             data: {'list': true},
             cache: false,
             dataType: 'json',
             headers: {'X-CSRFToken': $('[name="csrfmiddlewaretoken"]').val()},
             success: function (resp) {
+                console.dir(resp);
                 $('#user-search').selectize({
                     options: resp.users,
                     maxOptions: 100,

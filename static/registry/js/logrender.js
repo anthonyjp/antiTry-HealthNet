@@ -36,9 +36,6 @@ registry.data.logrender = (function () {
         if (!to)
             to = moment().add(DEFAULT_OFFSET_DAYS_FUTURE, 'days').format('YYYY-MM-DD');
 
-        if (moment(from).isAfter(moment(to)))
-            to = from;
-
         rendering = true;
         $.ajax({
             url: '/logs/' + from + '/' + to,

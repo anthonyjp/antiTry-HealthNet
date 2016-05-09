@@ -13,6 +13,7 @@ from localflavor.us.forms import USPhoneNumberField
 from django.forms import forms, models, fields, widgets
 
 import rules
+from multiupload.fields import MultiFileField
 
 
 @parsleyfy
@@ -779,6 +780,7 @@ class MedicalConditionAdd(models.ModelForm):
         fields = 'name', 'desc'
 
 
+@parsleyfy
 class MessageCreation(models.ModelForm):
     """
     Name: MessageCreation
@@ -803,11 +805,11 @@ class MessageCreation(models.ModelForm):
                                  css_class='row',
                          ),
                          Div(
-                             Div('title', css_class='col-lg-3'),
+                             Div('title', css_class='message-row'),
                              css_class='row',
                          ),
                          Div(
-                                 Div('content', css_class='col-lg-3'),
+                             Div('content', css_class='message-row'),
                                  css_class='row',
                          ),
                          )
@@ -858,17 +860,12 @@ class TimeFrame(forms.Form):
         self.fields['end'].widget.attrs['datepicker'] = True
 
 
-class SecurityValidation(forms.Form):
-    """
-    Name: SecurityValidation
-
-    Security Validation form
-    The user is asked provide the answer to their security question
-    """
+class ExportForm(forms.Form):
     security_answer = fields.CharField(max_length=100)
+    export_type = fields.ChoiceField(choices=ExportOption.choices(), initial=ExportOption.CSV)
 
     def __init__(self, *args, **kwargs):
-        super(SecurityValidation, self).__init__(*args, **kwargs)
+        super(ExportForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal hn-form securityQuestion'
         self.helper.form_method = 'POST'
@@ -877,6 +874,40 @@ class SecurityValidation(forms.Form):
 
         self.helper.layout = Layout(
             Fieldset('Security Question Validation',
+                     'export_type',
+                     Div(
+                         Div('security_answer', css_class='col-lg-3'),
+                         css_class='row',
+                     ),
+                     ),
+            FormActions(
+                Submit('submit', 'Submit'),
+                HTML(
+                    '<a class="btn btn-default" href={% if next_url %}{{ next_url }}{% else %}'
+                    '{% url "registry:home" %}{% endif %}>Cancel</a>'
+                )
+            )
+        )
+
+        self.fields['security_answer'].label = kwargs.get('secq', 'No Security Question')
+
+
+class MedicalTestUploadForm(forms.Form):
+    content = fields.CharField(max_length=5000)
+    attachments = MultiFileField(min_num=1)
+
+    def __init__(self, *args, **kwargs):
+        super(MedicalTestUploadForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal hn-form securityQuestion'
+        self.helper.form_method = 'POST'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+
+        self.helper.layout = Layout(
+            Fieldset('Security Question Validation',
+                     HTML('Export Type: '),
+                     'export_type',
                      HTML('<p>What is your mother`s first name?</p>'),
                      Div(
                          Div('security_answer', css_class='col-lg-3'),

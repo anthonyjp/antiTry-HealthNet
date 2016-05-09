@@ -7,8 +7,10 @@
 {% load compile_static %}
 {% load crispy_forms_tags %}
 
-{% block set-active %}Home|home|profile{% endblock %}
-{% block title %}HealthNet | Home{% endblock %}
+{% block set-active %}{% if hn_owner == hn_visitor %}Home|home|profile{% else %}__NONE__{% endif %}{% endblock %}
+{% block title %}HealthNet | {% if hn_owner == hn_visitor %}Home{% else %}{{ hn_owner|stringify }}
+{% endif %}{% endblock %}
+
 
 {% block cssimport %}
     <link rel="stylesheet" href="{% sass_src 'registry/css/base_user.scss' %}"/>
@@ -19,7 +21,6 @@
 {% block _base_jsimport %}
     <link rel="stylesheet" href="{% sass_src 'registry/css/calendar.scss' %}"/>
     <script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
-    {#    <script type="text/javascript" src="{% static 'registry/js/base_user.js' %}"></script>#}
     <script type="text/javascript" src="{% static 'registry/coffee/base_user_classes.coffee'|compile %}"></script>
     <script type="text/javascript" src="{% static 'registry/coffee/base_user.coffee'|compile %}"></script>
     {% block calendar_jsimport %}{% endblock %}
@@ -27,7 +28,12 @@
 
 {% block content %}
     {% include "registry/components/message_display.html" %}
+
     {% has_perm 'registry.inbox' hn_owner hn_visitor as has_inbox %}
+    {% has_perm 'registry.patient_admit' hn_owner as patient_info %}
+    {% has_perm 'registry.view_patient.profile' hn_owner as patient_profile %}
+    {% has_perm 'registry.view_patient' hn_visitor hn_owner as patient %}
+    {% has_perm 'registry.medinfo' hn_visitor hn_owner as can_admit %}
 <div id="left">
     <ul class="profile">
         <li>
@@ -37,15 +43,12 @@
                class="center">{{ hn_owner.first_name }} {{ hn_owner.middle_initial }} {{ hn_owner.last_name }}</p></li>
         <li><p id="leftDOB">{{ hn_owner.date_of_birth }}</p></li>
 
-        {% has_perm 'registry.view_patient' hn_visitor hn_owner as patient %}
+
         {% if patient %}
             Primary Provider: {{ hn_owner.provider }}<br>
             Preferred Hospital: {{ hn_owner.pref_hospital }}<br>
         {% endif %}
 
-        {% has_perm 'registry.patient_admit' hn_owner as patient_info %}
-        {% has_perm 'registry.view_patient.profile' hn_owner as patient_profile %}
-        {% has_perm 'registry.medinfo' hn_visitor hn_owner as can_admit %}
 
         {% if can_admit and not patient_info and pratient_profile %}
             <a href="{% url 'registry:patient_admit' hn_owner.uuid %}">

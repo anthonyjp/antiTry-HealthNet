@@ -12,6 +12,8 @@ from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseNotFound, Http404, QueryDict
 from django.shortcuts import redirect, get_object_or_404, render
+from easy_pdf.rendering import render_to_pdf, render_to_pdf_response
+from ipware.ip import get_real_ip
 
 from .forms import *
 from .models import *
@@ -21,16 +23,16 @@ from .utility.viewutils import *
 
 logger = HNLogger()
 
-
 @render_to('registry/landing.html')
 def index(request):
-    logger.info(request, repr(request.user.hn_user) if request.user.is_authenticated() else 'Anonymous',
+    logger.info(request, repr(request.user.hn_user) if request.user.is_authenticated() else str(get_real_ip(request)),
                 action=LogAction.PAGE_ACCESS)
 
     if request.user.is_authenticated():
         return redirect('registry:home')
     else:
         return {}
+
 
 @render_to('registry/about.html')
 def about(request):
@@ -517,9 +519,8 @@ def appt_delete(request, pk):
     return template_vars
 
 
-@require_http_methods(['GET', 'HEAD', 'PATCH', 'POST'])
+@require_http_methods(['GET', 'HEAD', 'PATCH', 'POST', 'OPTIONS'])
 @require_http_methods_not_none(['GET', 'HEAD', 'PATCH'], 'uuid')
-@login_required(login_url=reverse_lazy('registry:login'))
 def user(request, uuid=None):
     if request.method == 'PATCH':
         read_request_body_to(request, request.method)
@@ -527,13 +528,16 @@ def user(request, uuid=None):
             admit_user(request, uuid)
         else:
             return update_user(request, uuid)
-    elif is_safe_request(request.method):
-        return view_user(request, uuid)
     elif request.method == 'POST':
         return user_create(request)
+    elif request.method == 'OPTIONS':
+        return list_user(request)
+    elif is_safe_request(request.method):
+        return view_user(request, uuid)
 
 
 @ajax_request
+@login_required(login_url=reverse_lazy('registry:login'))
 def user_create(request):
     if 'user-type' not in request.POST:
         return ajax_failure()
@@ -574,25 +578,27 @@ def admin_create(request):
 
 @ajax_request
 def doctor_create(request):
-    """
-    The view for a doctor registration
-    A successful registration will be logged.
-    :param request:
-    :return:
-    """
-    form = DoctorRegistrationForm(request.POST)
+    formData = QueryDict(mutable=True)
+    formData.update(request.POST)
+    formData.update(({'hospitals': request.POST['hospitals[]']}))
+    form = DoctorRegistrationForm(formData)
     user = User.objects.get_subclass(pk=request.user.hn_user.pk)
     if form.is_valid():
         doc = form.save(commit=False)
         username = '{!s}'.format(doc)
         doc.auth_user = DjangoUser.objects.create_user(username, form.cleaned_data['email'],
                                                        form.cleaned_data['password'])
+
+        doc.save()
+
+        for hospital in form.cleaned_data['hospitals']:
+            doc.hospitals.add(hospital)
+
         doc.save()
         logger.action(request, LogAction.ST_CREATE, 'Doctor {0!r} created by {1!r}', doc, user, user)
         return ajax_success()
-    print(form.errors)
 
-    return ajax_failure()
+    return ajax_failure(formErrors=form.errors)
 
 
 @ajax_request
@@ -618,8 +624,6 @@ def nurse_create(request):
     return ajax_failure()
 
 
-@require_http_methods(['GET'])
-@login_required(login_url=reverse_lazy('registry:login'))
 @ajax_request
 def list_user(request):
     """
@@ -637,6 +641,7 @@ def list_user(request):
     return ajax_success(users=res)
 
 
+@login_required(login_url=reverse_lazy('registry:login'))
 @render_to("registry/base/base_user.html")
 def view_user(request, uuid):
     """
@@ -663,7 +668,7 @@ def view_user(request, uuid):
     return {"hn_owner": owner, "hn_visitor": visitor}
 
 
-
+@login_required(login_url=reverse_lazy('registry:login'))
 @ajax_request
 def admit_user(request, uuid):
     """
@@ -695,6 +700,7 @@ def admit_user(request, uuid):
     return ajax_failure()
 
 
+@login_required(login_url=reverse_lazy('registry:login'))
 @ajax_request
 def update_user(request, uuid):
     """
@@ -1052,37 +1058,37 @@ def logs(request, start, end):
     start_time = dateutil.parser.parse(start)
     end_time = dateutil.parser.parse(end)
 
-    if start_time > end_time:
-        start_time, end_time = end_time, start_time
+    if start_time <= end_time:
+        end_time += datetime.timedelta(days=1)
 
-    end_time += datetime.timedelta(days=1)
+        log_level = int(request.GET['level']) if 'level' in request.GET and LogLevel.VERBOSE <= int(
+            request.GET['level']) <= LogLevel.ERROR else LogLevel.INFO
 
-    log_level = int(request.GET['level']) if 'level' in request.GET and LogLevel.VERBOSE <= int(
-        request.GET['level']) <= LogLevel.ERROR else LogLevel.INFO
+        if 'ignore' in request.GET:
+            ignore_req = request.GET['ignore'].lower()
+            if ignore_req == 'both':
+                start_time = end_time = None
+            elif ignore_req == 'start':
+                start_time = None
+            elif ignore_req == 'end':
+                end_time = None
 
-    if 'ignore' in request.GET:
-        ignore_req = request.GET['ignore'].lower()
-        if ignore_req == 'both':
-            start_time = end_time = None
-        elif ignore_req == 'start':
-            start_time = None
-        elif ignore_req == 'end':
-            end_time = None
+        log_entries = logger.get_logs(start_time, end_time, log_level, True)
 
-    log_entries = logger.get_logs(start_time, end_time, log_level, True)
+        result = []
 
-    result = []
-
-    for entry in log_entries:
-        from registry.templatetags.registry_tags import loggify
-        result.append({
-            'level': LogLevel.label(entry.level),
-            'action': LogAction.label(entry.action),
-            'location': entry.where,
-            'timestamp': entry.timestamp,
-            'message': entry.message,
-            'class': loggify(entry.level)
-        })
+        for entry in log_entries:
+            from registry.templatetags.registry_tags import loggify
+            result.append({
+                'level': LogLevel.label(entry.level),
+                'action': LogAction.label(entry.action),
+                'location': entry.where,
+                'timestamp': entry.timestamp,
+                'message': entry.message,
+                'class': loggify(entry.level)
+            })
+    else:
+        result = []
 
     return ajax_success(entries=result)
 
@@ -1208,17 +1214,17 @@ def seq_check(request, patient_uuid):
             '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
 
     if request.method == 'POST':
-        form = SecurityValidation(request.POST)
+        form = ExportForm(request.POST)
         if form.is_valid():
             answer = form.cleaned_data['security_answer']
             if answer == hn_visitor.security_answer:
                 logger.action(request, LogAction.PA_INFO, 'Medical information of {0!r} exported by {1!r}',
                               patient, hn_visitor)
-                return export_patient_info(request, patient_uuid)
+                return patient_export(request, patient_uuid, ExportOption.label(int(form.cleaned_data['export_type'])))
             else:
                 error = "Incorrect answer"
     else:
-        form = SecurityValidation()
+        form = ExportForm(secq=SecurityQuestion.label(patient.security_question))
     template_vars = {'form': form, 'error': error, 'patient': patient_uuid}
     return template_vars
 
@@ -1231,58 +1237,121 @@ def export_patient_info(request, patient_uuid):
     :param patient_uuid: the patient whose information is being exported
     :return: the cvs file
     """
-    patient = get_object_or_404(Patient, uuid=patient_uuid)
-    # Create the HttpResponse object with the appropriate CSV header.
+    return patient_export_csv(request, patient_uuid)
+
+
+@require_http_methods(['POST'])
+@login_required(login_url=reverse_lazy('registry:login'))
+def patient_export(request, uuid, type):
+    type = type.lower()
+
+    if type == 'csv':
+        return patient_export_csv(request, uuid)
+    elif type == 'pdf':
+        return patient_export_pdf(request, uuid)
+
+
+@ajax_request
+def patient_export_csv(request, uuid):
+    from django.template import loader, Context
+    user = get_user_or_404(uuid)
+
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=' + str(patient) + '_record_export.csv'
+    response['Content-Disposition'] = 'attachment; filename="{!s}.csv"'.format(user)
 
-    writer = csv.writer(response)
+    csv_data = [(
+        'uuid',
+        'first_name',
+        'middle_initial',
+        'last_name',
+        'date_of_birth',
+        'gender',
+        'security_question',
+        'security_answer',
+        'address_line_one',
+        'address_line_two',
+        'address_city',
+        'address_state',
+        'address_zipcode',
+        'height',
+        'width',
+        'provider',
+        'admission_status',
+        'pref_hospital',
+        'blood_type',
+        'insurance',
+        'conditions'
+    ), [
+        str(user.uuid),
+        user.first_name,
+        user.middle_initial,
+        user.last_name,
+        user.date_of_birth.isoformat(),
+        Gender.label(user.gender),
+        SecQ.label(user.security_question),
+        user.security_answer,
+        user.address_line_one,
+        user.address_line_two,
+        user.address_city,
+        user.address_state,
+        user.address_zipcode,
+        str(user.height),
+        str(user.weight),
+        str(user.provider),
+        str(user.is_admitted()),
+        str(user.pref_hospital),
+        BloodType.label(user.blood_type),
+        user.insurance,
+        ','.join(["%s:%s" % (mc.name, mc.desc) for mc in user.conditions.all()])
+    ]]
 
-    # Basic profile information
-    writer.writerow(['Name', str(patient)])
-    writer.writerow(['Date of Birthday', patient.date_of_birth])
-    writer.writerow(['Address', patient.address_line_one])
-    if patient.address_line_two is None:
-        writer.writerow(['', patient.address_line_two])
-    writer.writerow(['', patient.address_city + ', ' + patient.address_state + ' ' + patient.address_zipcode])
+    tmpl = loader.get_template('registry/data/export/csv_export.csv')
+    ctxt = Context({
+        'data': csv_data
+    })
 
-    # Determine gender
-    if patient.gender == 0:
-        writer.writerow(['Gender', 'Male'])
-    else:
-        writer.writerow(['Gender', 'Female'])
+    response.write(tmpl.render(ctxt))
+    return response
 
-    # Determine blood type
-    if patient.blood_type == 0:
-        writer.writerow(['Blood Type', 'A'])
-    elif patient.blood_type == 1:
-        writer.writerow(['Blood Type', 'B'])
-    elif patient.blood_type == 2:
-        writer.writerow(['Blood Type', 'AB'])
-    elif patient.blood_type == 3:
-        writer.writerow(['Blood Type', 'O'])
-    elif patient.blood_type == 4:
-        writer.writerow(['Blood Type', 'Unknown'])
 
-    writer.writerow(['Height', patient.height])
-    writer.writerow(['Weight', patient.weight])
+@ajax_request
+def patient_export_pdf(request, uuid):
+    from django.template import loader, Context
 
-    # All the medical conditions
-    writer.writerow(['Medical Conditions:'])
-    for p in patient.conditions.all():
-        writer.writerow(['', str(p)])
+    patient = get_user_or_404(uuid)
+    creator = get_user_or_404(request.user.hn_user.pk)
 
-    # All the prescriptions
-    writer.writerow(['Prescriptions:'])
-    for p in patient.prescription_set.all():
-        writer.writerow(['', str(p)])
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="{!s}.pdf"'.format(patient)
 
-    # All the admits
-    if patient.admission_status is not None:
-        writer.writerow(['Admission Status: ', patient.admission_status])
+    address = (
+        ('Address Line One', patient.address_line_one),
+        ('Address Line Two', patient.address_line_two if patient.address_line_two != '' else ' '),
+        ('City', patient.address_city),
+        ('State', patient.address_state),
+        ('Zip Code', patient.address_zipcode)
+    )
 
-    writer.writerow(['Medical History:'])
-    for p in MedicalHistory.objects.filter(patient=patient).all():
-        writer.writerow(['', str(p)])
+    medical = (
+        ('Primary Provider', str(patient.provider)),
+        ('Preferred Hospital', str(patient.pref_hospital)),
+        ('Gender', 'Male' if patient.gender == Gender.MALE else 'Female'),
+        ('Blood Type', BloodType.label(patient.blood_type)),
+        ('Height', patient.height),
+        ('Weight', patient.weight),
+        ('Insurance', patient.insurance)
+    )
+
+    ctxt = Context({
+        'pagesize': 'A4',
+        'title': str(patient),
+        'user': patient,
+        'address': address,
+        'medical': medical,
+        'conditions': patient.conditions.all(),
+        'creator': creator
+    })
+    pdf = render_to_pdf('registry/data/export/pdf_export.html', ctxt)
+    response.write(pdf)
 
     return response

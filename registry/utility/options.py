@@ -1,6 +1,16 @@
 from django_enumfield import enum
 
 
+class ExportOption(enum.Enum):
+    CSV = 0
+    PDF = 1
+
+    labels = {
+        CSV: 'CSV',
+        PDF: 'PDF'
+    }
+
+
 class LogLevel(enum.Enum):
     VERBOSE = 0
     DEBUG = 1

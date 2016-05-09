@@ -202,14 +202,20 @@ tr.inbox-row {
   
 }
 
-input#id_title {
-  width: 300%;
-}
+.vex-content {
 
-#id_content {
-  width: 500%;
-  max-width: 500%;
-  max-height: 100%;
+  .message-row {
+    padding: 0 15px;
+  }
+
+  #id_title, #id_content {
+    width: 100%;
+  }
+
+  #id_content {
+    max-width: 500%;
+    max-height: 100%;
+  }
 }
 
 /*-------- End Inbox --------*/

@@ -1,0 +1,61 @@
+{% extends "easy_pdf/base.html" %}
+
+{% load registry_tags %}
+
+{% block extra_style %}
+    <style type="text/css">
+
+        ul {
+            list-style-type: none;
+            text-decoration: none;
+        }
+
+        h3.section-title {
+            font-weight: bolder;
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="header">
+        <h1>{{ user|stringify }}</h1>
+        <h4>Patient ID: {{ user.uuid|stringify }}</h4>
+        <h4>Date of Birth: {{ user.date_of_birth|date:"F j, Y" }}</h4>
+    </div>
+    <hr/>
+    <h3 class="section-title">Address Information: </h3>
+    <ul>
+        {% for key, value in address %}
+            <li>
+                <span class="list-label">{{ key }}:</span> {{ value }}
+            </li>
+        {% endfor %}
+    </ul>
+    <hr/>
+    <h3 class="section-title">Basic Medical Information: </h3>
+    <ul>
+        {% for key, value in medical %}
+            <li>
+                <span class="list-label">{{ key }}:</span> {{ value|naify:" " }}
+            </li>
+        {% endfor %}
+    </ul>
+    <hr/>
+    <h3 class="section-title">Medical Conditions:</h3>
+    <ul>
+        {% for mc in conditions %}
+            <li class="condition">
+                <div>
+                    <h5 id="mc-title">mc.name</h5>
+                    <hr/>
+                    <p id="mc-desc">mc.desc</p>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+    <hr/>
+    <div class="footer">
+        Created on {% now "F j, Y \a\t P" %} by {{ creator|stringify }}
+    </div>
+{% endblock %}

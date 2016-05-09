@@ -58,6 +58,14 @@ $(document).ready(function () {
     });
 
     var doctorForm = $('#doctor-reg-form');
+    var idSelect = $('#id_hospitals');
+    idSelect.find('option').click(function () {
+        var self = $(this);
+        var selected = self.prop('selected');
+
+        self.prop('selected', selected);
+    });
+
     $('#doctor-reg-submit').click(function () {
 
         var fname = doctorForm.find('input#id_first_name').val();
@@ -76,7 +84,7 @@ $(document).ready(function () {
         var seca = doctorForm.find('input#id_security_answer').val();
         var hospital = doctorForm.find('#id_hospitals').val();
 
-
+        console.log(hospital);
         $.ajax({
             url: '/user/create',
             type: 'POST',

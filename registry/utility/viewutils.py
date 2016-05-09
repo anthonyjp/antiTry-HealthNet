@@ -11,6 +11,7 @@ def require_http_methods_not_none(request_method_list, *required):
         @wraps(func, assigned=available_attrs(func))
         def inner(request, *args, **kwargs):
             if request.method in request_method_list and len([x for x in required if x not in kwargs]) > 0:
+                print("METHOD NOT ALLOWED", request.method)
                 return HttpResponseNotAllowed(request_method_list)
             return func(request, *args, **kwargs)
 

@@ -70,3 +70,10 @@ def labelify(value, enum):
 @register.simple_tag
 def loggify(value):
     return 'log-%s' % (options.LogLevel.label(value).lower())
+
+
+@register.filter
+def naify(value, replace=None):
+    print(replace, replace is None, replace is not None, 'm/a', 'N/A' if replace is None else replace)
+    return str(value) if (not isinstance(value, str) or value and value.lower() != 'none') else \
+        ('N/A' if replace is None else str(replace))

@@ -157,7 +157,7 @@ registry.module('forms.user') unless registry.has('forms.user')
       form.css("display", "block")
       form.find('span.help-inline').remove()
 
-     vex.dialog.buttons.YES.text = 'Send'
+      vex.dialog.buttons.YES.text = 'Send'
       vex.dialog.open
          message: form
          callback: (data) ->

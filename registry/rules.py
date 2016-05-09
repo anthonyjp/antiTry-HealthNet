@@ -39,7 +39,7 @@ def is_admit(patient):
 def is_doctor_of(doctor, patient):
     provider = doctor.providers.filter(pk=patient.uuid).exists()
     if patient.admission_status is not None:
-        transfer_doctor = doctor.hospitals.filter(hospital=patient.admission_status.hospital).exists()
+        transfer_doctor = patient.admission_status.hospital.provider_to.filter(pk=doctor.pk).exists()
     else:
         transfer_doctor = False
     return provider or transfer_doctor

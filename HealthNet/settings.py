@@ -51,7 +51,9 @@ INSTALLED_APPS = [
     'compat',
     'crispy_forms',
     'annoying',
-    'static_precompiler'
+    'static_precompiler',
+    'easy_pdf',
+    'reportlab',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -161,6 +163,8 @@ BOWER_INSTALLED_APPS = {
     'lodash',
     'pikaday',
 }
+
+MEDIA_ROOT = '/media/'
 
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR)
 STATIC_ROOT = os.path.join(BASE_DIR, 'private_static')
