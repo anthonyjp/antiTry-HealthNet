@@ -3,25 +3,29 @@
 }
 
 #logIn {
-    display: block;
-    width: 50%;
-    margin: 0 auto;
-    text-align:center;
-  }
+  display: block;
+  width: 50%;
+  margin: 0 auto;
+  text-align: center;
+}
 
 .left{
-    width: 47%;
-    float: left;
-    text-align: right;
-    margin-right: 1%;
+  width: 47%;
+  float: left;
+  text-align: right;
+  margin-right: 1%;
 }
 
 .right{
-    width: 47%;
-    float:left;
-    text-align: left;
+  width: 47%;
+  float: left;
+  text-align: left;
 }
 
 .right input{
   width: 50%;
+}
+
+#fieldExplain {
+  color: #cb7775;
 }

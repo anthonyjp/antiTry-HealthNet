@@ -71,8 +71,11 @@ def login(request):
                 logger.action(request, LogAction.USER_LOGIN, '{name} has logged in!', name=str(user.hn_user))
                 messages.add_message(request, messages.SUCCESS, 'Successfully Logged In.')
                 return redirect(to=reverse('registry:home'))
+        else:
+            messages.add_message(request, messages.ERROR, 'Invalid Email or Password. Please Try Again.')
+            form = LoginForm()
+            return {'form': form}
     else:
-        # messages.add_message(request, messages.ERROR, 'Invalid Email or Password. Please Try Again.')
         form = LoginForm()
     return {'form': form}
 
@@ -969,7 +972,6 @@ def msg_create(request):
     message.receiver.inbox.messages.add(message)
 
     message.save()
-    messages.add_message(request, messages.SUCCESS, 'Message Sent.')
     return ajax_success(id=message.uuid, sender=str(sender), timestamp=message.date.isoformat())
 
 
