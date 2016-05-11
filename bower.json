@@ -32,6 +32,7 @@
     "vex": "^2.3.3",
     "selectize": "^0.12.1",
     "parsleyjs": "^2.3.7",
-    "js-cookie": "^2.1.1"
+    "js-cookie": "^2.1.1",
+    "notifyjs": "^0.4.2"
   }
 }

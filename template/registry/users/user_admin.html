@@ -1,14 +1,12 @@
 {% extends 'registry/users/../base/base_user.html' %}
 {% load crispy_forms_tags %}
 {% load staticfiles %}
-{% load sass_tags %}
-{% load static %}
 {% load registry_tags %}
 
 {% block user_cssimport %}
-    <link rel="stylesheet" href="{% sass_src 'registry/css/admin.scss' %}"/>
+    <link rel="stylesheet" href="{% static 'registry/css/admin.css' %}"/>
     <link rel="stylesheet" href="{% static 'pikaday/css/pikaday.css' %}"/>
-    <link rel="stylesheet" href="{% sass_src 'registry/css/logrender.scss' %}"/>
+    <link rel="stylesheet" href="{% static 'registry/css/logrender.css' %}"/>
 {% endblock %}
 
 {% block userLinks %}
@@ -120,7 +118,7 @@
                             </div>
                         </td>
                         <td class="patientBody">
-                            <li><p>Admission Status: {{ p.admission_status }}</p></li>
+                            <p>Admission Status: {{ p.admission_status }}</p>
                         </td>
                         <td class="patientBody">
                             <a href="{% url 'registry:transfer_create' p.uuid %}">

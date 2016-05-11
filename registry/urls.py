@@ -47,4 +47,7 @@ urlpatterns = [
     url(r'^stats$', views.get_time, name='time'),
     # Get the patient export info
     url(uuid_url(r'^export/(?P<patient_uuid>{uuid})$'), views.seq_check, name='export_patient_info'),
+
+    url(uuid_url(r'^notifs/(?P<uuid>{uuid})$'), views.notifs, name="notifs"),
+    url(r'^notifs/(?P<nid>[0-9]+)$', views.notifs, name="notifs"),
 ]

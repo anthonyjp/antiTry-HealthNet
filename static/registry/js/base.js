@@ -6,6 +6,7 @@ var registry = {};
 registry = (function () {
     const NONE_CHOICE = '__NONE__';
     var curActive = null;
+    var visitorUuid = null;
 
     function register(key) {
         if (has(key))
@@ -170,6 +171,12 @@ registry = (function () {
         });
     }
 
+    function unescapeHtml(string) {
+        _.forOwn(entityMap, function (value, key) {
+            string = _.replace(string, value, key);
+        });
+    }
+
     function getCsrf(tree) {
         return registry['utility']['getCsrf']();
     }
@@ -178,17 +185,104 @@ registry = (function () {
         registry['utility']['stopEventBehavior'](event);
     }
 
-    function fulfillNotifs(notifString) {
-        var bits = _.trim(notifString).split(',');
+    function removeNotification(nid) {
+        var nidArr = null;
+        if (_.isArray(nid)) {
+            nidArr = nid;
+            nid = nidArr[0];
+        }
 
-        _.each(bits, function (element) {
-            var args = _.trim(element).split(':');
-            $.notify(args[0], args.length >= 1 ? args[1] : 'success');
+        $.ajax({
+            url: '/notifs/' + nid,
+            data: {
+                'additional_ids': nidArr
+            },
+            type: 'DELETE',
+            failure: function (resp) {
+                console.log("Could not remove notif: " + resp.msg);
+            }
+        })
+    }
+
+    function pollNotifications(targetUuid) {
+        setInterval(function () {
+            fulfillNotifs(targetUuid);
+        }, 5000);
+    }
+
+    function fulfillNotifs(targetUuid) {
+        getNotifications(targetUuid, function success(err, resp) {
+            ids = [];
+
+            _.each(resp.notifs, function (elem) {
+                $.notify(elem.message, elem.level);
+                ids.push(elem.id);
+            });
+
+            if (ids.length > 0)
+                removeNotification(ids);
+        }, function error() {
+            $.notify('Failed to retrieve notifications!', 'error');
         });
+    }
+
+    function postNotification(targetUuid, contextFilter, message, level, successCb, failureCb) {
+        successCb = successCb || function () {
+            };
+        failureCb = failureCb || function () {
+            };
+        level = level || 'success';
+
+        $.ajax({
+            url: '/notifs/' + targetUuid,
+            type: 'POST',
+            data: {
+                'context': contextFilter,
+                'msg': message,
+                'level': level
+            },
+            success: function (resp) {
+                if (resp.success)
+                    return successCb(null, resp);
+                else
+                    return failureCb(null, resp);
+            },
+            failure: function (resp) {
+                return failureCb(new Error('An unknown error occurred when posting a notification!'), resp);
+            }
+        })
+    }
+
+    function getNotifications(targetUuid, successCb, failureCb) {
+        successCb = successCb || function () {
+            };
+        failureCb = failureCb || function () {
+            };
+
+        $.ajax({
+            url: '/notifs/' + targetUuid,
+            type: 'GET',
+            success: function (resp) {
+                if (resp.success)
+                    return successCb(null, resp);
+                else
+                    return failureCb(null, resp);
+            },
+            failure: function (resp) {
+                return failureCb(new Error("An unknown error occurred getting notifications!"), resp);
+            }
+        });
+    }
+
+    function init(visitor) {
+        visitorUuid = visitor
     }
 
     return {
         'NO_MENUITEM': NONE_CHOICE,
+        'getVisitorUuid': function () {
+            return visitorUuid;
+        },
         'has': has,
         'module': register,
         'inArray': inArray,
@@ -196,13 +290,16 @@ registry = (function () {
         'initUserSearch': initUserSearch,
         'escapeHtml': escapeHtml,
         'getCsrf': getCsrf,
+        'init': init,
         'stopEventBehavior': stopEventBehavior,
-        'fulfillNotifications': fulfillNotifs
+        'pollNotifications': pollNotifications,
+        'fulfillNotifications': fulfillNotifs,
+        'postNotification': postNotification,
+        'getNotifications': getNotifications
     }
 })();
 
 registry.module('utility');
-registry.module('forms');
 registry.module('forms');
 registry.module('auth');
 registry.module('data');

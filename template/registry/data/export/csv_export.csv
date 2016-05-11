@@ -1,1 +1,2 @@
-{% for  row in data %}{% for datum in row %}"{{ datum|addslashes }}"{% if not forloop.last %},{% endif %}{% endfor %}{% endfor %}
+{% for  row in data %}{% for datum in row %}"{{ datum|addslashes }}"{% if not forloop.last %},{% endif %}{% endfor %}
+{% endfor %}

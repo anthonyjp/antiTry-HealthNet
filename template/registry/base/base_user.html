@@ -2,9 +2,7 @@
 
 {% load rules %}
 {% load staticfiles %}
-{% load sass_tags %}
 {% load registry_tags %}
-{% load compile_static %}
 {% load crispy_forms_tags %}
 
 {% block set-active %}{% if hn_owner == hn_visitor %}Home|home|profile{% else %}__NONE__{% endif %}{% endblock %}
@@ -13,16 +11,16 @@
 
 
 {% block cssimport %}
-    <link rel="stylesheet" href="{% sass_src 'registry/css/base_user.scss' %}"/>
+    <link rel="stylesheet" href="{% static 'registry/css/base_user.css' %}"/>
+    <link rel="stylesheet" href="{% static 'registry/css/calendar.css' %}"/>
     {% block calendar_cssimport %}{% endblock %}
     {% block user_cssimport %}{% endblock %}
 {% endblock %}
 
 {% block _base_jsimport %}
-    <link rel="stylesheet" href="{% sass_src 'registry/css/calendar.scss' %}"/>
     <script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'registry/coffee/base_user_classes.coffee'|compile %}"></script>
-    <script type="text/javascript" src="{% static 'registry/coffee/base_user.coffee'|compile %}"></script>
+    <script type="text/javascript" src="{% static 'registry/coffee/base_user_classes.js' %}"></script>
+    <script type="text/javascript" src="{% static 'registry/coffee/base_user.js' %}"></script>
     {% block calendar_jsimport %}{% endblock %}
 {% endblock %}
 
@@ -64,12 +62,14 @@
         {% if a_n_staff %}
             Hospital: {{ hn_owner.hospital }}<br>
         {% endif %}
-
-        {% if has_inbox %}
-            <a class="btn btn-primary" style="width: 100%; font-size:80%;" onclick="registry.forms.user.updateUser();">Submit
-                Changes to Profile</a>
-        {% endif %}
     </ul>
+    <div class="hn-button-box">
+        {% if has_inbox %}
+            <button class="hn-button" id="profileChangeSubmit" onclick="registry.forms.user.updateUser();">Submit
+                Changes to Profile
+            </button>
+        {% endif %}
+    </div>
 </div>
 
 
@@ -180,26 +180,26 @@
                     {% for m in inbox %}
                         <tr data-message-id="{{ m.uuid }}" class="inbox-row" href="#tab7">
                             <td class="inboxBody check-box-wrapper"><input id="msg-checkbox" type="checkbox"/></td>
-                            <td class="inboxBody">{{ m.sender | superify }}</td>
-                            <td class="inboxBody">{{ m.title }}</td>
-                            <td class="inboxBody">{{ m.date }}</td>
+                            <td class="inboxBody">{{ m.sender |superify|safe }}</td>
+                            <td class="inboxBody">{{ m.title | safe }}</td>
+                            <td class="inboxBody">{{ m.date |date:'F j, Y, h:i a' }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>
 
-                <div id="buttons">
-                    <button id="newMessage">New Message</button>
-                    <a href="#tab6">
-                        <button id="id-delete-msg">Delete Message(s)</button>
-                    </a>
+                <div class="hn-button-group">
+                    <button class="hn-button" id="newMessage">New Message</button>
+                    <button class="hn-button" id="id-delete-msg">Delete Message(s)</button>
                 </div>
             </div>
             {% endif %}
 
             <div id="tab7" class="tab">
                 <div id="button">
-                    <a href="#tab6"><button>< Back</button></a>
+                    <a href="#tab6">
+                        <button class="inbox-btn">< Back</button>
+                    </a>
                 </div>
                 <table id="message">
                     <tr>
@@ -231,6 +231,11 @@
 
 {% block customjs %}
     <script type="text/javascript">
+        {% if request and request.user %}
+            registry.init("{{ request.user.hn_user.uuid }}");
+            registry.fulfillNotifications("{{ request.user.hn_user.uuid }}");
+            registry.pollNotifications("{{ request.user.hn_user.uuid }}");
+        {% endif %}
         registry.forms.user.hook("{{ hn_owner.uuid }}");
     </script>
     {% block user_customjs %}{% endblock %}

@@ -798,6 +798,8 @@ class MessageCreation(models.ModelForm):
 
     model = Message
 
+    title = fields.CharField(min_length=1)
+
     def __init__(self, *args, **kwargs):
         super(MessageCreation, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -824,6 +826,7 @@ class MessageCreation(models.ModelForm):
         )
         self.fields['title'].widget.attrs['size'] = 30
         self.fields['title'].widget.attrs['style'] = ""
+        self.fields['content'].widget.attrs['min-length'] = 0
 
     class Meta:
         model = Message

@@ -17,6 +17,10 @@ body {
   background: $healthnet-primary-bg-color;
 }
 
+.interactive {
+  font-family: $healthnet-header-font;
+}
+
 // Where most of the action is
 nav.navbar {
   font-family: $healthnet-header-font;
@@ -175,4 +179,29 @@ hr.hn-sep-1 {
   height: 0;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+button.hn-button {
+  display: inline-block;
+
+  font-family: $healthnet-header-font;
+  font-weight: 700;
+  color: #337ab7;
+  word-wrap: break-word;
+
+  &:hover {
+    color: #23527c;
+  }
+
+}
+
+div.hn-button-group {
+  margin-left: auto;
+  margin-right: auto;
+  width: 25%;
+  margin-top: 1%;
+}
+
+[data-notify-text] {
+  font-family: $healthnet-header-font;
 }

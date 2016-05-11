@@ -1,5 +1,4 @@
 {% load rules %}
-{% load sass_tags %}
 {% load registry_tags %}
 {% load crispy_forms_tags %}
 {% has_perm 'registry.prescriptions' hn_visitor hn_owner as can_add %}
@@ -37,6 +36,7 @@
 {% endif %}
 <br><br>
 <table class="hn-table">
+    <thead>
     <tr>
         <th class="hn-table-header" id="theader" colspan="4">
             <div>

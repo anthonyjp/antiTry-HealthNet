@@ -21,6 +21,7 @@
                      center define what will be at center position in calendar
                      right define what will be at right position in calendar
                      */
+                    aspectRatio: 2.7,
                     header: {
                         left: 'prev,next today',
                         center: 'title',
@@ -71,6 +72,14 @@
                     ],
 
                     select: function (start, end, allDay) {
+                        var now = moment().add(2, 'hours');
+                        var then = moment(start);
+
+                        if (now.isAfter(then)) {
+                            $.notify("Cannot schedule an appointment before 2 hours from now.", "warn");
+                            return;
+                        }
+
                         window.location.href = "{% url 'registry:appt_create' %}?next={% url 'registry:home' %}&start=" + start.toISOString();
                     }
                 });

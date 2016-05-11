@@ -1,11 +1,10 @@
 {% extends 'registry/base/base.html' %}
 {% load static %}
-{% load sass_tags %}
 
 {% block title %}HealthNet{% endblock %}
 
 {% block cssimport %}
-   <link rel="stylesheet" type="text/css" href="{% sass_src 'registry/css/landing.scss' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'registry/css/landing.css' %}">
 {% endblock %}
 
 {% block content %}

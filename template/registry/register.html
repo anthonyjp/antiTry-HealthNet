@@ -1,7 +1,5 @@
 {% extends 'registry/base/base_auth.html' %}
 {% load static %}
-{% load compile_static %}
-{% load sass_tags %}
 {% load crispy_forms_tags %}
 
 {% block title %}HealthNet | Registration{% endblock %}
@@ -23,8 +21,7 @@
 <script type="text/javascript" src="{% static 'moment/min/moment.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'pikaday/pikaday.js' %}"></script>
 <script type="text/javascript" src="{% static 'pikaday/plugins/pikaday.jquery.js' %}"></script>
-    <script type="text/javascript" src="{% static 'registry/coffee/measurements.coffee'|compile %}"></script>
-    {#<script type="text/javascript" src="{% static 'registry/js/measurements.js' %}"></script>#}
+    <script type="text/javascript" src="{% static 'registry/coffee/measurements.js' %}"></script>
 <script type="text/javascript" src="{% static 'registry/js/utility.js' %}"></script>
 {% endblock %}
 

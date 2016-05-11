@@ -1,5 +1,7 @@
+import uuid as py_uuid
 import dateutil.parser
 import django.utils.timezone as tz
+
 
 from annoying.decorators import render_to, ajax_request
 from django.contrib.staticfiles.templatetags.staticfiles import static
@@ -23,13 +25,20 @@ from .utility.viewutils import *
 
 logger = HNLogger()
 
-@render_to('registry/landing.html')
-def index(request):
+
+def get_ip_or_anonymous(request):
     anonymous = get_real_ip(request)
     if anonymous is None:
         anonymous = get_ip(request)
     if anonymous is None:
-        anonymous = "Anonymous"
+        anonymous = 'Anonymous User'
+
+    return anonymous
+
+
+@render_to('registry/landing.html')
+def index(request):
+    anonymous = get_ip_or_anonymous(request)
 
     logger.info(request, repr(request.user.hn_user) if request.user.is_authenticated() else str(anonymous),
                 action=LogAction.PAGE_ACCESS)
@@ -52,6 +61,8 @@ def about(request):
 
         return {'name': name, 'role': role, 'desc': desc, 'img': img, 'links': real_links}
 
+    logger.action(request, LogAction.PAGE_ACCESS, "{}",
+                  repr(request.user.hn_user) if request.user else str(get_ip_or_anonymous(request)))
     return {'aboutus': [
         create_dev('Matthew Crocco', 'Development Coordinator', ('https://github.com/Matt529', 'Github')),
         create_dev('Lisa Ni', 'Requirements Coordinator', 'Contact Information'),
@@ -94,6 +105,7 @@ def sign_out(request):
     :return:
     """
     if request.user:
+        logger.action(request, LogAction.USER_LOGOUT, "{!r} logged out", request.user.hn_user)
         logout(request)
         messages.add_message(request, messages.SUCCESS, 'Successfully Logged Out.')
     return redirect(to=reverse('registry:index'))
@@ -107,13 +119,15 @@ def home(request):
     :param request:
     :return:
     """
-    hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
+    hn_user = get_user_or_404(request.user.hn_user.pk)
     form = MessageCreation(request.POST)
     inbox = hn_user.inbox.messages.filter(receiver=hn_user).order_by('-date')
 
+    logger.action(request, LogAction.PAGE_ACCESS, "{!r}", hn_user)
+
     if rules.test_rule('is_patient', hn_user):
         medical_history = MedicalHistory.objects.filter(patient=hn_user).all()
-        medical_tests = MedicalTest.objects.filter(patient=hn_user).all()
+        medical_tests = MedicalTest.objects.filter(patient=hn_user, released=True).all()
         return render(request,
                       'registry/users/user_patient.html',
                       {'form': form,
@@ -153,6 +167,7 @@ def home(request):
                       'registry/users/user_nurse.html',
                       {'form': form,
                        'hn_owner': hn_user,
+                       'hn_visitor': hn_user,
                        'inbox': inbox,
                        'appointments': hn_user.hospital.appointment_set.all(),
                        'admitted': admitted_list,
@@ -218,13 +233,10 @@ def register(request):
             except User.DoesNotExist:
                 user = None
 
-            print(user)
             if user is not None:
-                print("Not Null")
                 contact.contact_user = user
 
             contact.save()
-
 
             logger.action(request, LogAction.USER_REGISTER, 'Registered new user: {0!r}', patient)
             messages.add_message(request, messages.SUCCESS, 'Successfully Registered.')
@@ -232,6 +244,7 @@ def register(request):
     else:
         form = PatientRegisterForm()
     return {'form': form}
+
 
 @login_required(login_url=reverse_lazy('registry:login'))
 @render_to('registry/data/patient_admit.html')
@@ -269,6 +282,10 @@ def patient_admit(request, patient_uuid):
                     logger.action(request, LogAction.PA_ADMIT, '{0!r} admitted by {1!r} to {2!s}', patient, user,
                                   admit_request.hospital)
 
+                    SystemNotification.objects.create(target=patient_uuid, msg="Admitted to new hospital!",
+                                                      level="info")
+                    SystemNotification.objects.create(target=request.user.hn_user.uuid,
+                                                      msg="Successfully admitted patient!", level="success")
                     return redirect('registry:home')
                 else:
                     error = "Error: " + str(admit_request.doctor) + " does not work at " + str(admit_request.hospital)
@@ -315,8 +332,14 @@ def transfer(request, patient_uuid):
                 patient.save()
 
                 logger.action(request, LogAction.PA_TRANSFER_REQUEST,
-                                  'Transfer {0!r} to {1!s} by {2!r}', patient, transfer_request.hospital, user)
+                              'Transfer {0!r} to {1!s} by {2!r}', patient, transfer_request.hospital, user)
+
+                SystemNotification.objects.create(target=patient_uuid, msg="Transferred to new hospital!", level="info")
+                SystemNotification.objects.create(target=request.user.hn_user.uuid,
+                                                  msg="Successfully transferred patient!", level="success")
+
                 return redirect('registry:home')
+
         else:
             form = PatientTransferForm(user=user)
 
@@ -350,7 +373,8 @@ def patient_discharge(request, patient_uuid):
             patient.admission_status = None
 
             logger.action(request, LogAction.PA_DISCHARGE, '{0!r} discharged by {1!r}', patient, hn_user)
-
+            SystemNotification.objects.create(target=request.user.hn_user.uuid, msg="Successfully discharged patient!",
+                                              level="success")
             patient.save()
             return redirect('registry:home')
 
@@ -393,6 +417,16 @@ def appt_create(request):
                         logger.action(request, LogAction.APPT_CREATE, 'Created for {0!r} to meet with {1!r} by {2!r}',
                                       appointment.patient, appointment.doctor, user)
 
+                        SystemNotification.objects.create(target=appointment.patient.uuid,
+                                                          msg="New appointment with {!s} was scheduled by {!s}."
+                                                          .format(appointment.doctor, user), level="info")
+                        SystemNotification.objects.create(target=appointment.doctor.uuid,
+                                                          msg="New appointment with {!s} was scheduled by {!s}."
+                                                          .format(appointment.patient, user), level='info')
+                        SystemNotification.objects.create(target=user.uuid,
+                                                          msg="Appointment for {!s} to meet with {!s} created successfully!"
+                                                          .format(appointment.patient, appointment.doctor),
+                                                          level="success")
                         return redirect('registry:home')
                     else:
                         error = "Appointment Error: DateTime conflict"
@@ -401,11 +435,14 @@ def appt_create(request):
 
             else:
                 error = "Appointment Error: That date and time has already happen."
+            SystemNotification.objects.create(target=user.uuid, msg=error, level="error")
     else:
         if rules.test_rule('is_administrator', user):
+            logger.warn(request, "Attempt by unauthorized user to access appointment page! => {!r}", user)
             return HttpResponseNotFound(
                 '<h1>You do not have permission to perform this action</h1><a href="/"> Return to home</a>')
 
+        logger.action(request, LogAction.PAGE_ACCESS, '{!r} accessed appointments', user)
         if 'start' in request.GET:
             form = AppointmentSchedulingForm(user=user, initial={'time': dateutil.parser.parse(request.GET['start'])})
         else:
@@ -451,12 +488,25 @@ def appt_edit(request, pk):
                     logger.action(request, LogAction.APPT_EDIT, 'Appt {0!r} to meet with {1!r} edited by {2!r}',
                                   appointment.patient, appointment.doctor, user)
                     appointment.save()
+
+                    SystemNotification.objects.create(target=appointment.patient.uuid,
+                                                      msg="Appointment with {!s} updated by {!s}.".format(
+                                                          appointment.doctor, user),
+                                                      level="info")
+                    SystemNotification.objects.create(target=appointment.doctor.uuid,
+                                                      msg="Appointment with {!s} updated by {!s}.".format(
+                                                          appointment.patient, user),
+                                                      level="info")
+                    SystemNotification.objects.create(target=user.uuid, msg="Appointment updated successfully.",
+                                                      level="success")
                     return redirect('registry:home')
                 else:
                         error = "Appointment Edit Failure: Date/Time Conflicting"
             else:
                 error = "Appointment Error: That date and time has already happen."
+            SystemNotification.objects.create(target=user.uuid, msg=error, level="error")
     else:
+        logger.action(request, LogAction.PAGE_ACCESS, "{!r} accessed appointment editing", user)
         form = AppointmentEditForm(instance=appt, appt_id=pk)
     return {'form': form, 'appt': initial_appointment, 'error': error, 'hn_visitor': user, 'hn_owner': appt.patient}
 
@@ -515,8 +565,16 @@ def appt_delete(request, pk):
             logger.action(request, LogAction.APPT_DELETE, 'Appt {0!r} to meet with {1!r} deleted by {2!r}',
                           delete.patient, delete.doctor, user)
             delete.delete()
+            SystemNotification.objects.create(target=delete.patient.uuid,
+                                              msg="Appointment with {!s} cancelled by {!s}.".format(delete.doctor,
+                                                                                                    user), level="warn")
+            SystemNotification.objects.create(target=delete.doctor.uuid,
+                                              msg="Appointment with {!s} cancelled by {!s}.".format(delete.patient,
+                                                                                                    user), level="warn")
+            SystemNotification.objects.create(target=user.uuid,
+                                              msg="Appointment between {!s} and {!s} successfully cancelled!".format(
+                                                  delete.doctor, delete.patient), level="success")
             return redirect('registry:home')
-
     else:
         form = DeleteAppForm(instance=delete)
 
@@ -530,7 +588,7 @@ def user(request, uuid=None):
     if request.method == 'PATCH':
         read_request_body_to(request, request.method)
         if 'admit' in request.PATCH:
-            admit_user(request, uuid)
+            return admit_user(request, uuid)
         else:
             return update_user(request, uuid)
     elif request.method == 'POST':
@@ -575,9 +633,11 @@ def admin_create(request):
         admin.auth_user = DjangoUser.objects.create_user(username, form.cleaned_data['email'],
                                                          form.cleaned_data['password'])
         admin.save()
+        SystemNotification.objects.create(target=user.uuid, msg="Successfully created administrator!", level="success")
         logger.action(request, LogAction.ST_CREATE, 'Admin {0!r} created by {1!r}', admin, user, user)
         return ajax_success()
 
+    SystemNotification.objects.create(target=user.uuid, msg="Failed to create administrator!", level="error")
     return ajax_failure()
 
 
@@ -601,8 +661,10 @@ def doctor_create(request):
 
         doc.save()
         logger.action(request, LogAction.ST_CREATE, 'Doctor {0!r} created by {1!r}', doc, user, user)
+        SystemNotification.objects.create(target=user.uuid, msg="Successfully created doctor!", level="success")
         return ajax_success()
 
+    SystemNotification.objects.create(target=user.uuid, msg="Failed to create doctor!", level="error")
     return ajax_failure(formErrors=form.errors)
 
 
@@ -624,8 +686,10 @@ def nurse_create(request):
                                                          form.cleaned_data['password'])
         nurse.save()
         logger.action(request, LogAction.ST_CREATE, 'Nurse {0!r} created by {1!r}', nurse, user, user)
+        SystemNotification.objects.create(target=user.uuid, msg="Successfully created nurse!", level="success")
         return ajax_success()
 
+    SystemNotification.objects.create(target=user.uuid, msg="Failed to create nurse!", level="error")
     return ajax_failure()
 
 
@@ -665,6 +729,7 @@ def view_user(request, uuid):
     if rules.test_rule('is_patient', owner):
         mc = None
         mh = mc
+        mt = mh
         if visitor.has_perm('registry.edit_patient', owner):
             rxs = owner.prescription_set.filter()
             mc = owner.conditions.all()
@@ -705,8 +770,18 @@ def admit_user(request, uuid):
 
             logger.action(request, LogAction.PA_ADMIT, '{0!r} admitted by {1!r} to {2!s}', admittee, admitter,
                           admission.hospital)
+            SystemNotification.objects.create(target=admitter.uuid,
+                                              msg="Successfully admitted {!s} to {!s}.".format(admittee,
+                                                                                               admission.hospital),
+                                              level="success")
+            SystemNotification.objects.create(target=admittee.uuid,
+                                              msg="Admitted to {!s} by {!s}.".format(admission.hospital, admitter),
+                                              level="info")
             return ajax_success()
 
+    SystemNotification.objects.create(target=admitter.uuid,
+                                      msg="Failed to admit {!s}. Verify your selection.".format(admittee),
+                                      level="failure")
     return ajax_failure()
 
 
@@ -835,6 +910,11 @@ def rx_create(request, patient_uuid):
                     rx.save()
 
                     logger.action(request, LogAction.RX_CREATE, 'Prescribed by {0!r} to {1!r}', rx.doctor, rx.patient)
+                    SystemNotification.objects.create(target=p.uuid,
+                                                      msg="Prescription created for {!s}!".format(rx.patient),
+                                                      level="success")
+                    SystemNotification.objects.create(target=rx.patient.uuid,
+                                                      msg="New prescription for {!s} from {!s}.".format(rx.drug, p))
                     return redirect('registry:user', uuid=patient_uuid)
                 else:
                     error = "Time Range is invalid. Start time cannot be in the past and the end time must be after" \
@@ -872,15 +952,22 @@ def rx_delete(request, pk):
         form = DeletePresForm(request.POST, instance=rx)
         if form.is_valid():
             patient = rx.patient
+            drug = rx.drug
             logger.action(request, LogAction.RX_DELETE, 'Deleting a prescription from {0!r} by {1!r}',
                           rx.doctor, rx.patient)
             rx.delete()
+            SystemNotification.objects.create(target=hn_user.uuid, msg="Successfully deleted prescription.",
+                                              level="success")
+            SystemNotification.objects.create(target=patient.uuid,
+                                              msg="Prescription for {!s} deleted by {!s}.".format(drug, hn_user),
+                                              level="warn")
             return redirect('registry:user', uuid=patient.uuid)
     else:
         form = DeletePresForm(instance=rx)
 
     template_vars = {'form': form}
     return template_vars
+
 
 def rx_view(request, pk):
     return Http404()
@@ -892,26 +979,17 @@ def rx_update(request, pk):
     hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
 
     if hn_user.has_perm('registry.rx', rx.patient):
+        SystemNotification.objects.create(target=hn_user.uuid, msg="Successfully updated prescription.",
+                                          level="success")
+        SystemNotification.objects.create(target=rx.patient.uuid,
+                                          msg="Prescription for {!s} updated by {!s}.".format(rx.drug, hn_user),
+                                          level="warn")
         return ajax_success()
     else:
+        SystemNotification.objects.create(target=hn_user.uuid, msg="Failed to update prescription. Forbidden Access.",
+                                          level="error")
         return ajax_failure(error='Forbidden')
 
-
-"""
-@render_to('registry/data/rx_delete.html')
-@ajax_request
-def rx_delete(request, pk):
-    rx = get_object_or_404(Prescription, id=pk)
-    hn_user = User.objects.get_subclass(pk=request.user.hn_user.pk)
-
-    if not hn_user.has_perm('registry.rx', rx.patient) or rx.doctor.uuid != hn_user.uuid:
-        return ajax_failure(error='Forbidden')
-
-
-    rx.delete()
-
-    return ajax_success()
-"""
 
 @require_http_methods(['POST'])
 @login_required(login_url=reverse_lazy('registry:login'))
@@ -976,15 +1054,32 @@ def msg_create(request):
     :param request:
     :return:
     """
-    form = MessageCreation(request.POST)
+    blank = request.POST['content'] == ''
 
+    submission = QueryDict(mutable=True)
+    submission.update(request.POST)
+    if blank:
+        submission['content'] = 'BLANK'
+
+    form = MessageCreation(submission)
     if not form.is_valid():
+        SystemNotification.objects.create(target=request.user.hn_user.pk,
+                                          msg="Failed to send message, make sure title is not empty and a recipient is "
+                                              "selected.", level="error")
         return ajax_failure()
 
     message = form.save(commit=False)
 
     message.sender = sender = User.objects.get_subclass(pk=request.user.hn_user.pk)
     message.receiver.inbox.messages.add(message)
+
+    if blank:
+        message.content = ''
+
+    SystemNotification.objects.create(target=message.sender.uuid, msg="Message to {!s} sent!".format(message.receiver),
+                                      level="success")
+    SystemNotification.objects.create(target=message.receiver.uuid,
+                                      msg="New message from {!s} received.".format(message.sender), level="info")
 
     message.save()
     return ajax_success(id=message.uuid, sender=str(sender), timestamp=message.date.isoformat())
@@ -1019,8 +1114,18 @@ def msg_delete(request, uuid):
             except Message.DoesNotExist:
                 failures.append(uuid)
     except:
+        SystemNotification.objects.create(target=request.user.hn_user.uuid,
+                                          msg="Failed to delete any message! Try refreshing the page and trying again.",
+                                          level="error")
         return ajax_failure(fails=failures)
 
+    if len(failures) > 0:
+        SystemNotification.objects.create(target=request.user.hn_user.uuid,
+                                          msg="Partial success. Some messages not deleted. Try refreshing the page and trying again.",
+                                          level="warn")
+    else:
+        SystemNotification.objects.create(target=request.user.hn_user.uuid,
+                                          msg="Succeessfully deleted all checked messages!", level="success")
     return ajax_success(fails=failures)
 
 
@@ -1383,6 +1488,7 @@ def medical_tests(request, uuid):
 def medical_tests_create(request, uuid):
     creator = get_user_or_404(request.user.hn_user.pk)
 
+    print(request.POST)
     if request.method == 'POST':
         form = MedicalTestUploadForm(request.POST, files=request.FILES)
         if form.is_valid():
@@ -1398,13 +1504,27 @@ def medical_tests_create(request, uuid):
             test = MedicalTest.objects.create(timestamp=tz.now(), results=result_note, sign_off_user=creator,
                                               patient=patient)
             test.notes.add(result_note)
-
+            test.released = 'released' in request.POST and request.POST['released'] == 'on'
             test.save()
 
+            SystemNotification.objects.create(target=request.user.hn_user.uuid, msg="Successfully created test.",
+                                              level="success")
+            logger.action(request, LogAction.TEST_UPLOAD, "{!r} uploaded new test for {!r}", creator, patient)
+            if test.released:
+                logger.action(request, LogAction.TEST_RELEASE, "Test for {!r} released by {!r}", patient, creator)
+                SystemNotification.objects.create(target=request.user.hn_user.uuid, msg="Successfully released test.",
+                                                  level="success")
+                SystemNotification.objects.create(target=patient.uuid,
+                                                  msg="New test available from {}!".format(str(creator)), level="info")
+            else:
+                logger.warn(request, "Test for {!r} not released by {!r} after creation", patient, creator)
+                SystemNotification.objects.create(target=creator.uuid, msg="Test not released.", level="warn")
             return redirect('registry:home')
         else:
+            logger.warn(request, "Test upload failed with form errors. Likely user error: {!r}", creator)
             print(form.errors)
     else:
+        logger.action(request, LogAction.PAGE_ACCESS, "{!r}", creator)
         form = MedicalTestUploadForm()
 
     return {'form': form}
@@ -1413,6 +1533,7 @@ def medical_tests_create(request, uuid):
 @ajax_request
 def medical_tests_update(request, uuid):
     patient = get_user_or_404(uuid)
+    creator = get_user_or_404(request.user.hn_user.uuid)
     print(request.PUT)
     id = int(request.PUT['test-id'])
 
@@ -1421,6 +1542,94 @@ def medical_tests_update(request, uuid):
         test = test.first()
         test.released = True
         test.save()
+
+        logger.action(request, LogAction.TEST_RELEASE, "{!r} released a test for {!r}", creator, patient)
+        SystemNotification.objects.create(target=request.user.hn_user.uuid, msg="Test successfully released!",
+                                          level="success")
+        SystemNotification.objects.create(target=patient.uuid, msg="New test available from {}!".format(str(creator)),
+                                          level="info")
         return ajax_success()
 
+    logger.error(request, "Test release for {!r} failed! Attempting User: {!r}", patient, creator)
+    SystemNotification.objects.create(target=request.user.hn_user.uuid,
+                                      msg="Test release failed... Try refreshing the page.", level="error")
     return ajax_failure()
+
+
+@login_required(login_url=reverse_lazy('registry:login'))
+@require_http_methods(['GET', 'POST', 'DELETE'])
+@require_http_methods_not_none(['GET'], 'uuid')
+@require_http_methods_not_none(['DELETE'], 'nid')
+@ajax_request
+def notifs(request, uuid=None, nid=None):
+    if request.method == 'GET':
+        return notifs_list(request, uuid)
+    elif request.method == 'POST':
+        return notifs_create(request, uuid)
+    elif request.method == 'DELETE':
+        read_request_body_to(request, 'DELETE')
+        return notifs_delete(request, nid)
+
+
+@ajax_request
+def notifs_create(request, uuid):
+    try:
+        target = py_uuid.UUID(uuid)
+    except Exception:
+        logger.error(request,
+                     "Malformed UUID encountered! This is a system erorr, contact SysAdmin or Developers. ({!s})", uuid)
+        return ajax_failure()
+
+    msg = request.POST['msg']
+    level = request.POST['level']
+    context = request.POST['context']
+
+    SystemNotification.objects.create(target=target, context=context, msg=msg, level=level)
+
+    return ajax_success()
+
+
+@ajax_request
+def notifs_list(request, uuid):
+    try:
+        target_uuid = py_uuid.UUID(uuid)
+    except Exception:
+        logger.error(request,
+                     "Malformed UUID encountered! This is a system error, contact SysAdmin or Developers. ({!s})", uuid)
+        return ajax_failure()
+
+    notifications = SystemNotification.objects.filter(target=target_uuid).all()
+    resp = []
+
+    for n in notifications:
+        resp.append({
+            'id': n.pk,
+            'target': str(n.target),
+            'context': n.context,
+            'message': n.msg,
+            'level': n.level
+        })
+
+    return ajax_success(notifs=resp)
+
+
+@ajax_request
+def notifs_delete(request, nid):
+    troubleId = -1
+    try:
+        ids_to_remove = [nid]
+
+        others = request.DELETE.getlist('additional_ids')
+        if others:
+            ids_to_remove.extend(others)
+
+        for nid in ids_to_remove:
+            troubleId = nid
+            SystemNotification.objects.get(pk=nid).delete()
+
+        return ajax_success()
+    except SystemNotification.DoesNotExist:
+        logger.warn(
+            "Failed to delete notification, Did Not Exist. This may bne a system error for SysAdmins or Developers... "
+            "Notification ID: {!s}", troubleId)
+        return ajax_failure(msg='Does Not Exist')

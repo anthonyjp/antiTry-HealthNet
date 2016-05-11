@@ -21,6 +21,9 @@
   },
   "EXCLUDES": {
     "files": [
+      "package.json",
+      "coffeelint.json",
+      "gulpfile.js",
       "**/tests.py",
       "media/**/**"
     ],

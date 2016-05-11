@@ -1,13 +1,12 @@
 {% extends 'registry/users/../base/base_user.html' %}
 
 {% load static %}
-{% load sass_tags %}
 {% load registry_tags %}
 {% load crispy_forms_tags %}
 
 {% block calendar_cssimport %}
-    <link rel="stylesheet" href="{% sass_src 'registry/css/doctor.scss' %}"/>
-    <link rel="stylesheet" href="{% sass_src 'registry/css/calendar.scss' %}"/>
+    <link rel="stylesheet" href="{% static 'registry/css/doctor.css' %}"/>
+    <link rel="stylesheet" href="{% static 'registry/css/calendar.css' %}"/>
 	<link href="{% static 'fullcalendar/dist/fullcalendar.min.css' %}" rel="stylesheet" />
 	<link href="{% static 'fullcalendar/dist/fullcalendar.print.css' %}" rel="stylesheet" media="print" />
 {% endblock %}
@@ -85,9 +84,9 @@
                         </td>
                         <td class="patientBody">
                             {% if p.is_admitted %}
-                                <a href="{% url 'registry:patient_discharge' p.uuid %}">
-                                    <button>Discharge</button>
-                                </a>
+                                <button id="discharge-btn" data-patient-name="{{ p|stringify }}"
+                                        data-patient-id="{{ p.uuid }}">Discharge
+                                </button>
                             {% endif %}
                         </td>
 
@@ -103,11 +102,11 @@
         </div>
     </div>
 
-    <div id="tab10" class="tab">
+    <div id="tab10" class="hn-table tab">
         <table id="patients">
             <thead>
             <tr>
-                <th id="theader" colspan="3">
+                <th id="theader" class="hn-table-header" colspan="3">
                     <div class="patientHead">
                         <p id="patientTitle">Request Transfers
                         <p>
@@ -118,17 +117,17 @@
                 </th>
             </tr>
             <tr>
-                <th id="theader">
+                <th id="theader" class="hn-table-header">
                     <div class="patientHead">
                         Patient
                     </div>
                 </th>
-                <th id="theader">
+                <th id="theader" class="hn-table-header">
                     <div class="patientHead">
                         Current Transfer Infomation
                     </div>
                 </th>
-                <th id="theader">
+                <th id="theader" class="hn-table-header">
                     <div class="patientHead">
                         Transfer Request
                     </div>
@@ -145,7 +144,7 @@
                                                           src="{% static "registry/img/logo.png" %}"/></div>
                                 <ul>
                                     <li>
-                                        <a href="{% url 'registry:user' p.uuid %}">
+                                        <a style="vertical-align: middle;" href="{% url 'registry:user' p.uuid %}">
                                             <p id="patientName">{{ p.first_name }} {{ p.middle_initial }} {{ p.last_name }}</p>
                                         </a>
                                     </li>
@@ -154,7 +153,7 @@
                             </div>
                         </td>
                         <td class="patientBody">
-                            <li><p>Admission Status: {{ p.admission_status }}</p></li>
+                            <p>{{ p.admission_status }}</p>
                         </td>
                         <td class="patientBody">
                             <a href="{% url 'registry:transfer_create' p.uuid %}">

@@ -105,7 +105,7 @@ class HNLogger(object):
 
         self.log(LogLevel.ERROR, action, request.path, msg, *args, **kwargs)
 
-    def action(self, request, action, msg='', *args, **kwargs):
+    def action(self, request, action, msg='', *args, level=LogLevel.INFO, **kwargs):
         """
         Specifically logs a LogEntry with a log message containing the specified action. Unlike the others this forces
         a specific action to be chosen and the LogLevel defaults to INFO.
@@ -115,7 +115,7 @@ class HNLogger(object):
         :param msg: Either a message clarifying the log entry or a format string
         """
 
-        self.log(LogLevel.INFO, action, request.path, "<{0}> {1}", LogAction.label(action), msg.format(*args, **kwargs))
+        self.log(level, action, request.path, "<{0}> {1}", LogAction.label(action), msg.format(*args, **kwargs))
 
     def set_message_format(self, fmt):
         """

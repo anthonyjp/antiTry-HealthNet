@@ -1,12 +1,11 @@
 {% extends 'registry/base/base.html' %}
 
-{% load sass_tags %}
 {% load staticfiles %}
 
 {% block  set-active %}About|About Us{% endblock %}
 
 {% block cssimport %}
-    <link rel="stylesheet" href="{% sass_src 'registry/css/about.scss' %}"/>
+    <link rel="stylesheet" href="{% static 'registry/css/about.css' %}"/>
 {% endblock %}
 
 {% block content %}

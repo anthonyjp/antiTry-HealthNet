@@ -1,12 +1,11 @@
 {% extends 'registry/users/../base/base_user.html' %}
 
 {% load static %}
-{% load sass_tags %}
 {% load registry_tags %}
 {% load crispy_forms_tags %}
 
 {% block calendar_cssimport %}
-    <link rel="stylesheet" href="{% sass_src 'registry/css/doctor.scss' %}"/>
+    <link rel="stylesheet" href="{% static 'registry/css/doctor.css' %}"/>
     <link href="{% static 'fullcalendar/dist/fullcalendar.min.css' %}" rel="stylesheet"/>
     <link href="{% static 'fullcalendar/dist/fullcalendar.print.css' %}" rel="stylesheet" media="print"/>
 {% endblock %}

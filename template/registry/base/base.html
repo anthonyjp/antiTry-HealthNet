@@ -1,6 +1,4 @@
-{% load compile_static %}
 {% load staticfiles %}
-{% load sass_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,7 +20,7 @@
 
     <link href='https://fonts.googleapis.com/css?family=Noto+Serif:400,400italic,700' rel='stylesheet' type='text/css'/>
     <link href='https://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'/>
-    <link rel="stylesheet" href="{% sass_src 'registry/css/base.scss' %}"/>
+    <link rel="stylesheet" href="{% static 'registry/css/base.css' %}"/>
     {% block _base_cssimport %}{% endblock %}
     {% block cssimport %}{% endblock %}
 </head>
@@ -93,11 +91,12 @@
     <script type="text/javascript">
         $.notify.defaults({className: "success", position: "right bottom"});
         {# TODO Find a better solution than this appearing on every page... Sectioning maybe? #}
-        {% if waiting_notifs %}
-            registry.fulfillNotifications("{% for n in waiting_notifs %}{{ n.msg }}:{{ n.level }}{% if not forloop.last %},{% endif %}{% endfor %}");
-        {% endif %}
+
+
         registry.setActiveMenuItem("{% block set-active %}__NONE__{% endblock %}");
-        registry.initUserSearch();
+        $(function () {
+            registry.initUserSearch();
+        });
     </script>
     {% block customjs %}{% endblock %}
 

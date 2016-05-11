@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'rules.apps.AutodiscoverRulesConfig',
     'jet.dashboard',
     'jet',
-    'sass_processor',
+    # 'sass_processor',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     'compat',
     'crispy_forms',
     'annoying',
-    'static_precompiler',
+    # 'static_precompiler',
     'easy_pdf',
     'reportlab',
 ]
@@ -144,15 +144,10 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_SSL_REDIRECT = False
 X_FRAME_OPTIONS = 'DENY'
 
-if not DEBUG:
-    CSRF_COOKIE_HTTPONLY = True
-
 STATICFILES_FINDERS = {
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'djangobower.finders.BowerFinder',
-    'sass_processor.finders.CssFinder',
-    'static_precompiler.finders.StaticPrecompilerFinder',
 }
 
 BOWER_INSTALLED_APPS = {

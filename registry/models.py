@@ -171,8 +171,8 @@ class AdmissionInfo(models.Model):
     def __str__(self):
         if self is not None:
             # return "self.doctor, self.hospital, self.admission_time.start_time"
-            return "Admitted to %s to %s on %s" % \
-                   (self.doctor, self.hospital, self.admission_time.start_time)
+            return "Admitted by %s to %s on %s" % \
+                   (self.doctor, self.hospital, self.admission_time.start_time.strftime('%x at %I:%M %p'))
         else:
             return "None"
 
@@ -371,7 +371,7 @@ class Message(models.Model):
     sender = models.ForeignKey(to=User, related_name='sender', on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=255, default="")
     date = models.DateTimeField(default=datetime.now, blank=True)
-    content = models.TextField()
+    content = models.TextField(blank=True)
 
 
 class Inbox(models.Model):
@@ -387,6 +387,13 @@ class Inbox(models.Model):
         return "%s's Inbox" % str(User.objects.get_subclass(pk=self.user.pk))
 
 
+class SystemNotification(models.Model):
+    target = models.UUIDField(default=uuid.uuid4, null=False)
+    context = models.CharField(max_length=100, null=True)
+    level = models.CharField(max_length=10, default='success')
+    msg = models.CharField(max_length=325, default="")
+
+
 @receiver(post_save)
 def init_user_inbox(sender, **kwargs):
     inst = kwargs.get('instance')
@@ -394,7 +401,6 @@ def init_user_inbox(sender, **kwargs):
     if not issubclass(sender, User) or (hasattr(inst, 'inbox') and getattr(inst, 'inbox', None) is not None):
         return
 
-    print('Creating inbox for', inst)
     Inbox.objects.create(user=inst)
 
 
